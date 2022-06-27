@@ -31,11 +31,14 @@ def _handler(payload, task):
 
         robot.run('apps/robot-external-task/test.robot')
 
+        result = {}
         if output_file.exists():
             with open(output_file, encoding='utf-8', mode='r') as fd:
-                result = json.load(fd)
-        else: 
-            result = {}
+                json_result = json.load(fd)
+
+                if len(json_result) > 0:
+                    result = json_result[0].get('payload', {})
+                    
     return result
 
 def main(engine_url):

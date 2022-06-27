@@ -4,6 +4,9 @@ Library    RPA.Robocorp.WorkItems
 
 *** Tasks ***
 Demo Task
-    ${payload} =    Get work item payload   
-    Log    ${payload}
-    Create File   test.test    ${payload}
+    ${PAYLOAD}=     Get work item variable    test
+    
+    ${variables}=    Create Dictionary
+    ...    Test=${PAYLOAD}
+
+    Create Output Work Item    variables=${variables}    save=True
