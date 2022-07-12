@@ -1,2 +1,2 @@
-from .inproc_robot_agent import InprocRobotAgent
+from .base_agent import BaseAgent
 from .error import RobotError

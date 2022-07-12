@@ -6,7 +6,7 @@ from processcube_sdk.debugging import start_debugging
 from processcube_sdk.logging import setup_logging
 from processcube_sdk.external_tasks import start_external_task
 
-from .external_task import robot_task_handler, RobotTaskHandlerFactoryCreator
+from .robot_agent.inproc import RobotTaskHandlerFactoryCreator
 
 
 app = typer.Typer()
@@ -18,10 +18,6 @@ def default():
 
     setup_logging()
     start_debugging()
-
-    handler_factories = [
-        robot_task_handler,
-    ]
 
     handler_factory= RobotTaskHandlerFactoryCreator(config)
 

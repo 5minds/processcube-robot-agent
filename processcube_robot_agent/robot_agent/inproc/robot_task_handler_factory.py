@@ -4,8 +4,9 @@ from pathlib import Path
 from processcube_sdk.configuration import Config
 from processcube_sdk.external_tasks import BaseHandler
 
+from ...external_task.robot_task_handler import RobotTaskHandler
 
-from .robot_task_handler import RobotTaskHandler
+from .robot_agent import RobotAgent
 
 class Factory:
 
@@ -16,7 +17,9 @@ class Factory:
 
     def create_external_task(self, config: Config) -> BaseHandler:
 
-        handler = RobotTaskHandler(self._topic, self._filename, config)
+        inproc_agent = RobotAgent(self._filename, config)
+
+        handler = RobotTaskHandler(self._topic, inproc_agent)
 
         return handler
 
@@ -24,7 +27,7 @@ class RobotTaskHandlerFactoryCreator:
 
     def __init__(self, config: Config):
         self._config = config
-        self._robots_root_dir = Path(self._config.get('robot_agent', 'robots_root_dir')).absolute()
+        self._robots_root_dir = Path(self._config.get('inproc_robot_agent', 'robots_root_dir')).absolute()
         self._topic_prefix = self._config.get('robot_agent', 'topic_prefix', default='robot_task')
 
     def _build_topic(self, filename: str) -> str:

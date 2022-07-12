@@ -7,28 +7,30 @@ import robot
 
 from processcube_sdk.configuration import Config
 
-from .error import RobotError
+from ..base_agent import BaseAgent
+from ..error import RobotError
 
-class InprocRobotAgent:
+class RobotAgent(BaseAgent):
 
     def __init__(self, filename: str, config: Config):
         self._filename = filename
         self._config = config
+        self._root_dir = self._config.get('robot_agent', 'robots_root_dir')
 
     def create_input_data(self, temp_dirname:str, payload, task):
-            input_file = Path(temp_dirname).joinpath(f"{task['id']}.json").absolute()
-            output_file = Path(temp_dirname).joinpath(f"{task['id']}.output.json").absolute()
+        input_file = Path(temp_dirname).joinpath(f"{task['id']}.json").absolute()
+        output_file = Path(temp_dirname).joinpath(f"{task['id']}.output.json").absolute()
 
-            os.environ['RPA_WORKITEMS_ADAPTER'] = 'RPA.Robocorp.WorkItems.FileAdapter'
-            os.environ['RPA_INPUT_WORKITEM_PATH'] = str(input_file)
-            os.environ['RPA_OUTPUT_WORKITEM_PATH'] = str(output_file)
+        os.environ['RPA_WORKITEMS_ADAPTER'] = 'RPA.Robocorp.WorkItems.FileAdapter'
+        os.environ['RPA_INPUT_WORKITEM_PATH'] = str(input_file)
+        os.environ['RPA_OUTPUT_WORKITEM_PATH'] = str(output_file)
 
-            data_parameters = self.get_data(payload, task)
+        data_parameters = self.get_data(payload, task)
 
-            list_payload = [{'payload': data_parameters}]
+        list_payload = [{'payload': data_parameters}]
 
-            with open(input_file, encoding='utf-8', mode='w') as fd:
-                fd.write(json.dumps(list_payload, indent=4))
+        with open(input_file, encoding='utf-8', mode='w') as fd:
+            fd.write(json.dumps(list_payload, indent=4))
 
     def read_output_data(self, temp_dirname:str, task):
         output_file = Path(temp_dirname).joinpath(f"{task['id']}.output.json").absolute()
@@ -58,7 +60,6 @@ class InprocRobotAgent:
         return RobotError(run_code, new_msg)
 
     def execute(self, payload, task):
-        self._root_dir = self._config.get('robot_agent', 'robots_root_dir')
 
         robot_filename = self.get_robot_filename()
 

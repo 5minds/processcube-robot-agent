@@ -10,5 +10,8 @@
     },
     "robot_agent": {
         "robots_root_dir": "robots"
+    },
+    "inproc_robot_agent": {
+        "robots_root_dir": "robots"
     }
 }
