@@ -1,6 +1,6 @@
 {
     "debugging": {
-        "enabled": false,
+        "enabled": true,
         "hostname": "localhost",
         "port": 5678,
         "wait_for_client": true
