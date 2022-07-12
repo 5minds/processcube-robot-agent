@@ -1,9 +1,8 @@
 import json
 import os
 from pathlib import Path
+import subprocess
 import tempfile
-
-import robot
 
 from processcube_sdk.configuration import Config
 
@@ -15,7 +14,8 @@ class RobotAgent(BaseAgent):
     def __init__(self, filename: str, config: Config):
         self._filename = filename
         self._config = config
-        self._root_dir = self._config.get('inproc_robot_agent', 'robots_root_dir', default="robots")
+        self._root_dir = self._config.get('rcc_robot_agent', 'robots_root_dir', default="robots")
+        self._unwrap_dir = self._config.get('rcc_robot_agent', 'unwrap_root_dir', default="temp/unwrap")
 
     def create_input_data(self, temp_dirname:str, payload, task):
         input_file = Path(temp_dirname).joinpath(f"{task['id']}.json").absolute()
@@ -53,39 +53,49 @@ class RobotAgent(BaseAgent):
 
         return robot_filename
 
-    def get_execution_error(self, run_code:int, msg: str):
+    def get_unwrapped_path(self):
 
-        new_msg = f"Robot: {self._filename} failed: {msg}"
+        filename = self._filename.removesuffix('.zip')
 
-        return RobotError(run_code, new_msg)
+        unwrapped_path = Path().cwd().joinpath(self._unwrap_dir).joinpath(filename).absolute()
+
+        return unwrapped_path
+
+    def unwrap(self):
+
+        robot_path = self.get_robot_filename()
+        unwrapped_path = self.get_unwrapped_path()
+
+        Path(unwrapped_path).mkdir(parents=True, exist_ok=True)
+
+        cmd = f"rcc robot unwrap -z {str(robot_path)} -d {str(unwrapped_path)} --force"
+
+        return_code = subprocess.call(cmd, shell=True)
+
+        return return_code
+
+    def run_robot(self):
+
+        unwrapped_path = self.get_unwrapped_path().joinpath('robot.yaml').absolute()
+
+        cmd = f"rcc run -r {str(unwrapped_path)}"
+
+        return_code = subprocess.call(cmd, shell=True)
+
+        return return_code
 
     def execute(self, payload, task):
 
-        robot_filename = self.get_robot_filename()
+        result = {}
 
         with tempfile.TemporaryDirectory() as tmpdirname:
 
             self.create_input_data(tmpdirname, payload, task)
+            
+            self.unwrap()
 
-            run_code = robot.run(robot_filename)
+            self.run_robot()
 
-            if run_code == 0:
-                result = self.read_output_data(tmpdirname, task)
-            elif run_code >= 0 or run_code <= 249:
-                raise self.get_execution_error(run_code, f"Executing {run_code} tasks failed.")
-            elif run_code == 251:
-                msg = "Help or version information printed."
-                raise self.get_execution_error(run_code, msg)
-            elif run_code == 252:
-                msg = "Invalid test data or command line options."
-                raise self.get_execution_error(run_code, msg)
-            elif run_code == 253:
-                msg = "Test execution stopped by user."
-                raise self.get_execution_error(run_code, msg)
-            elif run_code == 255:
-                msg = "Unexpected internal error."
-                raise self.get_execution_error(run_code, msg)
-            else:
-                raise self.get_execution_error(run_code, f"Robot failed with {run_code} tasks failed to execute")
+            result = self.read_output_data(tmpdirname, task)
 
         return result

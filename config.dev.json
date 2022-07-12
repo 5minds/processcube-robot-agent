@@ -9,9 +9,13 @@
         "url": "http://localhost:56100"
     },
     "robot_agent": {
-        "robots_root_dir": "robots"
+        "type": "rcc"
     },
     "inproc_robot_agent": {
         "robots_root_dir": "robots"
+    },
+    "rcc_robot_agent": {
+        "robots_root_dir": "robots_rcc",
+        "unwrap_root_dir": "temp/unwrapped_rcc"
     }
 }
