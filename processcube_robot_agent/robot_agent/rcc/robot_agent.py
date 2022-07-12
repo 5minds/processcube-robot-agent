@@ -62,6 +62,17 @@ class RobotAgent(BaseAgent):
 
         return unwrapped_path
 
+    def check_rcc(self):
+
+        cmd = f"rcc version"
+
+        completed_process = subprocess.run(cmd, shell=True, capture_output=True)
+
+        if completed_process.returncode != 0:
+            raise RobotError("rcc", f"rcc --version failed with return code {completed_process.returncode}")
+
+        return completed_process
+
     def unwrap(self):
 
         robot_path = self.get_robot_filename()
@@ -94,6 +105,8 @@ class RobotAgent(BaseAgent):
     def execute(self, payload, task):
 
         result = {}
+
+        self.check_rcc()
 
         with tempfile.TemporaryDirectory() as tmpdirname:
 
