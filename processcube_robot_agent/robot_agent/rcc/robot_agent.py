@@ -1,6 +1,7 @@
 import json
 import os
 from pathlib import Path
+import re
 import subprocess
 import tempfile
 
@@ -70,9 +71,12 @@ class RobotAgent(BaseAgent):
 
         cmd = f"rcc robot unwrap -z {str(robot_path)} -d {str(unwrapped_path)} --force"
 
-        return_code = subprocess.call(cmd, shell=True)
+        completed_process = subprocess.run(cmd, shell=True, capture_output=True)
+        
+        if completed_process.returncode != 0:
+            raise RobotError("unwrap", f"unwrap {robot_path} to {unwrapped_path} failed with return code {completed_process.returncode}")
 
-        return return_code
+        return completed_process
 
     def run_robot(self):
 
@@ -80,9 +84,12 @@ class RobotAgent(BaseAgent):
 
         cmd = f"rcc run -r {str(unwrapped_path)}"
 
-        return_code = subprocess.call(cmd, shell=True)
+        completed_process = subprocess.run(cmd, shell=True, capture_output=True)
 
-        return return_code
+        if completed_process.returncode != 0:
+            raise RobotError("run", f"run {unwrapped_path} failed with return code {completed_process.returncode}")
+
+        return completed_process
 
     def execute(self, payload, task):
 
