@@ -1,0 +1,14 @@
+{
+    "debugging": {
+        "enabled": false,
+        "hostname": "localhost",
+        "port": 5678,
+        "wait_for_client": true
+    },
+    "engine": {
+        "url": "http://localhost:56100"
+    },
+    "robot_agent": {
+        "robots_root_dir": "robots"
+    }
+}

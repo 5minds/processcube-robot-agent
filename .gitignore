@@ -2,6 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
+log.html
+output.xml
+report.html
 
 # C extensions
 *.so

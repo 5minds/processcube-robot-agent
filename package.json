@@ -1,0 +1,31 @@
+{
+  "name": "processcube-robot-agent",
+  "version": "0.0.1",
+  "description": "A Agent, that connects to the ProcessCube and can start RPA-Agents.",
+  "scripts": {
+    "python": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python",
+    "external_task": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent"
+ 
+  },
+  "private": true,
+  "devDependencies": {
+    "@process-engine/ci_tools": "3.3.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/atlas-engine-contrib/processcube-robot-agent.git"
+  },
+  "keywords": [
+    "workflow",
+    "rpa",
+    "processcube",
+    "bpmn",
+    "agent"
+  ],
+  "author": "developers@5Minds.de",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/atlas-engine-contrib/processcube-robot-agent/issues"
+  },
+  "homepage": "https://github.com/atlas-engine-contrib/processcube-robot-agent#readme"
+}

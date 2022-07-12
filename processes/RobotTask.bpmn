@@ -15,7 +15,7 @@
       <bpmn:outgoing>Flow_0pjuqpl</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0pjuqpl" sourceRef="StartEvent_1" targetRef="Activity_0y2r5ar" />
-    <bpmn:serviceTask id="Activity_0y2r5ar" name="Robot Task" camunda:type="external" camunda:topic="RobotTask">
+    <bpmn:serviceTask id="Activity_0y2r5ar" name="Robot Task" camunda:type="external" camunda:topic="robot_task">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   test: &#39;wert&#39; &#10;}" />
