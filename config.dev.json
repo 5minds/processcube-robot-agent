@@ -3,7 +3,7 @@
         "enabled": true,
         "hostname": "localhost",
         "port": 5678,
-        "wait_for_client": true
+        "wait_for_client": false
     },
     "engine": {
         "url": "http://localhost:56100"

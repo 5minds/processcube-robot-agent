@@ -23,6 +23,7 @@ class RobotAgent(BaseAgent):
         output_file = Path(temp_dirname).joinpath(f"{task['id']}.output.json").absolute()
 
         os.environ['RPA_WORKITEMS_ADAPTER'] = 'RPA.Robocorp.WorkItems.FileAdapter'
+        os.environ['RPA_WORKITEMS_PATH'] = str(input_file)
         os.environ['RPA_INPUT_WORKITEM_PATH'] = str(input_file)
         os.environ['RPA_OUTPUT_WORKITEM_PATH'] = str(output_file)
 
