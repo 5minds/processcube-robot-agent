@@ -15,6 +15,10 @@ class Factory:
         self._filename = filename
         self._topic = topic
 
+    def get_topic(self) -> str:
+
+        return self._topic
+
     def create_external_task(self, config: Config) -> BaseHandler:
 
         inproc_agent = RobotAgent(self._filename, config)

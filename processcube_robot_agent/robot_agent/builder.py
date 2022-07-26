@@ -26,7 +26,7 @@ def build():
         logger.error("Unknown robot agent type: %s", creator_type)
         sys.exit(-1)
 
-    logger.info("Starting robot agent type: %s", creator_type)
+    logger.info("Using robot agent type: %s", creator_type)
     handler_factory = creator_class(config)
 
     return handler_factory

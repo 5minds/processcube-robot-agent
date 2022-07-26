@@ -17,5 +17,9 @@
     "rcc_robot_agent": {
         "robots_root_dir": "robots_rcc",
         "unwrap_root_dir": "temp/unwrapped_rcc"
+    },
+    "rest_api": {
+        "port": 42042,
+        "host": "0.0.0.0"
     }
 }

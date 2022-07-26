@@ -6,7 +6,8 @@ processcube-sdk>=1.5.0a1
 typer>=0.5.0
 
 # api
-fastapi>=0.78.0
+#fastapi>=0.78.0
+uvicorn[standard]==0.17.5
 
 # RPA
 robotframework>=5.0.1
