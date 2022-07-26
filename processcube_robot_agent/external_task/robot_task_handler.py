@@ -6,7 +6,6 @@ from ..robot_agent import BaseAgent
 class RobotTaskHandler(BaseHandler):
 
     def __init__(self, topic: str, agent: BaseAgent):
-        # TODO: Topic per robot-File
         super(RobotTaskHandler, self).__init__(topic)
         self._agent = agent
     

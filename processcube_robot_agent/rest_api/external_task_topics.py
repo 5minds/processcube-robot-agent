@@ -10,7 +10,7 @@ router = APIRouter()
 class ExternalTaskTopics(BaseModel):
     topics: List[str] = []
 
-@router.get("/external_tasks/topics", response_model=ExternalTaskTopics, tags=["external_tasks"])
+@router.get("/robot_agents/topics", response_model=ExternalTaskTopics, tags=["external_tasks"])
 async def get_external_task_topics():
 
     external_task_topics = ExternalTaskTopics()
