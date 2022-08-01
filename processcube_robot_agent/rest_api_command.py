@@ -2,11 +2,11 @@ from fastapi import FastAPI
 
 from processcube_sdk.configuration.config_accessor import ConfigAccessor
 
-from .rest_api import external_task_topics
+from .rest_api import robots
 
 webapp = FastAPI()
 
-webapp.include_router(external_task_topics.router)
+webapp.include_router(robots.router)
 
 def start_rest_api():
     import uvicorn

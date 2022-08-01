@@ -1,0 +1,11 @@
+tasks:
+  Start a Windows UI:
+    robotTaskName: Start a Windows UI
+condaConfigFile: conda.yaml
+ignoreFiles:
+- .gitignore
+artifactsDir: output
+PATH:
+- .
+PYTHONPATH:
+- .

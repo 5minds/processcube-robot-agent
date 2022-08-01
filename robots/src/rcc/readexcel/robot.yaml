@@ -1,0 +1,11 @@
+tasks:
+  Read Excel:
+    robotTaskName: Read Excel
+condaConfigFile: conda.yaml
+ignoreFiles:
+- .gitignore
+artifactsDir: output
+PATH:
+- .
+PYTHONPATH:
+- .

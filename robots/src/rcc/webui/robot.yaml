@@ -1,0 +1,11 @@
+tasks:
+  Open Web UI:
+    robotTaskName: Open Web UI
+condaConfigFile: conda.yaml
+ignoreFiles:
+- .gitignore
+artifactsDir: output
+PATH:
+- .
+PYTHONPATH:
+- .

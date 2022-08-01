@@ -1,0 +1,23 @@
+{
+    "AlleAkzeptieren": {
+        "screenshot": ".images/alleakzeptieren-screenshot.png",
+        "source": "https://www.5minds.de/",
+        "strategy": "link",
+        "type": "browser",
+        "value": "Alle akzeptieren"
+    },
+    "Div": {
+        "screenshot": ".images/div-screenshot.png",
+        "source": "https://www.google.com/",
+        "strategy": "xpath",
+        "type": "browser",
+        "value": "//button[2]/div"
+    },
+    "Q": {
+        "screenshot": ".images/q-screenshot.png",
+        "source": "https://www.google.de/",
+        "strategy": "name",
+        "type": "browser",
+        "value": "q"
+    }
+}

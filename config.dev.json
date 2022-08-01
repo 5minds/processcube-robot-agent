@@ -12,11 +12,11 @@
         "type": "rcc"
     },
     "inproc_robot_agent": {
-        "robots_root_dir": "robots"
+        "robots_root_dir": "robots/installed/robot"
     },
     "rcc_robot_agent": {
-        "robots_root_dir": "robots_rcc",
-        "unwrap_root_dir": "temp/unwrapped_rcc"
+        "robots_root_dir": "robots/installed/rcc",
+        "unwrap_root_dir": "temp/robots/rcc/unwrapped"
     },
     "rest_api": {
         "port": 42042,
