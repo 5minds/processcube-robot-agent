@@ -8,10 +8,10 @@
     },
     "Div": {
         "screenshot": ".images/div-screenshot.png",
-        "source": "https://www.google.com/",
-        "strategy": "xpath",
+        "source": "https://www.5minds.de/",
+        "strategy": "css",
         "type": "browser",
-        "value": "//button[2]/div"
+        "value": "div:nth-child(1) > .ct-sticky-container > div > div"
     },
     "Q": {
         "screenshot": ".images/q-screenshot.png",
