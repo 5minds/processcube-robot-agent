@@ -19,5 +19,12 @@
         "strategy": "name",
         "type": "browser",
         "value": "q"
+    },
+    "Span": {
+        "screenshot": ".images/span-screenshot.png",
+        "source": "https://www.5minds.de/",
+        "strategy": "css",
+        "type": "browser",
+        "value": ".elementor-column:nth-child(2) .elementor-element:nth-child(1) .elementor-button-text"
     }
 }
