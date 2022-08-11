@@ -4,7 +4,7 @@
   "description": "A Agent, that connects to the ProcessCube and can start RPA-Agents.",
   "scripts": {
     "python": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python",
-    "processcube_robot_agent": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent"
+    "processcube_robot_agent": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent start-all-endpoints"
  
   },
   "private": true,

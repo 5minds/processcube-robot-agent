@@ -8,15 +8,12 @@
     "engine": {
         "url": "http://localhost:56100"
     },
-    "robot_agent": {
-        "type": "rcc"
-    },
-    "inproc_robot_agent": {
-        "robots_root_dir": "robots/installed/robot"
-    },
-    "rcc_robot_agent": {
-        "robots_root_dir": "robots/installed/rcc",
-        "unwrap_root_dir": "temp/robots/rcc/unwrapped"
+    "rcc": {
+        "topic_prefix": "rcc",
+        "wrap_dir": "robots/installed/rcc",
+        "unwrap_dir": "temp/robots/rcc/unwrapped",
+        "start_watch_project_dir": true,
+        "project_dir": "robots/src/rcc"
     },
     "rest_api": {
         "port": 42042,

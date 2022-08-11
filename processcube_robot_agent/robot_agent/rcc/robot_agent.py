@@ -1,7 +1,6 @@
 import json
 import os
 from pathlib import Path
-import re
 import subprocess
 import tempfile
 
@@ -10,13 +9,15 @@ from processcube_sdk.configuration import Config
 from ..base_agent import BaseAgent
 from ..error import RobotError
 
-class RobotAgent(BaseAgent):
+from .rcc_runner import RccRunner
+
+class RobotAgent(BaseAgent, RccRunner):
 
     def __init__(self, filename: str, config: Config):
         self._filename = filename
         self._config = config
-        self._root_dir = self._config.get('rcc_robot_agent', 'robots_root_dir', default="robots")
-        self._unwrap_dir = self._config.get('rcc_robot_agent', 'unwrap_root_dir', default="temp/unwrap")
+        self._wrap_dir = self._config.get('rcc', 'wrap_dir', default="robots")
+        self._unwrap_dir = self._config.get('rcc', 'unwrap_dir', default="temp/unwrap")
 
     def create_input_data(self, temp_dirname:str, payload, task):
         input_file = Path(temp_dirname).joinpath(f"{task['id']}.json").absolute()
@@ -51,7 +52,7 @@ class RobotAgent(BaseAgent):
 
     def get_robot_filename(self):
 
-        robot_filename = Path().cwd().joinpath(self._root_dir).joinpath(self._filename).absolute()
+        robot_filename = Path().cwd().joinpath(self._wrap_dir).joinpath(self._filename).absolute()
 
         return robot_filename
 
@@ -63,16 +64,6 @@ class RobotAgent(BaseAgent):
 
         return unwrapped_path
 
-    def check_rcc(self):
-
-        cmd = f"rcc version"
-
-        completed_process = subprocess.run(cmd, shell=True, capture_output=True)
-
-        if completed_process.returncode != 0:
-            raise RobotError("rcc", f"rcc --version failed with return code {completed_process.returncode}")
-
-        return completed_process
 
     def unwrap(self):
 

@@ -31,8 +31,8 @@ class RobotTaskHandlerFactoryCreator:
 
     def __init__(self, config: Config):
         self._config = config
-        self._robots_root_dir = Path(self._config.get('rcc_robot_agent', 'robots_root_dir')).absolute()
-        self._topic_prefix = self._config.get('robot_agent', 'topic_prefix', default='robot_task')
+        self._wrap_dir = Path(self._config.get('rcc', 'wrap_dir')).absolute()
+        self._topic_prefix = self._config.get('rcc', 'topic_prefix', default='robot_task')
 
     def _build_topic(self, filename: str) -> str:
 
@@ -42,7 +42,7 @@ class RobotTaskHandlerFactoryCreator:
 
     def _build_factory(self, filename: str) -> Factory:
 
-        robot_path = str(Path(filename).relative_to(self._robots_root_dir))
+        robot_path = str(Path(filename).relative_to(self._wrap_dir))
 
         topic = self._build_topic(robot_path)
 
@@ -50,7 +50,7 @@ class RobotTaskHandlerFactoryCreator:
 
     def __iter__(self) -> Factory:
 
-        for path in self._robots_root_dir.rglob('*.zip'):
+        for path in self._wrap_dir.rglob('*.zip'):
 
             factory = self._build_factory(path)
 
