@@ -90,7 +90,9 @@ class RobotAgent(BaseAgent, RccRunner):
         completed_process = subprocess.run(cmd, shell=True, capture_output=True)
 
         if completed_process.returncode != 0:
-            raise RobotError("run", f"run {unwrapped_path} failed with return code {completed_process.returncode}")
+            output_xml = self.read_outout_xml(unwrapped_path)
+            stdout = completed_process.stdout.decode('utf-8')
+            raise RobotError(f"return_code_{completed_process.returncode}", stdout, details=output_xml)
 
         return completed_process
 
@@ -111,3 +113,12 @@ class RobotAgent(BaseAgent, RccRunner):
             result = self.read_output_data(tmpdirname, task)
 
         return result
+
+    def read_outout_xml(self, rcc_robot_yaml_path: Path):
+        output_xml_path = rcc_robot_yaml_path.parent.joinpath('output').joinpath('output.xml')
+
+        if output_xml_path.is_file():
+            content = output_xml_path.read_text()
+            return content
+
+        return ""

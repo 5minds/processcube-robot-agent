@@ -19,7 +19,7 @@
       <bpmn:outgoing>Flow_0pjuqpl</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0pjuqpl" sourceRef="StartEvent_1" targetRef="Activity_0y2r5ar" />
-    <bpmn:serviceTask id="Activity_0y2r5ar" name="Run Robot &#39;another&#39; in &#39;some_dir&#39; Scope" camunda:type="external" camunda:topic="robot_task.some_dir.another">
+    <bpmn:serviceTask id="Activity_0y2r5ar" name="Run Windows UI" camunda:type="external" camunda:topic="rcc.windows.ui">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   test: &#39;from somedir&#39;&#10;}" />
@@ -31,7 +31,7 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0tgke77" sourceRef="Activity_0y2r5ar" targetRef="Activity_1cgd1h1" />
     <bpmn:sequenceFlow id="Flow_0s6ako2" sourceRef="Activity_1cgd1h1" targetRef="Activity_1fls5is" />
-    <bpmn:serviceTask id="Activity_1cgd1h1" name="Run Robot &#39;test&#39; in Root Scope" camunda:type="external" camunda:topic="robot_task.test">
+    <bpmn:serviceTask id="Activity_1cgd1h1" name="Run Web" camunda:type="external" camunda:topic="rcc.webui">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   test: &#39;from root&#39;&#10;}" />
@@ -44,7 +44,7 @@
       <bpmn:incoming>Flow_1mju9ja</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1mju9ja" sourceRef="Activity_1fls5is" targetRef="Event_0a00qx9" />
-    <bpmn:serviceTask id="Activity_1fls5is" name="Failed Robot" camunda:type="external" camunda:topic="robot_task.test">
+    <bpmn:serviceTask id="Activity_1fls5is" name="Run Excel" camunda:type="external" camunda:topic="rcc.readexcel">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   no_test: &#39;from root&#39;&#10;}" />
@@ -112,6 +112,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Activity_1jmyht6_di" bpmnElement="Activity_1fls5is">
         <dc:Bounds x="520" y="130" width="100" height="80" />
+        <bpmndi:BPMNLabel />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_0thz934_di" bpmnElement="Event_0thz934">
         <dc:Bounds x="712" y="252" width="36" height="36" />

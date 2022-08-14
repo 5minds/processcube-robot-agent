@@ -1,8 +1,10 @@
+import logging
 from pathlib import Path
 
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 
+logger = logging.getLogger('processcube_robot_agent.robot_agent.project_watcher')
 
 class RobotsFileSystemEventHandler(FileSystemEventHandler):
     def __init__(self, config):
@@ -10,7 +12,7 @@ class RobotsFileSystemEventHandler(FileSystemEventHandler):
         self._config = config
 
     def on_any_event(self, event):
-        print(event)
+        logger.info(event)
 
 class ProjectWatcher:
 
