@@ -23,6 +23,7 @@ class RobotAgent(BaseAgent, RccRunner):
         input_file = Path(temp_dirname).joinpath(f"{task['id']}.json").absolute()
         output_file = Path(temp_dirname).joinpath(f"{task['id']}.output.json").absolute()
 
+        # siehe https://robocorp.com/docs/development-guide/control-room/data-pipeline#developing-with-work-items-locally)
         os.environ['RPA_WORKITEMS_ADAPTER'] = 'RPA.Robocorp.WorkItems.FileAdapter'
         os.environ['RPA_WORKITEMS_PATH'] = str(input_file)
         os.environ['RPA_INPUT_WORKITEM_PATH'] = str(input_file)
