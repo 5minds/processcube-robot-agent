@@ -1,6 +1,7 @@
 *** Settings ***
 Library     RPA.Excel.Files
 
+
 *** Tasks ***
 Read Excel
-    Open Workbook
+    Open Workbook    data/sample.xlsx

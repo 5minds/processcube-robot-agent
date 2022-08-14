@@ -23,6 +23,7 @@ def pack_robots():
 
 @app.command(short_help="Watch to pack new robots from project folder to wrap folder.")
 def watch_robots():
+    setup_logging()
     start_watch_robots()
 
 @app.command(short_help="Start the restapi and the external tasks worker for every installed robot.")
