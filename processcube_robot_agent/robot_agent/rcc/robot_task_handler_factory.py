@@ -27,12 +27,11 @@ class Factory:
 
         return handler
 
-class RobotTaskHandlerFactoryCreator:
-
-    def __init__(self, config: Config):
-        self._config = config
-        self._wrap_dir = Path(self._config.get('rcc', 'wrap_dir')).absolute()
-        self._topic_prefix = self._config.get('rcc', 'topic_prefix', default='robot_task')
+class FactoryBuilder:
+    
+    def __init__(self, wrap_dir: str, topic_prefix: str):
+        self._wrap_dir = wrap_dir
+        self._topic_prefix = topic_prefix
 
     def _build_topic(self, filename: str) -> str:
 
@@ -40,7 +39,34 @@ class RobotTaskHandlerFactoryCreator:
 
         return f"{self._topic_prefix}.{topic}"
 
-    def _build_factory(self, filename: str) -> Factory:
+    def _build_robot_path(self, filename: str) -> str:
+
+        robot_path = str(Path(filename).relative_to(self._wrap_dir))
+
+        return robot_path
+
+    def build(self, filename: str) -> Factory:
+
+        robot_path = self._build_robot_path(filename)
+        topic = self._build_topic(robot_path)
+
+        return Factory(robot_path, topic)
+
+class RobotTaskHandlerFactoryCreator:
+
+    def __init__(self, config: Config):
+        self._config = config
+        self._wrap_dir = Path(self._config.get('rcc', 'wrap_dir')).absolute()
+        self._topic_prefix = self._config.get('rcc', 'topic_prefix', default='robot_task')
+        self._factory_builder = FactoryBuilder(self._wrap_dir, self._topic_prefix)
+
+    def _build_topic(self, filename: str) -> str:
+
+        topic = filename.replace('/', '.').removesuffix('.zip')
+
+        return f"{self._topic_prefix}.{topic}"
+
+    def _build_factory_new(self, filename: str) -> Factory:
 
         robot_path = str(Path(filename).relative_to(self._wrap_dir))
 
@@ -48,10 +74,14 @@ class RobotTaskHandlerFactoryCreator:
 
         return Factory(robot_path, topic)
 
+    def _build_factory(self, filename: str) -> Factory:
+
+        return self._factory_builder.build(filename)
+
     def __iter__(self) -> Factory:
 
         for path in self._wrap_dir.rglob('*.zip'):
 
-            factory = self._build_factory(path)
+            factory = self._build_factory(str(path))
 
             yield factory

@@ -7,7 +7,7 @@ from .robot_agent.rcc import ProjectWatcher
 
 logger = logging.getLogger("processcube_robot_agent")
 
-def start_watch_robots():
+def start_watch_robots(external_task_client):
 
     ConfigAccessor.ensure_from_env()
     config = ConfigAccessor.current()
@@ -16,5 +16,5 @@ def start_watch_robots():
     project_packer = ProjectPacker(config)
     project_packer.start()
 
-    project_watcher = ProjectWatcher(config)
+    project_watcher = ProjectWatcher(config, external_task_client)
     project_watcher.watch()

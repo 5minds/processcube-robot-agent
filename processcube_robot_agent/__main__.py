@@ -22,11 +22,6 @@ def pack():
     setup_logging()
     start_pack_robots()
 
-@app.command(short_help="Watch to pack new robots from project folder to wrap folder.")
-def watch():
-    setup_logging()
-    start_watch_robots()
-
 @app.command(short_help="Start the restapi and the external tasks worker for every installed robot.")
 def serve():
     @webapp.on_event('startup')
@@ -42,7 +37,7 @@ def serve():
         start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
 
         if start_watch_project_dir:
-            _ = loop.run_in_executor(None, start_watch_robots) # TODO: cancel the task if the service will stopped
+            _ = loop.run_in_executor(None, start_watch_robots, external_task_client) # TODO: cancel the task if the service will stopped
 
     @webapp.on_event("shutdown")
     def event_stop_external_task():

@@ -16,7 +16,7 @@ class ProjectPacker(RccRunner):
         self._absolute_project_dir = Path(self._config.get('rcc', 'project_dir')).absolute()
         self._wrap_dir = Path(self._config.get('rcc', 'wrap_dir')).absolute()
 
-    def pack_folder(self, robot_yaml_path: Path):
+    def pack_folder(self, robot_yaml_path: Path) -> Path:
         logger.debug(f"pack robot {robot_yaml_path}")
         current_folder = robot_yaml_path.parent
 
@@ -40,6 +40,8 @@ class ProjectPacker(RccRunner):
         completed_process = subprocess.run(cmd, shell=True, capture_output=True, cwd=str(self._absolute_project_dir))
 
         logger.debug(f"'{cmd}' finished with '{completed_process.returncode}'")
+
+        return Path(f"{str(wrap_robot_path)}.zip").absolute()
 
     def pack_all(self, absolute_start_folder: Path):
 
