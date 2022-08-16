@@ -2,6 +2,8 @@ from fastapi import FastAPI
 
 from processcube_sdk.configuration.config_accessor import ConfigAccessor
 
+from .watch_robots_command import start_watch_robots
+
 from .rest_api import robots
 
 webapp = FastAPI()

@@ -6,6 +6,7 @@ import typer
 from processcube_sdk.debugging import start_debugging
 from processcube_sdk.logging import setup_logging
 from processcube_sdk.external_tasks import start_external_task
+from processcube_sdk.configuration.config_accessor import ConfigAccessor
 
 from .robot_agent import builder
 from .pack_robots_command import start_pack_robots
@@ -30,19 +31,23 @@ def watch():
 def serve():
     @webapp.on_event('startup')
     def event_start_external_task():
-        loop = asyncio.get_running_loop()
 
+        ConfigAccessor.ensure_from_env()
+        config = ConfigAccessor.current()
+
+        start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
+
+        if start_watch_project_dir:
+            pass
+            #start_watch_robots()
+
+        loop = asyncio.get_running_loop()
         c = start_external_task(builder.build(), loop=loop)
         logger.info(f"Started external task {c}")
     
     setup_logging()
     start_debugging()
     start_rest_api()
-
-#@app.callback(invoke_without_command=True)
-#def default():
-#    start_all()
-
 
 if __name__ == '__main__':
     app()
