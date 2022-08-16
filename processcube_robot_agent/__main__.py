@@ -17,17 +17,17 @@ app = typer.Typer()
 logger = logging.getLogger("processcube_robot_agent")
 
 @app.command(short_help="Pack the rcc projects folders and install them into the agent.")
-def pack_robots():
+def pack():
     setup_logging()
     start_pack_robots()
 
 @app.command(short_help="Watch to pack new robots from project folder to wrap folder.")
-def watch_robots():
+def watch():
     setup_logging()
     start_watch_robots()
 
 @app.command(short_help="Start the restapi and the external tasks worker for every installed robot.")
-def start_all_endpoints():
+def serve():
     @webapp.on_event('startup')
     def event_start_external_task():
         loop = asyncio.get_running_loop()

@@ -7,8 +7,12 @@ from ..robot_agent import builder
 
 router = APIRouter()
 
+class Robot(BaseModel):
+    name: str
+    topic: str
+
 class Robots(BaseModel):
-    robot_names: List[str] = []
+    topics: List[Robot] = []
 
 @router.get("/robot_agents/robots", response_model=Robots, tags=["external_tasks"])
 async def get_robots():
@@ -18,6 +22,9 @@ async def get_robots():
     for external_task_record in builder.build():
         full_topic = external_task_record.get_topic()
         robot_name = full_topic.replace(".", "/")
-        robots.robot_names.append(robot_name)
+
+        robot = Robot(name=robot_name, topic=full_topic)
+
+        robots.topics.append(robot)
 
     return robots
