@@ -26,6 +26,10 @@ class RobotsFileSystemEventHandler(FileSystemEventHandler):
                     return path.joinpath('robot.yaml')
                 else:
                     return find_robot_yaml(path.parent)
+            elif path.is_file():
+                return find_robot_yaml(path.parent)
+            else:
+                return None
 
         logger.info(event)
         changed_path = Path(event.src_path)

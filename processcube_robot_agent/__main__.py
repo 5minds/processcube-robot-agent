@@ -31,6 +31,10 @@ def watch():
 def serve():
     @webapp.on_event('startup')
     def event_start_external_task():
+        loop = asyncio.get_running_loop()
+
+        external_task_client = start_external_task(builder.build(), loop=loop)
+        logger.info(f"Started external task {external_task_client}")
 
         ConfigAccessor.ensure_from_env()
         config = ConfigAccessor.current()
@@ -38,13 +42,13 @@ def serve():
         start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
 
         if start_watch_project_dir:
-            pass
-            #start_watch_robots()
+            _ = loop.run_in_executor(None, start_watch_robots) # TODO: cancel the task if the service will stopped
 
-        loop = asyncio.get_running_loop()
-        c = start_external_task(builder.build(), loop=loop)
-        logger.info(f"Started external task {c}")
-    
+    @webapp.on_event("shutdown")
+    def event_stop_external_task():
+        logger.info("Stopping external task")
+
+
     setup_logging()
     start_debugging()
     start_rest_api()

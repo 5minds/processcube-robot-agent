@@ -12,7 +12,7 @@ def start_watch_robots():
     ConfigAccessor.ensure_from_env()
     config = ConfigAccessor.current()
 
-    logger.info(f"start watch robots new or changed robots (and pack @first all available robots).")
+    logger.info(f"start watch robots new or changed robots (and pack @ first all available robots).")
     project_packer = ProjectPacker(config)
     project_packer.start()
 

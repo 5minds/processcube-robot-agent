@@ -3,7 +3,6 @@ Library     Collections
 Library     RPA.Excel.Files
 Library     RPA.Robocorp.WorkItems
 
-
 *** Tasks ***
 Read Excel
     Open Workbook    data/sample.xlsx
