@@ -11,7 +11,8 @@ uvicorn[standard]==0.17.5
 
 # RPA
 robotframework>=5.0.1
-rpaframework>=15.1.4
+rpaframework>=15.1.4    
+robotframework-tidy>=3.2
 
 # watchdog
 watchdog>=2.1.9
