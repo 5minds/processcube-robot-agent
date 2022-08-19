@@ -68,9 +68,3 @@ class ProjectWatcher:
         observer.schedule(event_handler, self._project_dir, recursive=True)
         
         observer.start()
-        try:
-            while True:
-                pass
-        except KeyboardInterrupt:
-            observer.stop()
-            observer.join()

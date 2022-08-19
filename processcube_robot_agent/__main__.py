@@ -24,11 +24,21 @@ def pack():
 
 @app.command(short_help="Start the restapi and the external tasks worker for every installed robot.")
 def serve():
+    task = None
+
     @webapp.on_event('startup')
     def event_start_external_task():
+
+        external_task_client = None
+
+        def on_shutdown_external_task():
+            logger.info("Stopping external task")
+            if external_task_client is not None:
+                external_task_client.stop()
+
         loop = asyncio.get_running_loop()
 
-        external_task_client = start_external_task(builder.build(), loop=loop)
+        external_task_client = start_external_task(builder.build(), loop=loop, on_shutdown=on_shutdown_external_task)
         logger.info(f"Started external task {external_task_client}")
 
         ConfigAccessor.ensure_from_env()
@@ -37,11 +47,7 @@ def serve():
         start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
 
         if start_watch_project_dir:
-            _ = loop.run_in_executor(None, start_watch_robots, external_task_client) # TODO: cancel the task if the service will stopped
-
-    @webapp.on_event("shutdown")
-    def event_stop_external_task():
-        logger.info("Stopping external task")
+            _ = loop.run_in_executor(None, start_watch_robots, external_task_client)
 
 
     setup_logging()
