@@ -1,6 +1,8 @@
 .processcube/requirements_extension/_build/
 .vscode/settings.json
 *~$*
+robots/src/rcc/readexcel/
+robots/installed/rcc/readexcel.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
