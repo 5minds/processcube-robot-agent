@@ -3,6 +3,8 @@
 *~$*
 robots/src/rcc/readexcel/
 robots/installed/rcc/readexcel.zip
+studio_extension/node_modules
+studio_extension/out
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

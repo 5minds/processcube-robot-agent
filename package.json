@@ -24,8 +24,8 @@
     "bpmn",
     "agent"
   ],
-  "author": "developers@5Minds.de",
-  "license": "MIT",
+  "author": "customer-solutions@5minds.de",
+  "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/atlas-engine-contrib/processcube-robot-agent/issues"
   },
