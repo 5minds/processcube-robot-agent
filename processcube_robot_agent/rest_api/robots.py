@@ -19,9 +19,14 @@ async def get_robots():
 
     robots = Robots()
 
-    for external_task_record in builder.build():
+    builder_factory = builder.build()
+
+    topic_prefic = builder_factory.get_topic_prefix()
+
+    for external_task_record in builder_factory:
         full_topic = external_task_record.get_topic()
         robot_name = full_topic.replace(".", "/")
+        robot_name = robot_name.replace(f"{topic_prefic}/", "") # TODO: 
 
         robot = Robot(name=robot_name, topic=full_topic)
 

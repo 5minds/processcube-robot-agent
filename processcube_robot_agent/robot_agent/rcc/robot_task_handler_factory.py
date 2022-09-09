@@ -60,6 +60,10 @@ class RobotTaskHandlerFactoryCreator:
         self._topic_prefix = self._config.get('rcc', 'topic_prefix', default='robot_task')
         self._factory_builder = FactoryBuilder(self._wrap_dir, self._topic_prefix)
 
+    def get_topic_prefix(self) -> str:
+
+        return self._topic_prefix
+
     def _build_topic(self, filename: str) -> str:
 
         topic = filename.replace('/', '.').removesuffix('.zip')
