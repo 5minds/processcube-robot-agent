@@ -29,16 +29,9 @@ def serve():
     @webapp.on_event('startup')
     def event_start_external_task():
 
-        external_task_client = None
-
-        def on_shutdown_external_task():
-            logger.info("Stopping external task")
-            if external_task_client is not None:
-                external_task_client.stop()
-
         loop = asyncio.get_running_loop()
 
-        external_task_client = start_external_task(builder.build(), loop=loop, on_shutdown=on_shutdown_external_task)
+        external_task_client = start_external_task(builder.build(), loop=loop)
         logger.info(f"Started external task {external_task_client}")
 
         ConfigAccessor.ensure_from_env()
