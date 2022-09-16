@@ -1,12 +1,16 @@
-import fs from 'fs';
 import { Studio } from '@atlas-engine/atlas_studio_sdk';
 
-import {initializeRobotServiceTypePanel} from './initializePanes';
-import {initializeServiceTypeRobot} from './initializeServiceTypeRobot';
-import {initializeDefaultSettings} from './initializeStudioSettings';
+import { initializeServiceTypeRobot } from './robotServiceType/initializeServiceTypeRobot';
 
 export function onLoad(studio: Studio): void {
-  initializeRobotServiceTypePanel(studio);
   initializeServiceTypeRobot(studio);
-  initializeDefaultSettings(studio);
+
+  // studio.menus.appendToMenu(studio.menus.getMenuSync('std/activity-bar/settings'), [{
+  //   type: 'divider',
+  // },{
+  //   label: 'Robot Sources',
+  //   command: 'std.shell.checkForStudioUpdate',
+  //   type: 'command',
+  //   id: 'std/activity-bar/settings/robot-sources',
+  // }]);
 }
