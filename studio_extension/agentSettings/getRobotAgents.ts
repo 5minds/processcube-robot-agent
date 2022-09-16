@@ -15,7 +15,8 @@ export type RobotAgents = {
 
 export type RobotAgentSelectOption = Omit<SelectOption, 'value'> & { value: RobotAgent };
 
-const ROBOT_AGENT_SOLUTION_DIR = '/.processcube/robot-agent/';
+export const ROBOT_AGENT_SOLUTION_DIR = '/.processcube/robot-agent/';
+export const ROBOT_AGENT_CONFIG_FILE = ROBOT_AGENT_SOLUTION_DIR + 'agents.json';
 
 let robotAgentSettings: RobotAgents | null = null;
 let watcher: WatcherDisposable | null = null;
@@ -30,7 +31,7 @@ export function getRobotAgents(studio: Studio): RobotAgents | null {
     return robotAgentSettings;
   }
 
-  const robotLocatorsFileName = `${studio.files.getLocalFilenameForUri(solutionURI)}${ROBOT_AGENT_SOLUTION_DIR}locators.json`;
+  const robotLocatorsFileName = studio.files.getLocalFilenameForUri(solutionURI) + ROBOT_AGENT_CONFIG_FILE;
   if (!fs.existsSync(robotLocatorsFileName)) {
     fs.mkdirSync(`${studio.files.getLocalFilenameForUri(solutionURI)}${ROBOT_AGENT_SOLUTION_DIR}`);
     fs.writeFileSync(robotLocatorsFileName, JSON.stringify({ agents: [] }));

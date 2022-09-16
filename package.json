@@ -29,8 +29,5 @@
   "bugs": {
     "url": "https://github.com/atlas-engine-contrib/processcube-robot-agent/issues"
   },
-  "homepage": "https://github.com/atlas-engine-contrib/processcube-robot-agent#readme",
-  "dependencies": {
-    "uuid": "^9.0.0"
-  }
+  "homepage": "https://github.com/atlas-engine-contrib/processcube-robot-agent#readme"
 }

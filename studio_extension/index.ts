@@ -1,9 +1,11 @@
 import { Studio } from '@atlas-engine/atlas_studio_sdk';
 
 import { initializeServiceTypeRobot } from './robotServiceType/initializeServiceTypeRobot';
+import { initializeAgentSettingsEditor } from './agentSettings/initializeAgentSettingsEditor';
 
 export function onLoad(studio: Studio): void {
   initializeServiceTypeRobot(studio);
+  initializeAgentSettingsEditor(studio);
 
   // studio.menus.appendToMenu(studio.menus.getMenuSync('std/activity-bar/settings'), [{
   //   type: 'divider',
