@@ -1,0 +1,9 @@
+{
+  "agents": [
+    {
+      "uuid": "1b765644-2b92-4ae5-b22f-93e36f45da66",
+      "name": "test_robot",
+      "url": "http://0.0.0.0:42042"
+    }
+  ]
+}
