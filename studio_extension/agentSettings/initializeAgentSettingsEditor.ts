@@ -3,23 +3,28 @@ import * as fs from 'fs';
 
 import { RobotAgentsConfigEditor } from './RobotAgentsConfigEditor';
 import { RobotAgentsConfigDocument } from './RobotAgentsConfigDocument';
-import { ROBOT_AGENT_CONFIG_FILE } from './getRobotAgents';
+import { AGENT_CONFIG_FILE_NAME, SOLUTION_ROBOT_DIRECTORY } from './getRobotAgents';
 
 export function initializeAgentSettingsEditor(studio: Studio): void {
-  studio.menus.registerMenuModifier('std/activity-bar/settings', menu => {
-    return studio.menus.appendToMenu(menu, [{
+  studio.menus.registerMenuModifier('std/activity-bar/settings', menu =>
+    studio.menus.appendToMenu(menu, [{
         type: 'divider',
-      },{
+      }, {
         label: 'Robot Agents',
         command: 'plugin.robot-agents.editAgents',
         type: 'command',
         id: 'std/activity-bar/settings/robot-agents',
-      }]);
-  });
+      }]
+    )
+  );
 
-  studio.commands.registerInCommandSearch('plugin.robot-agents.editAgents', 'Robot Agents: Edit Agents', () => {
-    studio.editors.focusOrOpenEditorDocument(studio.solution.getSolution()?.baseUri + ROBOT_AGENT_CONFIG_FILE)
-  }, () => studio.solution.getSolution() !== null && fs.existsSync(studio.files.getLocalFilenameForUri(studio.solution.getSolution()?.baseUri + ROBOT_AGENT_CONFIG_FILE)));
+  studio.commands.registerInCommandSearch(
+    'plugin.robot-agents.editAgents',
+    'Robot Agents: Edit Agents',
+    () => studio.editors.focusOrOpenEditorDocument(studio.solution.getSolution()?.baseUri + SOLUTION_ROBOT_DIRECTORY +  AGENT_CONFIG_FILE_NAME),
+    () => studio.solution.hasOpenSolution()
+      && fs.existsSync(studio.files.getLocalFilenameForUri(studio.solution.getSolution()?.baseUri + SOLUTION_ROBOT_DIRECTORY + AGENT_CONFIG_FILE_NAME))
+  );
 
   studio.editors.registerDocumentType('editor-document-robot-agents', {
     uriMatch: /\.processcube\/robot-agent\/agents\.json$/,
@@ -27,6 +32,8 @@ export function initializeAgentSettingsEditor(studio: Studio): void {
     rendererConstructor: RobotAgentsConfigEditor,
     modelKey: 'RobotAgentsConfigDocument',
     modelConstructor: RobotAgentsConfigDocument,
-    icon: 'far fa-cog'
+    icon: 'far fa-robot'
   });
+
+  studio.icons.registerIcons({})
 }

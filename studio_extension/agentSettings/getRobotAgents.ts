@@ -15,30 +15,48 @@ export type RobotAgents = {
 
 export type RobotAgentSelectOption = Omit<SelectOption, 'value'> & { value: RobotAgent };
 
-export const ROBOT_AGENT_SOLUTION_DIR = '/.processcube/robot-agent/';
-export const ROBOT_AGENT_CONFIG_FILE = ROBOT_AGENT_SOLUTION_DIR + 'agents.json';
+export const SOLUTION_ROBOT_DIRECTORY = '/.processcube/robot-agent/';
+export const AGENT_CONFIG_FILE_NAME = 'agents.json';
 
 let robotAgentSettings: RobotAgents | null = null;
 let watcher: WatcherDisposable | null = null;
 
 export function getRobotAgents(studio: Studio): RobotAgents | null {
-  if (watcher !== null) {
-    return robotAgentSettings;
+  if (watcher === null) {
+    return registerFileWatcher(studio);
   }
-
-  const solutionURI = studio.solution.getSolution()?.baseUri;
-  if (!solutionURI) {
-    return robotAgentSettings;
-  }
-
-  const robotLocatorsFileName = studio.files.getLocalFilenameForUri(solutionURI) + ROBOT_AGENT_CONFIG_FILE;
-  if (!fs.existsSync(robotLocatorsFileName)) {
-    fs.mkdirSync(`${studio.files.getLocalFilenameForUri(solutionURI)}${ROBOT_AGENT_SOLUTION_DIR}`);
-    fs.writeFileSync(robotLocatorsFileName, JSON.stringify({ agents: [] }));
-  }
-
-  robotAgentSettings = JSON.parse(fs.readFileSync(robotLocatorsFileName, 'utf8'));
-  watcher = studio.files.watchFile(studio.files.getUriForFilename(robotLocatorsFileName), () => robotAgentSettings = JSON.parse(fs.readFileSync(robotLocatorsFileName, 'utf-8')));
 
   return robotAgentSettings;
+}
+
+function registerFileWatcher(studio: Studio): RobotAgents | null {
+  const solutionURI = studio.solution.getSolution()?.baseUri;
+  if (solutionURI === undefined) {
+    return null;
+  }
+
+  const agentDirectory = studio.files.getLocalFilenameForUri(solutionURI + SOLUTION_ROBOT_DIRECTORY);
+  const agentConfigFile = agentDirectory + AGENT_CONFIG_FILE_NAME;
+
+  if (!fs.existsSync(agentConfigFile)) {
+    createConfigFile(agentDirectory);
+  }
+
+  readAgentFile(agentConfigFile);
+
+  watcher = studio.files.watchFile(
+    studio.files.getUriForFilename(agentConfigFile),
+    () => readAgentFile(agentConfigFile),
+  );
+
+  return robotAgentSettings;
+}
+
+function createConfigFile(agentDirectory: string) {
+  fs.mkdirSync(agentDirectory);
+  fs.writeFileSync(agentDirectory + AGENT_CONFIG_FILE_NAME, JSON.stringify({ agents: [] }));
+}
+
+function readAgentFile(agentConfigFile: string): void {
+  robotAgentSettings = JSON.parse(fs.readFileSync(agentConfigFile, 'utf8'));
 }
