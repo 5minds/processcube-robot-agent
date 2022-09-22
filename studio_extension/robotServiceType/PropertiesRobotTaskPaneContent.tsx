@@ -35,18 +35,6 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
     props.studio.commands
       .executeCommand<Promise<string>>('bpmn.editor.getDefaultJavaScriptDeclarationFile', [props.editorDocument])
       .then(declarationFile => this.setState({ declarationFiles: [declarationFile] }));
-
-    const selectedElement = this.props.editorDocumentModel.selection.getOnlyElementOrNull();
-
-    if (selectedElement === null || selectedElement.type !== BpmnElementType.ExternalServiceTask) {
-      return;
-    }
-
-    const agents = this.getRobotAgentSelectOptions();
-
-    const selectedAgent = this.findSelectedAgent(agents, selectedElement as any);
-
-    this.getRobotsForAgent(selectedAgent);
   }
 
   private updateExternalTask(elementId: string, properties: Record<string, string>): void {
