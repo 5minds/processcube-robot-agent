@@ -9,17 +9,17 @@ import {
   PaneComponentProps,
   PaneProperty,
   RuntimeExpressionHint,
-  Studio
 } from '@atlas-engine/atlas_studio_sdk';
 import { BpmnElement_ExternalServiceTask } from '@atlas-engine/atlas_studio_sdk/out/types/bpmn/BpmnElementTypes';
-import { getRobotAgents, RobotAgentSelectOption } from '../agentSettings/getRobotAgents';
+import { getRobotAgents, RobotAgent, RobotAgentSelectOption } from '../agentSettings/getRobotAgents';
 import { fetchRobots, RobotSelectOption } from './fetchRobots';
 import { ROBOT_AGENT_PROPERTY_NAME } from './initializeServiceTypeRobot';
 
 type PaneContentProps = Omit<PaneComponentProps, 'editorDocumentModel'> & { editorDocumentModel: BpmnDocumentModel };
 type PaneContentState = {
-  declarationFiles: Array<string>,
-  robotsForSelectedAgent: Array<RobotSelectOption>,
+  declarationFiles: Array<string>;
+  robotsForSelectedAgent: Array<RobotSelectOption>;
+  selectedAgent: RobotAgent | null;
 };
 
 export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentProps, PaneContentState> {
@@ -29,6 +29,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
     this.state = {
       declarationFiles: [],
       robotsForSelectedAgent: [],
+      selectedAgent: null,
     };
 
     props.studio.commands
@@ -81,7 +82,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
   }
 
   private getRobotsForAgent(agent: RobotAgentSelectOption | undefined): void {
-    this.setState({ robotsForSelectedAgent: [] });
+    this.setState({ robotsForSelectedAgent: [], selectedAgent: agent?.value ?? null });
     if (agent === undefined) {
       return;
     }
@@ -131,11 +132,16 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
 
     const selectedRobot = this.findSelectedRobot(selectedElement as any);
 
+    if (selectedAgent?.value.uuid !== this.state.selectedAgent?.uuid) {
+      this.getRobotsForAgent(selectedAgent);
+    }
+
     return (
       <PaneBody>
         <div className='form-group'>
           <label className='d-block'>Agent</label>
           <PaneProperty
+            key={JSON.stringify(selectedAgent)}
             type='select'
             options={agents}
             onChange={(option: RobotAgentSelectOption) => {
@@ -146,12 +152,12 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
           />
           <label className='d-block'>Topic</label>
           <PaneProperty
+            key={JSON.stringify(selectedRobot)}
             type='select'
             options={this.state.robotsForSelectedAgent}
             onChange={(option: RobotSelectOption) => this.updateExternalTask(selectedElement.id, { topic: option.value.topic })}
             value={selectedRobot}
           />
-          {JSON.stringify(selectedRobot) /** TODO remove this later, its just for showing, that the above component does not work properly */}
           <label className="d-block">
             Body
             {' '}
