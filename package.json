@@ -5,6 +5,7 @@
   "scripts": {
     "python": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python",
     "processcube_robot_agent": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent serve",
+    "processcube_robot_agent_win": "sh start_on_windows.sh",
     "prepare": "rm robots/installed/rcc/readexcel.zip && rm -rf robots/src/rcc/readexcel",
     "run": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent serve",
     "push_sample": "cp -R robots/backup/readexcel robots/src/rcc/"
