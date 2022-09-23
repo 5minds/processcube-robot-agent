@@ -69,13 +69,13 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
     };
   }
 
-  private getRobotsForAgent(agent: RobotAgentSelectOption | undefined): void {
+  private getRobotsForAgent(agent: RobotAgentSelectOption | undefined, withTimeout?: boolean): void {
     this.setState({ robotsForSelectedAgent: [], selectedAgent: agent?.value ?? null });
     if (agent === undefined) {
       return;
     }
 
-    fetchRobots(agent.value.url, this.props.studio)
+    fetchRobots(agent.value.url, this.props.studio, withTimeout ?? true)
       .then(fetchedRobots => {
         const selectOptions: Array<RobotSelectOption> = fetchedRobots.map(robot => ({
           label: robot.name,
@@ -83,12 +83,24 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
         }));
         this.setState({ robotsForSelectedAgent: selectOptions });
       })
-      .catch(error =>
-        this.props.studio.notifications.open({
+      .catch(error => {
+        const notification = this.props.studio.notifications.open({
           content: `Could not fetch robots from '${agent.value.url}' due to: ${error}`,
           type: 'error',
+          source: 'Robot-Agent-Addin',
+          actions: [
+            {
+              action: 'retry',
+              label: 'Erneut versuchen',
+            },
+          ],
+        }, (action) => {
+          if (action.action === 'retry') {
+            this.props.studio.notifications.close(notification);
+            this.getRobotsForAgent(agent, false);
+          }
         })
-      );
+      });
   }
 
   private findSelectedRobot(element: BpmnElement_ExternalServiceTask): RobotSelectOption | undefined {

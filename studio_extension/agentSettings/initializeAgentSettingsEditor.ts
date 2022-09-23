@@ -1,9 +1,8 @@
 import { Studio } from '@atlas-engine/atlas_studio_sdk';
-import * as fs from 'fs';
 
 import { RobotAgentsConfigEditor } from './RobotAgentsConfigEditor';
 import { RobotAgentsConfigDocument } from './RobotAgentsConfigDocument';
-import { AGENT_CONFIG_FILE_NAME, SOLUTION_ROBOT_DIRECTORY } from './getRobotAgents';
+import { AGENT_CONFIG_FILE_NAME, getRobotAgents, SOLUTION_ROBOT_DIRECTORY } from './getRobotAgents';
 
 export function initializeAgentSettingsEditor(studio: Studio): void {
   studio.menus.registerMenuModifier('std/activity-bar/settings', menu =>
@@ -21,9 +20,11 @@ export function initializeAgentSettingsEditor(studio: Studio): void {
   studio.commands.registerInCommandSearch(
     'plugin.robot-agents.editAgents',
     'Robot Agents: Edit Agents',
-    () => studio.editors.focusOrOpenEditorDocument(studio.solution.getSolution()?.baseUri + SOLUTION_ROBOT_DIRECTORY +  AGENT_CONFIG_FILE_NAME),
-    () => studio.solution.hasOpenSolution()
-      && fs.existsSync(studio.files.getLocalFilenameForUri(studio.solution.getSolution()?.baseUri + SOLUTION_ROBOT_DIRECTORY + AGENT_CONFIG_FILE_NAME))
+    () => {
+      getRobotAgents(studio);
+      studio.editors.focusOrOpenEditorDocument(studio.solution.getSolution()?.baseUri + SOLUTION_ROBOT_DIRECTORY +  AGENT_CONFIG_FILE_NAME);
+    },
+    () => studio.solution.hasOpenSolution(),
   );
 
   studio.editors.registerDocumentType('editor-document-robot-agents', {

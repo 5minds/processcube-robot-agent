@@ -53,7 +53,7 @@ function registerFileWatcher(studio: Studio): RobotAgents | null {
 }
 
 function createConfigFile(agentDirectory: string) {
-  fs.mkdirSync(agentDirectory);
+  fs.mkdirSync(agentDirectory, { recursive: true });
   fs.writeFileSync(agentDirectory + AGENT_CONFIG_FILE_NAME, JSON.stringify({ agents: [] }));
 }
 
