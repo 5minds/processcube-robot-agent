@@ -19,13 +19,13 @@
       <bpmn:outgoing>Flow_0pjuqpl</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0pjuqpl" sourceRef="StartEvent_1" targetRef="Activity_0y2r5ar" />
-    <bpmn:serviceTask id="Activity_0y2r5ar" name="Run Windows UI" camunda:type="external" camunda:topic="rcc.readexcel">
+    <bpmn:serviceTask id="Activity_0y2r5ar" name="Run Windows UI" camunda:type="external" camunda:topic="win.windows-example-calculator">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   test: &#39;from somedir&#39;&#10;}" />
           <camunda:property name="some_property" value="" />
+          <camunda:property name="studio.externalTask.robotAddin.agentId" value="971853ca-6fe5-40b5-b05d-cd444a30a3c9" />
           <camunda:property name="studio.externalTask.customType" value="robot" />
-          <camunda:property name="studio.externalTask.robotAddin.agentId" value="1b765644-2b92-4ae5-b22f-93e36f45da66" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0pjuqpl</bpmn:incoming>
@@ -35,7 +35,10 @@
     <bpmn:sequenceFlow id="Flow_0s6ako2" sourceRef="Activity_1cgd1h1" targetRef="Activity_1fls5is" />
     <bpmn:serviceTask id="Activity_1cgd1h1" name="Run Web" camunda:type="external" camunda:topic="rcc.webui">
       <bpmn:extensionElements>
-        <camunda:properties />
+        <camunda:properties>
+          <camunda:property name="studio.externalTask.customType" value="robot" />
+          <camunda:property name="studio.externalTask.robotAddin.agentId" value="1b765644-2b92-4ae5-b22f-93e36f45da66" />
+        </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0tgke77</bpmn:incoming>
       <bpmn:outgoing>Flow_0s6ako2</bpmn:outgoing>
@@ -48,6 +51,8 @@
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   no_test: &#39;from root&#39;&#10;}" />
+          <camunda:property name="studio.externalTask.customType" value="robot" />
+          <camunda:property name="studio.externalTask.robotAddin.agentId" value="1b765644-2b92-4ae5-b22f-93e36f45da66" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0s6ako2</bpmn:incoming>
