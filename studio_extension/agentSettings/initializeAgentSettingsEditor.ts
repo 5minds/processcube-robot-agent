@@ -3,6 +3,7 @@ import { Studio } from '@atlas-engine/atlas_studio_sdk';
 import { RobotAgentsConfigEditor } from './RobotAgentsConfigEditor';
 import { RobotAgentsConfigDocument } from './RobotAgentsConfigDocument';
 import { AGENT_CONFIG_FILE_NAME, getRobotAgents, SOLUTION_ROBOT_DIRECTORY } from './getRobotAgents';
+import { ROBOT_ICON_SVG } from '../robotServiceType/PropertiesRobotTaskPane';
 
 export function initializeAgentSettingsEditor(studio: Studio): void {
   studio.menus.registerMenuModifier('std/activity-bar/settings', menu =>
@@ -33,8 +34,8 @@ export function initializeAgentSettingsEditor(studio: Studio): void {
     rendererConstructor: RobotAgentsConfigEditor,
     modelKey: 'RobotAgentsConfigDocument',
     modelConstructor: RobotAgentsConfigDocument,
-    icon: 'far fa-robot'
+    icon: 'robot-framework-icon'
   });
 
-  studio.icons.registerIcons({})
+  studio.icons.registerIcons({ 'robot-framework-icon': ROBOT_ICON_SVG });
 }
