@@ -1,4 +1,4 @@
-import { EditorDocumentModel, Studio } from '@atlas-engine/atlas_studio_sdk';
+import { EditorDocumentModel } from '@atlas-engine/atlas_studio_sdk';
 import { RobotAgents } from './getRobotAgents';
 
 export class RobotAgentsConfigDocument extends EditorDocumentModel {
@@ -8,7 +8,7 @@ export class RobotAgentsConfigDocument extends EditorDocumentModel {
     this.updateOriginalAndCurrentData(originalData, restoredCurrentData || originalData);
   }
 
-  static async create(uri, restoredCurrentData, restoredMetadata, fileLoader, studio): Promise<RobotAgentsConfigDocument> {
+  static async create(uri, restoredCurrentData, restoredMetadata, fileLoader): Promise<RobotAgentsConfigDocument> {
     const content = await fileLoader.load(uri);
 
     return new RobotAgentsConfigDocument(uri, content, restoredCurrentData);

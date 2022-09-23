@@ -1,17 +1,17 @@
 import {
-  assertNotNull,
   Editor,
   EditorContent,
   EditorDocumentRendererProps,
   OneLineCodeEditor,
-  Studio
+  Studio,
+  assertNotNull,
 } from '@atlas-engine/atlas_studio_sdk';
 import React from 'react';
-import {v4 as uuidv4} from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 import { RobotAgentsConfigDocument } from './RobotAgentsConfigDocument';
 import '../styles.scss';
-import { RobotAgent, RobotAgents } from './getRobotAgents';
+import { RobotAgent } from './getRobotAgents';
 
 export class RobotAgentsConfigEditor extends React.Component<EditorDocumentRendererProps, any> {
   private studio: Studio;

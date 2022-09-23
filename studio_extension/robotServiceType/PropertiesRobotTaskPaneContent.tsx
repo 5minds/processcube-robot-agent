@@ -3,16 +3,16 @@ import React from 'react';
 import {
   BpmnDocumentModel,
   BpmnElementType,
-  getUrlForOpenInNewTab,
   MultiLineCodeEditor,
   PaneBody,
   PaneComponentProps,
   PaneProperty,
   RuntimeExpressionHint,
+  getUrlForOpenInNewTab,
 } from '@atlas-engine/atlas_studio_sdk';
 import { BpmnElement_ExternalServiceTask } from '@atlas-engine/atlas_studio_sdk/out/types/bpmn/BpmnElementTypes';
-import { getRobotAgents, RobotAgent, RobotAgentSelectOption } from '../agentSettings/getRobotAgents';
-import { fetchRobots, RobotSelectOption } from './fetchRobots';
+import { RobotAgent, RobotAgentSelectOption, getRobotAgents } from '../agentSettings/getRobotAgents';
+import { RobotSelectOption, fetchRobots } from './fetchRobots';
 import { ROBOT_AGENT_PROPERTY_NAME } from './initializeServiceTypeRobot';
 
 type PaneContentProps = Omit<PaneComponentProps, 'editorDocumentModel'> & { editorDocumentModel: BpmnDocumentModel };
@@ -71,7 +71,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
 
   private getRobotsForAgent(agent: RobotAgentSelectOption | undefined, withTimeout?: boolean): void {
     this.setState({ robotsForSelectedAgent: [], selectedAgent: agent?.value ?? null });
-    if (agent === undefined) {
+    if (agent === undefined || agent.value.url.length === 0) {
       return;
     }
 
@@ -85,7 +85,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
       })
       .catch(error => {
         const notification = this.props.studio.notifications.open({
-          content: `Could not fetch robots from '${agent.value.url}' due to: ${error}`,
+          content: `Could not fetch robots from ${agent.value.name}(${agent.value.url}) due to: ${error}`,
           type: 'error',
           source: 'Robot-Agent-Addin',
           actions: [
@@ -99,7 +99,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
             this.props.studio.notifications.close(notification);
             this.getRobotsForAgent(agent, false);
           }
-        })
+        });
       });
   }
 
@@ -111,7 +111,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
     }
 
     return this.state.robotsForSelectedAgent.find(robot => robot.value.topic === topic) ?? {
-      label: 'Unknown Topic: ' + topic,
+      label: `Unknown Topic: ${topic}`,
       value: {
         name: '',
         topic,
@@ -158,18 +158,18 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
             onChange={(option: RobotSelectOption) => this.updateExternalTask(selectedElement.id, { topic: option.value.topic })}
             value={selectedRobot}
           />
-          <label className="d-block">
+          <label className='d-block'>
             Body
             {' '}
             <small>
               <a
-                href="#"
+                href='#'
                 onClick={() => this.props.studio.editors.focusOrOpenEditorDocument(getUrlForOpenInNewTab('bpmn.external-service-task.payload', this.props.editorDocument.uri, selectedElement.id))}
               >
                 Open in new tab
               </a>
             </small>
-            <RuntimeExpressionHint className="float-right" studio={this.props.studio} requiresInterpolation={false} />
+            <RuntimeExpressionHint className='float-right' studio={this.props.studio} requiresInterpolation={false} />
           </label>
           <MultiLineCodeEditor
             className='pane__textarea'
