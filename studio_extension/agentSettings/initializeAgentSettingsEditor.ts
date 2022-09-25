@@ -28,6 +28,8 @@ export function initializeAgentSettingsEditor(studio: Studio): void {
     () => studio.solution.hasOpenSolution(),
   );
 
+  studio.icons.registerIcons({ 'robot-framework-icon': ROBOT_ICON_SVG });
+
   studio.editors.registerDocumentType('editor-document-robot-agents', {
     uriMatch: /\.processcube\/robot-agent\/agents\.json$/,
     rendererKey: 'RobotAgentsConfigEditor',
@@ -36,6 +38,4 @@ export function initializeAgentSettingsEditor(studio: Studio): void {
     modelConstructor: RobotAgentsConfigDocument,
     icon: 'robot-framework-icon',
   });
-
-  studio.icons.registerIcons({ 'robot-framework-icon': ROBOT_ICON_SVG });
 }

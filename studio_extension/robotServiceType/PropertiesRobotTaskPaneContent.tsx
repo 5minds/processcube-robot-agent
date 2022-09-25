@@ -84,22 +84,25 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
         this.setState({ robotsForSelectedAgent: selectOptions });
       })
       .catch(error => {
-        const notification = this.props.studio.notifications.open({
-          content: `Could not fetch robots from ${agent.value.name}(${agent.value.url}) due to: ${error}`,
-          type: 'error',
-          source: 'Robot-Agent-Addin',
-          actions: [
-            {
-              action: 'retry',
-              label: 'Erneut versuchen',
-            },
-          ],
-        }, (action) => {
-          if (action.action === 'retry') {
-            this.props.studio.notifications.close(notification);
-            this.getRobotsForAgent(agent, false);
-          }
-        });
+        const notification = this.props.studio.notifications.open(
+          {
+            content: `Could not fetch robots from ${agent.value.name}(${agent.value.url}) due to: ${error}`,
+            type: 'error',
+            source: 'Robot-Agent-Addin',
+            actions: [
+              {
+                action: 'retry',
+                label: 'Try again',
+              },
+            ],
+          },
+          (action) => {
+            if (action.action === 'retry') {
+              this.props.studio.notifications.close(notification);
+              this.getRobotsForAgent(agent, false);
+            }
+          },
+        );
       });
   }
 
@@ -120,7 +123,7 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
   }
 
   public render(): JSX.Element {
-    const selectedElement = this.props.editorDocumentModel.selection.getOnlyElementOrNull();
+    const selectedElement = this.props.editorDocumentModel.selection.getOnlyElementOrNull() as null | BpmnElement_ExternalServiceTask;
 
     if (selectedElement === null || selectedElement.type !== BpmnElementType.ExternalServiceTask) {
       return <></>;
@@ -128,9 +131,9 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
 
     const agents = this.getRobotAgentSelectOptions();
 
-    const selectedAgent = this.findSelectedAgent(agents, selectedElement as any);
+    const selectedAgent = this.findSelectedAgent(agents, selectedElement);
 
-    const selectedRobot = this.findSelectedRobot(selectedElement as any);
+    const selectedRobot = this.findSelectedRobot(selectedElement);
 
     if (selectedAgent?.value.uuid !== this.state.selectedAgent?.uuid) {
       this.getRobotsForAgent(selectedAgent);
@@ -144,10 +147,9 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
             key={JSON.stringify(selectedAgent)}
             type='select'
             options={agents}
-            onChange={(option: RobotAgentSelectOption) => {
-              this.props.editorDocumentModel.elements.setCustomProperty(selectedElement.id, ROBOT_AGENT_PROPERTY_NAME, option.value.uuid);
-              this.getRobotsForAgent(option);
-            }}
+            onChange={(option: RobotAgentSelectOption) =>
+              this.props.editorDocumentModel.elements.setCustomProperty(selectedElement.id, ROBOT_AGENT_PROPERTY_NAME, option.value.uuid)
+            }
             value={selectedAgent}
           />
           <label className='d-block'>Topic</label>
@@ -174,9 +176,9 @@ export class PropertiesRobotTaskPaneContent extends React.Component<PaneContentP
           <MultiLineCodeEditor
             className='pane__textarea'
             studio={this.props.studio}
-            initialValue={(selectedElement as any).payload ?? ''}
+            initialValue={(selectedElement).payload ?? ''}
             language='javascript'
-            onChange={(value: string) => this.updateExternalTask(selectedElement.id, { payload: value })}
+            onChange={value => this.updateExternalTask(selectedElement.id, { payload: value })}
             declarationFiles={this.state.declarationFiles}
           />
         </div>

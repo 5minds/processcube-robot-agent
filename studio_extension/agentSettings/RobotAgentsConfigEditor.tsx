@@ -10,10 +10,10 @@ import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
 import { RobotAgentsConfigDocument } from './RobotAgentsConfigDocument';
-import '../styles.scss';
+import './RobotAgentsConfigEditor.scss';
 import { RobotAgent } from './getRobotAgents';
 
-export class RobotAgentsConfigEditor extends React.Component<EditorDocumentRendererProps, any> {
+export class RobotAgentsConfigEditor extends React.Component<EditorDocumentRendererProps> {
   private studio: Studio;
   private model: RobotAgentsConfigDocument | null = null;
 
@@ -36,9 +36,14 @@ export class RobotAgentsConfigEditor extends React.Component<EditorDocumentRende
     // early and with a descriptive error message (which is why this is preferable to the bang operator).
     assertNotNull(this.model, 'this.model');
 
-    const agents = [...values.filter(agent => agent.uuid !== modifiedAgent.uuid), modifiedAgent].filter(agent => agent.name.length > 0 || agent.url.length > 0);
+    const agentsWithModifiedAgent = [
+      ...values.filter(agent => agent.uuid !== modifiedAgent.uuid),
+      modifiedAgent,
+    ];
 
-    this.model.setValue({ agents });
+    const agentsWithoutEmptyAgents = agentsWithModifiedAgent.filter(agent => agent.name.length > 0 || agent.url.length > 0);
+
+    this.model.setValue({ agents: agentsWithoutEmptyAgents });
   }
 
   render(): JSX.Element | null {
@@ -46,20 +51,30 @@ export class RobotAgentsConfigEditor extends React.Component<EditorDocumentRende
       return null;
     }
 
-    const agents = [...this.model.getValue().agents, { uuid: uuidv4(), name: '', url: '' }];
+    const agents = [
+      ...this.model.getValue().agents,
+      { uuid: uuidv4(), name: '', url: '' },
+    ];
 
     return (
       <Editor>
         <EditorContent>
-          <div style={{ margin: '20px' }}>
+          <div className='robot-agents-config-editor--content'>
             <h2>Robot Agents</h2>
-            <div style={{ display: 'grid', rowGap: '10px' }}>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '10px' }}>
+            <div className='robot-agents-config-editor--grid-rows'>
+              <div className='robot-agents-config-editor--grid-columns'>
                 <span>Name</span>
                 <span>URL</span>
               </div>
               {
-                agents.map((agent, index) => <AgentEditor key={index} agent={agent} studio={this.props.studio} onChange={(agent) => this.onDataChanged(agents, agent)} />)
+                agents.map((agent, index) => (
+                  <AgentEditor
+                    agent={agent}
+                    key={index}
+                    onChange={(agent) => this.onDataChanged(agents, agent)}
+                    studio={this.props.studio}
+                  />
+                ))
               }
             </div>
           </div>
@@ -69,9 +84,15 @@ export class RobotAgentsConfigEditor extends React.Component<EditorDocumentRende
   }
 }
 
-function AgentEditor(props: { agent: RobotAgent, onChange: (agent: RobotAgent) => void, studio: Studio }): JSX.Element {
+type AgentEditorProps = {
+  agent: RobotAgent;
+  onChange: (agent: RobotAgent) => void;
+  studio: Studio;
+};
+
+function AgentEditor(props: AgentEditorProps): JSX.Element {
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', columnGap: '20px' }}>
+    <div className='robot-agents-config-editor--grid-columns'>
       <OneLineCodeEditor
         initialValue={props.agent.name}
         language='text'

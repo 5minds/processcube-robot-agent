@@ -1,0 +1,14 @@
+.robot-agents-config-editor--grid-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 10px;
+}
+
+.robot-agents-config-editor--grid-rows {
+  display: grid;
+  row-gap: 10px;
+}
+
+.robot-agents-config-editor--content {
+  margin: 20px;
+}
