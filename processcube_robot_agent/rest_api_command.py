@@ -6,7 +6,26 @@ from .watch_robots_command import start_watch_robots
 
 from .rest_api import robots
 
-webapp = FastAPI()
+
+description = """
+The ProcessCube Robot Agent is a REST API that allows to rest the installed robots.
+"""
+
+webapp = FastAPI(
+    title="API for ProcessCube Robot Agent",
+    description=description,
+    version="0.0.1",
+    terms_of_service="https://www.5minds.de/impressum/",
+    contact={
+        "name": "5Minds IT-Solutions GmbH & Co. KG",
+        "url": "https://www.5minds.de/kontakt/",
+        "email": "solutions@5minds.de",
+    },
+    license_info={
+        "name": "Apache 2.0",
+        "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
+    },
+)
 
 webapp.include_router(robots.router)
 
