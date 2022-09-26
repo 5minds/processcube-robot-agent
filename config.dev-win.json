@@ -1,0 +1,22 @@
+{
+    "debugging": {
+        "enabled": true,
+        "hostname": "localhost",
+        "port": 5678,
+        "wait_for_client": false
+    },
+    "engine": {
+        "url": "http://192.168.179.89:56100"
+    },
+    "rcc": {
+        "topic_prefix": "win",
+        "wrap_dir": "robots/installed/rcc",
+        "unwrap_dir": "temp/robots/rcc/unwrapped",
+        "start_watch_project_dir": true,
+        "project_dir": "robots/src/rcc"
+    },
+    "rest_api": {
+        "port": 42042,
+        "host": "0.0.0.0"
+    }
+}
