@@ -3,7 +3,12 @@ import { paneProvider } from './PropertiesRobotTaskPane';
 
 export const ROBOT_AGENT_PROPERTY_NAME = 'studio.externalTask.robotAddin.agentId';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const propertiesRobotServiceTaskDoku = require('./PropertiesRobotServiceTask.md');
+
 export function initializeServiceTaskTypeRobot(studio: Studio): void {
+  studio.helpTexts.registerHelpText('bpmn/properties/robot_service_task', propertiesRobotServiceTaskDoku);
+
   studio.panes.insertInPaneGroupAfter('right', 'property', 'bpmn/panes/properties/PropertiesServiceTask', [
     studio.panes.getPaneViaPaneProvider(
       'bpmn/panes/properties/PropertiesExternalRobotTask',

@@ -7,6 +7,7 @@ import {
   Pane,
   PaneComponentProps,
   PaneHeader,
+  PaneHeaderHelpIcon,
   PaneProvider,
 } from '@atlas-engine/atlas_studio_sdk';
 import { BpmnDocumentOverlay } from '@atlas-engine/atlas_studio_sdk/out/types/bpmn/BpmnDocumentOverlays';
@@ -92,7 +93,9 @@ function PaneFull(props: PaneComponentProps): JSX.Element {
         paneId={props.paneId}
         studio={props.studio}
         title='Robot Service Task'
-      />
+      >
+        <PaneHeaderHelpIcon studio={props.studio} id='bpmn/properties/robot_service_task' />
+      </PaneHeader>
       {!props.collapsed &&
         <PropertiesRobotTaskPaneContent {...props} />
       }
