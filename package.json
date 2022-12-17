@@ -5,14 +5,19 @@
   "scripts": {
     "python": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python",
     "processcube_robot_agent": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent serve",
+    "__prepare": "rm robots/installed/rcc/readexcel.zip && rm -rf robots/src/rcc/readexcel",
     "processcube_robot_agent_win": "sh start_on_windows.sh",
-    "prepare": "rm robots/installed/rcc/readexcel.zip && rm -rf robots/src/rcc/readexcel",
     "run": "CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent serve",
-    "push_sample": "cp -R robots/backup/readexcel robots/src/rcc/"
+    "push_sample": "cp -R robots/backup/readexcel robots/src/rcc/",
+    "install_studio_extension": "npm install && cd studio_extension && npm install && npm run build && cd .. && tar cfvz robot-agent-plugin.tgz studio_extension && ./node_modules/.bin/pc install-extension --type studio -y robot-agent-plugin.tgz",
+    "copy_release_to_beta": "cp -R ~/.atlas/studio/extensions/processcube.robot.extension ~/.atlas/studio-beta/extensions/processcube.robot.extension"
   },
   "private": true,
   "devDependencies": {
     "@process-engine/ci_tools": "3.3.4"
+  },
+  "dependencies": {
+    "@5minds/processcube_cli": "^2.1.0"
   },
   "repository": {
     "type": "git",

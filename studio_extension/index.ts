@@ -1,12 +1,9 @@
-import fs from 'fs';
 import { Studio } from '@atlas-engine/atlas_studio_sdk';
 
-import {initializeRobotServiceTypePanel} from './initializePanes';
-import {initializeServiceTypeRobot} from './initializeServiceTypeRobot';
-import {initializeDefaultSettings} from './initializeStudioSettings';
+import { initializeServiceTaskTypeRobot } from './robotServiceType/initializeServiceTypeRobot';
+import { initializeAgentSettingsEditor } from './agentSettings/initializeAgentSettingsEditor';
 
 export function onLoad(studio: Studio): void {
-  initializeRobotServiceTypePanel(studio);
-  initializeServiceTypeRobot(studio);
-  initializeDefaultSettings(studio);
+  initializeServiceTaskTypeRobot(studio);
+  initializeAgentSettingsEditor(studio);
 }

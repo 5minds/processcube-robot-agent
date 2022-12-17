@@ -4,20 +4,28 @@
   "description": "Plugin to add the type 'robots' to service tasks",
   "main": "out/index.js",
   "scripts": {
+    "lint": "eslint -- './**/*.ts*'",
+    "lint-fix": "eslint --fix -- './**/*.ts*'",
     "build": "webpack-cli",
     "studio": "/Applications/5Minds\\ Studio\\ \\(Beta\\).app/Contents/MacOS/5Minds\\ Studio\\ \\(Beta\\) --extension-development-dir \"${PWD}\""
   },
   "author": "customer-solutions@5minds.de",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@atlas-engine/atlas_studio_sdk": "1.11.0-beta.7",
+    "@atlas-engine/atlas_studio_sdk": "1.12.0-beta.1",
     "@types/node": "^14.14.13",
     "@types/react": "^17.0.0",
+    "@typescript-eslint/eslint-plugin": "^4.31.1",
+    "@typescript-eslint/parser": "^4.31.1",
     "css-loader": "^5.0.1",
+    "eslint": "^7.32.0",
+    "eslint-plugin-import-newlines": "^1.1.4",
+    "eslint-plugin-react": "^7.25.1",
+    "eslint-plugin-unused-imports": "^1.1.5",
     "null-loader": "^4.0.1",
     "raw-loader": "^4.0.2",
-    "react": "^17.0.1",
-    "react-dom": "^17.0.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "sass": "^1.32.6",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",
@@ -25,5 +33,9 @@
     "typescript": "^4.1.3",
     "webpack": "^5.10.2",
     "webpack-cli": "^4.9.2"
+  },
+  "dependencies": {
+    "markdown-image-loader": "^3.0.0",
+    "uuid": "^9.0.0"
   }
 }

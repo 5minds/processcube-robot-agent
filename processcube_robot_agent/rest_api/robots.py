@@ -14,7 +14,12 @@ class Robot(BaseModel):
 class Robots(BaseModel):
     topics: List[Robot] = []
 
-@router.get("/robot_agents/robots", response_model=Robots, tags=["external_tasks"])
+@router.get("/robot_agents/robots", 
+    response_model=Robots, 
+    tags=["external_tasks"],
+    summary="Request the names and topics of all robots",
+    description="Get the robots by name and the related topic that are connected to the configured processcube engine.",
+)
 async def get_robots():
 
     robots = Robots()

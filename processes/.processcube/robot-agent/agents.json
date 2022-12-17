@@ -1,0 +1,19 @@
+{
+  "agents": [
+    {
+      "uuid": "aa0a2c6a-20ab-49f5-81e7-26e751c5c841",
+      "name": "James Bond  ",
+      "url": "http://0.0.0.0:42042"
+    },
+    {
+      "uuid": "feaa1508-2e9f-416c-963a-7732a8fe0042",
+      "name": "ERP SAP [PRD]",
+      "url": "https://erp-sap.prd.5minds.cloud:4712/robot_agents/robots"
+    },
+    {
+      "uuid": "b3351152-2000-4105-bc92-a22d9a1390cb",
+      "name": "MES SAP [PRD]",
+      "url": "https://mes-sap.prd.5minds.cloud:4712/robot_agents/robots"
+    }
+  ]
+}
