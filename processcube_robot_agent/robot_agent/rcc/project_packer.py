@@ -9,14 +9,33 @@ from .rcc_runner import RccRunner
 
 logger = logging.getLogger("processcube_robot_agent.robot_agent.project_packer")
 
-class ProjectPacker(RccRunner):
 
-    def __init__(self, config: Config):
+class ProjectPacker(RccRunner):
+    """Packs robot projects into installable ZIP packages.
+
+    Uses RCC (Robot Code Compiler) to wrap robot projects
+    into distributable .zip packages.
+    """
+
+    def __init__(self, config: Config) -> None:
+        """Initialize ProjectPacker.
+
+        Args:
+            config: ProcessCube configuration object.
+        """
         self._config = config
         self._absolute_project_dir = Path(self._config.get('rcc', 'project_dir')).absolute()
         self._wrap_dir = Path(self._config.get('rcc', 'wrap_dir')).absolute()
 
     def pack_folder(self, robot_yaml_path: Path) -> Path:
+        """Pack a single robot project into a ZIP file.
+
+        Args:
+            robot_yaml_path: Path to robot.yaml file.
+
+        Returns:
+            Path to the created .zip package.
+        """
         logger.debug(f"pack robot {robot_yaml_path}")
         current_folder = robot_yaml_path.parent
 
@@ -43,13 +62,20 @@ class ProjectPacker(RccRunner):
 
         return Path(f"{str(wrap_robot_path)}.zip").absolute()
 
-    def pack_all(self, absolute_start_folder: Path):
+    def pack_all(self, absolute_start_folder: Path) -> None:
+        """Recursively pack all robot projects in a folder.
 
+        Args:
+            absolute_start_folder: Root folder to search for robot.yaml files.
+        """
         for robot_yaml_path in absolute_start_folder.rglob('robot.yaml'):
             self.pack_folder(robot_yaml_path)
 
-    def start(self):
+    def start(self) -> None:
+        """Start the packing process.
 
+        Checks RCC availability and packs all robots
+        in the configured project directory.
+        """
         self.check_rcc()
-
         self.pack_all(self._absolute_project_dir)
