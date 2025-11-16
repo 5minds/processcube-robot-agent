@@ -73,12 +73,12 @@ class RobotAgent(BaseAgent, RccRunner):
 
         Path(unwrapped_path).mkdir(parents=True, exist_ok=True)
 
-        cmd = f"rcc robot unwrap -z {str(robot_path)} -d {str(unwrapped_path)} --force"
+        cmd = ["rcc", "robot", "unwrap", "-z", str(robot_path), "-d", str(unwrapped_path), "--force"]
 
-        completed_process = subprocess.run(cmd, shell=True, capture_output=True)
-        
+        completed_process = subprocess.run(cmd, capture_output=True, text=True)
+
         if completed_process.returncode != 0:
-            raise RobotError("unwrap", f"unwrap {robot_path} to {unwrapped_path} failed with return code {completed_process.returncode}")
+            raise RobotError("unwrap", f"unwrap {robot_path} to {unwrapped_path} failed with return code {completed_process.returncode}\nStderr: {completed_process.stderr}")
 
         return completed_process
 
@@ -86,14 +86,13 @@ class RobotAgent(BaseAgent, RccRunner):
 
         unwrapped_path = self.get_unwrapped_path().joinpath('robot.yaml').absolute()
 
-        cmd = f"rcc run -r {str(unwrapped_path)}"
+        cmd = ["rcc", "run", "-r", str(unwrapped_path)]
 
-        completed_process = subprocess.run(cmd, shell=True, capture_output=True)
+        completed_process = subprocess.run(cmd, capture_output=True, text=True)
 
         if completed_process.returncode != 0:
             output_xml = self.read_outout_xml(unwrapped_path)
-            stdout = completed_process.stdout.decode('utf-8')
-            raise RobotError(f"return_code_{completed_process.returncode}", stdout, details=output_xml)
+            raise RobotError(f"return_code_{completed_process.returncode}", completed_process.stdout, details=output_xml)
 
         return completed_process
 

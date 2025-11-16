@@ -34,10 +34,10 @@ class ProjectPacker(RccRunner):
 
         # rcc robot wrap --directory windows/ui --zipfile ../../installed/rcc/windows/ui.zip
         relative_wrap_robot_path = wrap_robot_path.relative_to(self._wrap_dir)
-        cmd = f"rcc robot wrap --directory {str(relative_robot_path)} --zipfile {str(wrap_robot_path)}.zip"
+        cmd = ["rcc", "robot", "wrap", "--directory", str(relative_robot_path), "--zipfile", f"{str(wrap_robot_path)}.zip"]
         logger.info(f"Create robot {str(relative_wrap_robot_path)}.zip from {str(relative_robot_path)} in {str(self._wrap_dir.relative_to(Path().cwd()))}.")
 
-        completed_process = subprocess.run(cmd, shell=True, capture_output=True, cwd=str(self._absolute_project_dir))
+        completed_process = subprocess.run(cmd, capture_output=True, text=True, cwd=str(self._absolute_project_dir))
 
         logger.debug(f"'{cmd}' finished with '{completed_process.returncode}'")
 

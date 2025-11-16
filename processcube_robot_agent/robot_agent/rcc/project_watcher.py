@@ -51,7 +51,7 @@ class RobotsFileSystemEventHandler(FileSystemEventHandler):
             packed_robot_path = self._project_packer.pack_folder(robot_yaml)
             self.install_robot(packed_robot_path)
         else:
-            logger.warn(f"Cannot find any robot.yaml in path {changed_path}")
+            logger.warning(f"Cannot find any robot.yaml in path {changed_path}")
 
 class ProjectWatcher:
 

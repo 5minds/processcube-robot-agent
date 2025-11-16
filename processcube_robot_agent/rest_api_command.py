@@ -38,6 +38,6 @@ def start_rest_api():
     port = config.get('rest_api', 'port', default=8000)
     host = config.get('rest_api', 'host', default='127.0.0.1')
 
-    # loop='asyncio' is required cause we are using papermill that raise an exception while running with 'uvloop'
-    # "Can't patch loop of type <class 'uvloop.Loop'>"
-    uvicorn.run("processcube_robot_agent.rest_api_command:webapp", host=host, port=port, log_level="info", reload=False, loop='asyncio')
+    # Note: loop parameter was deprecated in uvicorn 0.24.0
+    # uvicorn now automatically uses asyncio for async apps
+    uvicorn.run("processcube_robot_agent.rest_api_command:webapp", host=host, port=port, log_level="info", reload=False)
