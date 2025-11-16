@@ -9,8 +9,8 @@ import {
   PaneHeader,
   PaneHeaderHelpIcon,
   PaneProvider,
-} from '@atlas-engine/atlas_studio_sdk';
-import { BpmnDocumentOverlay } from '@atlas-engine/atlas_studio_sdk/out/types/bpmn/BpmnDocumentOverlays';
+} from '@5minds/processcube_studio_sdk';
+import { BpmnDocumentOverlay } from '@5minds/processcube_studio_sdk/out/types/bpmn/BpmnDocumentOverlays';
 // eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import React from 'react';
 

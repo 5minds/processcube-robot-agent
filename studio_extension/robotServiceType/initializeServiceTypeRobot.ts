@@ -1,4 +1,4 @@
-import { BpmnElementType, Studio } from '@atlas-engine/atlas_studio_sdk';
+import { BpmnElementType, Studio } from '@5minds/processcube_studio_sdk';
 import { paneProvider } from './PropertiesRobotTaskPane';
 
 export const ROBOT_AGENT_PROPERTY_NAME = 'studio.externalTask.robotAddin.agentId';

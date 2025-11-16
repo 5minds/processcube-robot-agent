@@ -9,8 +9,8 @@ import {
   PaneProperty,
   RuntimeExpressionHint,
   getUrlForOpenInNewTab,
-} from '@atlas-engine/atlas_studio_sdk';
-import { BpmnElement_ExternalServiceTask } from '@atlas-engine/atlas_studio_sdk/out/types/bpmn/BpmnElementTypes';
+} from '@5minds/processcube_studio_sdk';
+import { BpmnElement_ExternalServiceTask } from '@5minds/processcube_studio_sdk/out/types/bpmn/BpmnElementTypes';
 import { RobotAgent, RobotAgentSelectOption, getRobotAgents } from '../agentSettings/getRobotAgents';
 import { RobotSelectOption, fetchRobots } from './fetchRobots';
 import { ROBOT_AGENT_PROPERTY_NAME } from './initializeServiceTypeRobot';

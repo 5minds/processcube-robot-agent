@@ -1,4 +1,4 @@
-import { SelectOption, Studio } from '@atlas-engine/atlas_studio_sdk';
+import { SelectOption, Studio } from '@5minds/processcube_studio_sdk';
 
 export type RobotTopic = {
   name: string;
