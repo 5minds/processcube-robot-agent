@@ -1,18 +1,17 @@
+# ProcessCube SDK - Integration with ProcessCube engine
+processcube-sdk>=3.0.0,<5.0.0
 
-# ProcessCube
-processcube-sdk>=1.5.0a1
+# CLI Framework - Command-line interface
+typer>=0.9.0
 
-# Commadline
-typer>=0.5.0
+# REST API - FastAPI and server
+fastapi>=0.95.0
+uvicorn[standard]>=0.25.0,<1.0.0
 
-# api
-#fastapi>=0.78.0
-uvicorn[standard]==0.17.5
+# RPA - Robot Process Automation
+robotframework>=6.0.0,<7.0.0
+rpaframework>=16.0.0,<17.0.0
+robotframework-tidy>=3.2,<5.0.0
 
-# RPA
-robotframework>=5.0.1
-rpaframework>=15.1.4    
-robotframework-tidy>=3.2
-
-# watchdog
-watchdog>=2.1.9
+# File System Monitoring
+watchdog>=3.0.0,<4.0.0
