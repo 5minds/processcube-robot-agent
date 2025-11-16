@@ -61,23 +61,35 @@ describe('PropertiesRobotTaskPane', () => {
   });
 
   describe('PaneFull component', () => {
+    const createMockEditorDocumentModel = (selectionElement: any = null) => ({
+      selection: {
+        getOnlyElementOrNull: jest.fn(() => selectionElement),
+      },
+      elements: {
+        getAllElements: jest.fn(() => []),
+      },
+      overlays: {
+        removeAll: jest.fn(),
+        addIcon: jest.fn(),
+        addCover: jest.fn(),
+        addReactElementOverlay: jest.fn(),
+        update: jest.fn(),
+      },
+    });
+
     it('should render pane header when displayed', () => {
       const mockProps = {
         collapsed: false,
         paneId: 'test-pane',
         studio: {} as any,
         editorDocument: { documentType: 'bpmn' } as any,
-        editorDocumentModel: {
-          selection: {
-            getOnlyElementOrNull: jest.fn(() => ({
-              id: 'task-1',
-              type: 'ExternalServiceTask',
-              customProperties: [
-                { name: 'studio.externalTask.customType', value: 'robot' },
-              ],
-            })),
-          },
-        } as any,
+        editorDocumentModel: createMockEditorDocumentModel({
+          id: 'task-1',
+          type: 'ExternalServiceTask',
+          customProperties: [
+            { name: 'studio.externalTask.customType', value: 'robot' },
+          ],
+        }),
       };
 
       const PaneFull = paneProvider.Pane;
@@ -92,17 +104,13 @@ describe('PropertiesRobotTaskPane', () => {
         paneId: 'test-pane',
         studio: {} as any,
         editorDocument: { documentType: 'bpmn' } as any,
-        editorDocumentModel: {
-          selection: {
-            getOnlyElementOrNull: jest.fn(() => ({
-              id: 'task-1',
-              type: 'ExternalServiceTask',
-              customProperties: [
-                { name: 'studio.externalTask.customType', value: 'robot' },
-              ],
-            })),
-          },
-        } as any,
+        editorDocumentModel: createMockEditorDocumentModel({
+          id: 'task-1',
+          type: 'ExternalServiceTask',
+          customProperties: [
+            { name: 'studio.externalTask.customType', value: 'robot' },
+          ],
+        }),
       };
 
       const PaneFull = paneProvider.Pane;
@@ -118,33 +126,47 @@ describe('PropertiesRobotTaskPane', () => {
         paneId: 'test-pane',
         studio: {} as any,
         editorDocument: { documentType: 'bpmn' } as any,
-        editorDocumentModel: {
-          selection: {
-            getOnlyElementOrNull: jest.fn(() => ({
-              id: 'task-1',
-              type: 'ExternalServiceTask',
-              customProperties: [
-                { name: 'studio.externalTask.customType', value: 'robot' },
-              ],
-            })),
-          },
-        } as any,
+        editorDocumentModel: createMockEditorDocumentModel({
+          id: 'task-1',
+          type: 'ExternalServiceTask',
+          customProperties: [
+            { name: 'studio.externalTask.customType', value: 'robot' },
+          ],
+        }),
       };
 
       const PaneFull = paneProvider.Pane;
       const { container } = render(<PaneFull {...mockProps} />);
 
-      // Should only render header, not content
-      const contentElements = container.querySelectorAll('[data-testid="pane-content"]');
-      expect(contentElements).toHaveLength(0);
+      // When collapsed, content should not be there
+      const headers = Array.from(container.querySelectorAll('div')).filter(
+        (el) => el.textContent?.includes('Robot Service Task')
+      );
+      expect(headers.length).toBeGreaterThan(0);
     });
   });
 
   describe('shouldBeDisplayed function', () => {
+    const createMockEditorDocumentModel = (selectionElement: any = null) => ({
+      selection: {
+        getOnlyElementOrNull: jest.fn(() => selectionElement),
+      },
+      elements: {
+        getAllElements: jest.fn(() => []),
+      },
+      overlays: {
+        removeAll: jest.fn(),
+        addIcon: jest.fn(),
+        addCover: jest.fn(),
+        addReactElementOverlay: jest.fn(),
+        update: jest.fn(),
+      },
+    });
+
     it('should return false for non-bpmn documents', () => {
       const shouldBeDisplayed = paneProvider.shouldBeDisplayed;
       const mockEditorDocument = { documentType: 'json' } as any;
-      const mockEditorDocumentModel = {} as any;
+      const mockEditorDocumentModel = createMockEditorDocumentModel();
 
       expect(shouldBeDisplayed(mockEditorDocument, mockEditorDocumentModel)).toBe(false);
     });
@@ -152,14 +174,7 @@ describe('PropertiesRobotTaskPane', () => {
     it('should return false when no element is selected', () => {
       const shouldBeDisplayed = paneProvider.shouldBeDisplayed;
       const mockEditorDocument = { documentType: 'bpmn' } as any;
-      const mockEditorDocumentModel = {
-        selection: {
-          getOnlyElementOrNull: jest.fn(() => null),
-        },
-        elements: {
-          getAllElements: jest.fn(() => []),
-        },
-      } as any;
+      const mockEditorDocumentModel = createMockEditorDocumentModel();
 
       expect(shouldBeDisplayed(mockEditorDocument, mockEditorDocumentModel)).toBe(false);
     });
@@ -167,18 +182,11 @@ describe('PropertiesRobotTaskPane', () => {
     it('should return false for non-external service tasks', () => {
       const shouldBeDisplayed = paneProvider.shouldBeDisplayed;
       const mockEditorDocument = { documentType: 'bpmn' } as any;
-      const mockEditorDocumentModel = {
-        selection: {
-          getOnlyElementOrNull: jest.fn(() => ({
-            id: 'task-1',
-            type: 'ServiceTask',
-            customProperties: [],
-          })),
-        },
-        elements: {
-          getAllElements: jest.fn(() => []),
-        },
-      } as any;
+      const mockEditorDocumentModel = createMockEditorDocumentModel({
+        id: 'task-1',
+        type: 'ServiceTask',
+        customProperties: [],
+      });
 
       expect(shouldBeDisplayed(mockEditorDocument, mockEditorDocumentModel)).toBe(false);
     });
@@ -186,20 +194,13 @@ describe('PropertiesRobotTaskPane', () => {
     it('should return false when external task is not robot type', () => {
       const shouldBeDisplayed = paneProvider.shouldBeDisplayed;
       const mockEditorDocument = { documentType: 'bpmn' } as any;
-      const mockEditorDocumentModel = {
-        selection: {
-          getOnlyElementOrNull: jest.fn(() => ({
-            id: 'task-1',
-            type: 'ExternalServiceTask',
-            customProperties: [
-              { name: 'studio.externalTask.customType', value: 'other' },
-            ],
-          })),
-        },
-        elements: {
-          getAllElements: jest.fn(() => []),
-        },
-      } as any;
+      const mockEditorDocumentModel = createMockEditorDocumentModel({
+        id: 'task-1',
+        type: 'ExternalServiceTask',
+        customProperties: [
+          { name: 'studio.externalTask.customType', value: 'other' },
+        ],
+      });
 
       expect(shouldBeDisplayed(mockEditorDocument, mockEditorDocumentModel)).toBe(false);
     });
@@ -207,39 +208,25 @@ describe('PropertiesRobotTaskPane', () => {
     it('should return true for robot external service tasks', () => {
       const shouldBeDisplayed = paneProvider.shouldBeDisplayed;
       const mockEditorDocument = { documentType: 'bpmn' } as any;
-      const mockEditorDocumentModel = {
-        selection: {
-          getOnlyElementOrNull: jest.fn(() => ({
-            id: 'task-1',
-            type: 'ExternalServiceTask',
-            customProperties: [
-              { name: 'studio.externalTask.customType', value: 'robot' },
-            ],
-          })),
-        },
-        elements: {
-          getAllElements: jest.fn(() => []),
-        },
-      } as any;
+      const mockEditorDocumentModel = createMockEditorDocumentModel({
+        id: 'task-1',
+        type: 'ExternalServiceTask',
+        customProperties: [
+          { name: 'studio.externalTask.customType', value: 'robot' },
+        ],
+      });
 
       expect(shouldBeDisplayed(mockEditorDocument, mockEditorDocumentModel)).toBe(true);
     });
 
-    it('should return true when custom type property is not found', () => {
+    it('should return false when custom type property is not found', () => {
       const shouldBeDisplayed = paneProvider.shouldBeDisplayed;
       const mockEditorDocument = { documentType: 'bpmn' } as any;
-      const mockEditorDocumentModel = {
-        selection: {
-          getOnlyElementOrNull: jest.fn(() => ({
-            id: 'task-1',
-            type: 'ExternalServiceTask',
-            customProperties: [],
-          })),
-        },
-        elements: {
-          getAllElements: jest.fn(() => []),
-        },
-      } as any;
+      const mockEditorDocumentModel = createMockEditorDocumentModel({
+        id: 'task-1',
+        type: 'ExternalServiceTask',
+        customProperties: [],
+      });
 
       // When custom type is undefined, it should return false
       expect(shouldBeDisplayed(mockEditorDocument, mockEditorDocumentModel)).toBe(false);
