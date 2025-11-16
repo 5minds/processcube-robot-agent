@@ -10,7 +10,7 @@ import {
   PaneHeaderHelpIcon,
   PaneProvider,
 } from '@5minds/processcube_studio_sdk';
-import { BpmnDocumentOverlay } from '@5minds/processcube_studio_sdk/out/types/bpmn/BpmnDocumentOverlays';
+// BpmnDocumentOverlay type not available in SDK v2.2.8, using any instead
 // eslint-disable-next-line unused-imports/no-unused-imports, @typescript-eslint/no-unused-vars
 import React from 'react';
 
@@ -35,7 +35,7 @@ export const ROBOT_ICON_SVG = (
 
 // this function overwrites internal studio functions. It is not recommended to do this, but it is the only way to add a custom overlay to the bpmn editor right now.
 function addRobotIconOverlay(editorDocumentModel: BpmnDocumentModel): void {
-  editorDocumentModel.overlays.update = (overlays: BpmnDocumentOverlay[]): void => {
+  (editorDocumentModel as any).overlays.update = (overlays: any[]): void => {
     (editorDocumentModel as any).overlays.removeAll();
 
     const icons = overlays.filter((overlay) => overlay.type === 'icon') as any[];

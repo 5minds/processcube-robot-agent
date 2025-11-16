@@ -12,10 +12,14 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react",
+    "jsxFactory": "React.createElement",
+    "jsxFragmentFactory": "React.Fragment",
     "sourceMap": true,
     "noImplicitAny": false,
     "noEmitOnError": true,
     "lib": ["dom", "dom.iterable", "esnext"]
   },
-  "include": ["index.ts"],
+  "include": ["**/*.ts", "**/*.tsx", "jsx.d.ts"],
+  "exclude": ["node_modules", "out", "**/__tests__/**"],
+  "typeRoots": ["./node_modules/@types", "./node_modules/@5minds"]
 }
