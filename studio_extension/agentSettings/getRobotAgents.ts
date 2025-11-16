@@ -1,7 +1,7 @@
 import * as fs from 'fs';
 
-import { SelectOption, Studio } from '@atlas-engine/atlas_studio_sdk';
-import { WatcherDisposable } from '@atlas-engine/atlas_studio_sdk/out/types/common';
+import { SelectOption, Studio } from '@5minds/processcube_studio_sdk';
+import { WatcherDisposable } from '@5minds/processcube_studio_sdk/out/types/common';
 
 export type RobotAgent = {
   name: string;

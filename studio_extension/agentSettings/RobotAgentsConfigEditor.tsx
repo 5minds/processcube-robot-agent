@@ -5,7 +5,7 @@ import {
   OneLineCodeEditor,
   Studio,
   assertNotNull,
-} from '@atlas-engine/atlas_studio_sdk';
+} from '@5minds/processcube_studio_sdk';
 import React from 'react';
 import { v4 as uuidv4 } from 'uuid';
 

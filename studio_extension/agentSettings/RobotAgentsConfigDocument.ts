@@ -1,4 +1,4 @@
-import { EditorDocumentModel } from '@atlas-engine/atlas_studio_sdk';
+import { EditorDocumentModel } from '@5minds/processcube_studio_sdk';
 import { RobotAgents } from './getRobotAgents';
 
 export class RobotAgentsConfigDocument extends EditorDocumentModel {

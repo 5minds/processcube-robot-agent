@@ -1,4 +1,4 @@
-import { Studio } from '@atlas-engine/atlas_studio_sdk';
+import { Studio } from '@5minds/processcube_studio_sdk';
 
 import { RobotAgentsConfigEditor } from './RobotAgentsConfigEditor';
 import { RobotAgentsConfigDocument } from './RobotAgentsConfigDocument';

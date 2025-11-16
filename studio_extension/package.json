@@ -12,7 +12,7 @@
   "author": "customer-solutions@5minds.de",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@5minds/processcube_studio_sdk": "^1.0.0",
+    "@5minds/processcube_studio_sdk": "^2.2.8",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
     "@typescript-eslint/eslint-plugin": "^8.46.0",
@@ -36,6 +36,7 @@
   },
   "dependencies": {
     "markdown-image-loader": "^3.0.0",
+    "react-contextmenu": "^2.14.0",
     "uuid": "^9.0.0"
   }
 }
