@@ -3,7 +3,12 @@
 import pytest
 from pathlib import Path
 from unittest.mock import Mock, MagicMock
-from processcube_sdk.configuration import Config
+
+# Try to import Config, but mock it if not available (for testing without full SDK)
+try:
+    from processcube_sdk.configuration import Config
+except ImportError:
+    Config = object
 
 
 @pytest.fixture
