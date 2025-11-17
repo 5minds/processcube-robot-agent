@@ -135,13 +135,35 @@ The ProcessCube Robot Agent project has successfully completed **all 5 major mod
 - Stabilized uvicorn compatibility (0.23.2)
 - Enhanced processcube-sdk to 6.0.2a1 with bug fixes
 
+### Uvicorn Compatibility Investigation
+**Status**: DOCUMENTED
+- Tested uvicorn upgrade from 0.23.2 to 0.38.0
+- **Finding**: Uvicorn 0.38+ introduces `loop_factory` parameter incompatible with processcube-sdk's asyncio.run() patching
+- **Root Cause**: SDK uses nest_asyncio to patch asyncio.run(), but modern uvicorn passes `loop_factory` which the patched version doesn't accept
+- **Solution**: Maintained uvicorn 0.23.2 (last version before loop_factory introduction)
+- **Additional Issue**: `uvicorn[standard]` includes uvloop which conflicts with nest_asyncio patching
+- **Impact**: Agent successfully starts with uvicorn 0.23.2, all external task workers registered
+
+**Technical Details**:
+```
+Error (with uvicorn 0.38.0):
+  TypeError: _patch_asyncio.<locals>.run() got an unexpected keyword argument 'loop_factory'
+
+Solution:
+  - Use uvicorn>=0.23.0,<0.24.0 (before loop_factory)
+  - Do NOT use uvicorn[standard] (excludes uvloop)
+  - Ensure uvloop is uninstalled (conflicts with nest_asyncio)
+```
+
 **Recent Commits**:
 1. ✅ `91a9da7` - Add comprehensive unit tests for project_watcher (12 tests)
 2. ✅ `0a01539` - Add comprehensive unit tests for watch_robots_command and robot_task_handler_factory (7 + 21 tests)
 3. ✅ `979fac5` - Update README with agent start/stop instructions
 4. ✅ `fe98853` - Add npm stop scripts for agent process management
 5. ✅ `d23b682` - Migrate FastAPI from deprecated on_event to modern lifespan API
-6. ✅ `1c2119c` - Stabilize uvicorn version to 0.23.2 for SDK compatibility
+6. ✅ `df391eb` - Upgrade uvicorn to 0.38.0 (experimental - tested compatibility)
+7. ✅ `ce809fe` - Revert uvicorn to 0.23.2 (stable, production-ready)
+8. ✅ `1c2119c` - Stabilize uvicorn version to 0.23.2 for SDK compatibility
 
 ---
 
