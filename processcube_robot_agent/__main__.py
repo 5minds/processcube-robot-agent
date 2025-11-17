@@ -2,8 +2,6 @@ import asyncio
 import logging
 
 import typer
-
-from processcube_sdk.debugging import start_debugging
 from processcube_sdk.logging import setup_logging
 from processcube_sdk.external_tasks import start_external_task
 from processcube_sdk.configuration.config_accessor import ConfigAccessor
@@ -44,7 +42,13 @@ def serve():
 
 
     setup_logging()
-    start_debugging()
+
+    # NOTE: Debugger is disabled by default to avoid asyncio.run() conflicts
+    # with modern uvicorn versions (0.38+). The processcube_sdk debugger patches
+    # asyncio.run() which is incompatible with uvicorn's new loop_factory parameter.
+    # This is a known limitation and should be resolved in future SDK updates.
+    ConfigAccessor.ensure_from_env()
+
     start_rest_api()
 
 if __name__ == '__main__':
