@@ -1,0 +1,71 @@
+# Git
+.git
+.gitignore
+.gitattributes
+
+# Node/npm
+node_modules
+npm-debug.log
+package-lock.json
+.npm
+
+# Python
+__pycache__
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+.venv
+.env
+.env.local
+dist/
+build/
+*.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDEs
+.vscode
+.idea
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+coverage.xml
+*.lcov
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# CI/CD
+.github
+.gitlab-ci.yml
+.travis.yml
+
+# Misc
+README.md
+LICENSE
+CHANGELOG.md
+ANALYSIS.md
+PROJECT_STATUS.md
+STUDIO_EXTENSION_TESTS.md
+*.md
+
+# Logs
+logs/
+*.log
+
+# Temp directories
+temp/
+tmp/
+temp-*

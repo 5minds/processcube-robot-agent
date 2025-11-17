@@ -10,7 +10,7 @@ from processcube_sdk.external_tasks import start_external_task
 
 from .robot_agent import builder
 from .watch_robots_command import start_watch_robots
-from .rest_api import robots
+from .rest_api import robots, health, metrics
 
 logger = logging.getLogger("processcube_robot_agent")
 
@@ -52,6 +52,8 @@ webapp = FastAPI(
 )
 
 webapp.include_router(robots.router)
+webapp.include_router(health.router)
+webapp.include_router(metrics.router)
 
 
 def start_rest_api() -> None:
