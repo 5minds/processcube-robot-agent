@@ -5,6 +5,8 @@
   "scripts": {
     "python": "source venv/bin/activate && CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python",
     "processcube_robot_agent": "source venv/bin/activate && CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent serve",
+    "stop": "pkill -f 'processcube_robot_agent serve' || true",
+    "stop:force": "pkill -9 -f 'processcube_robot_agent serve' || true",
     "__prepare": "rm robots/installed/rcc/readexcel.zip && rm -rf robots/src/rcc/readexcel",
     "processcube_robot_agent_win": "sh start_on_windows.sh",
     "run": "source venv/bin/activate && CONFIG_FILE=`pwd`/config.dev.json PYTHONPATH=`pwd` python -m processcube_robot_agent serve",
