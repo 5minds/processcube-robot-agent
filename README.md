@@ -125,12 +125,34 @@ npm run processcube_robot_agent
 ### 1. Service starten
 
 ```bash
-# Terminal 1: Robot Agent Service
+# Terminal 1: Robot Agent Service starten
 npm run processcube_robot_agent
+
+# Output sollte ähnlich aussehen:
+# INFO:     Started server process [12345]
+# INFO:     Waiting for application startup.
+# INFO:     Starting external task worker for topic 'rcc.webui'
+# INFO:     Starting external task worker for topic 'rcc.test'
+# ...
+# INFO:     Application startup complete
+
 # Service läuft auf http://localhost:42042
 ```
 
-### 2. Verfügbare Robots prüfen
+### 2. Service stoppen
+
+```bash
+# Option A: Im selben Terminal (Terminal 1)
+# Drücke: Ctrl+C
+
+# Option B: Von einem anderen Terminal (Terminal 2)
+npm run stop
+
+# Option C: Force Stop (wenn hung)
+npm run stop:force
+```
+
+### 3. Verfügbare Robots prüfen
 
 ```bash
 # Terminal 2: Alle Robots auflisten
@@ -144,7 +166,7 @@ curl http://localhost:42042/robot_agents/robots
 # }
 ```
 
-### 3. Mit ProcessCube verbinden
+### 4. Mit ProcessCube verbinden
 
 ```bash
 # ProcessCube-Engine muss auf einem bekannten Service registrieren können
@@ -152,7 +174,7 @@ curl http://localhost:42042/robot_agents/robots
 # (Standard: http://localhost:42042)
 ```
 
-### 4. Einen eigenen Robot erstellen
+### 5. Einen eigenen Robot erstellen
 
 ```bash
 # 1. Neuen Robot-Ordner anlegen
