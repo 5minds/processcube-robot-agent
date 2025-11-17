@@ -1,5 +1,5 @@
 # ProcessCube SDK - Integration with ProcessCube engine
-processcube-sdk==6.0.1a1
+processcube-sdk==6.0.1
 
 # CLI Framework - Command-line interface
 typer>=0.20.0
