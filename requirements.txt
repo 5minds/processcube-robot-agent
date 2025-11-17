@@ -6,7 +6,7 @@ typer>=0.20.0
 
 # REST API - FastAPI and server
 fastapi>=0.121.0
-uvicorn>=0.15.0,<0.24.0
+uvicorn>=0.23.0,<0.24.0
 httpx>=0.27.0
 
 # RPA - Robot Process Automation
