@@ -26,23 +26,12 @@ async def event_start_external_task(app: FastAPI) -> Any:
 
     loop = asyncio.get_running_loop()
 
-    # Start external task with timeout to avoid blocking indefinitely
-    try:
-        external_task_client = await asyncio.wait_for(
-            loop.run_in_executor(None, start_external_task, builder.build()),
-            timeout=5.0
-        )
-        logger.info(f"Started external task {external_task_client}")
-    except asyncio.TimeoutError:
-        logger.warning("ProcessCube engine connection timed out, continuing without external task support")
-        external_task_client = None
-    except Exception as e:
-        logger.error(f"Failed to start external task client: {e}")
-        external_task_client = None
+    external_task_client = start_external_task(builder.build(), loop=loop, run_forever=False)
+    logger.info(f"Started external task {external_task_client}")
 
     start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
 
-    if start_watch_project_dir and external_task_client:
+    if start_watch_project_dir:
         _ = loop.run_in_executor(None, start_watch_robots, external_task_client)
 
     yield
