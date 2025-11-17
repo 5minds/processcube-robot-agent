@@ -1,4 +1,3 @@
-import '@testing-library/jest-dom';
 import React from 'react';
 
 // Mock the @5minds/processcube_studio_sdk module

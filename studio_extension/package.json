@@ -10,14 +10,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "studio": "/Applications/5Minds\\ Studio\\ \\(Beta\\).app/Contents/MacOS/5Minds\\ Studio\\ \\(Beta\\) --extension-development-dir \"${PWD}\""
+    "studio": "/Applications/5Minds\\ Studio\\ \\(Insiders\\).app/Contents/MacOS/5Minds\\ Studio\\ \\(Insiders\\) --extension-development-dir \"${PWD}\""
   },
   "author": "customer-solutions@5minds.de",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@5minds/processcube_studio_sdk": "^2.2.8",
-    "@testing-library/jest-dom": "^6.1.5",
-    "@testing-library/react": "^14.1.2",
+    "@5minds/processcube_studio_sdk": "^2.3.0-insiders.27",
     "@types/jest": "^29.5.11",
     "@types/node": "^22.0.0",
     "@types/react": "^19.0.0",
