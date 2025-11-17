@@ -50,7 +50,10 @@ class Counter(Metric):
     
     def to_prometheus_line(self) -> str:
         """Convert to Prometheus format."""
-        return f'{self.name}{{{",".join(f"{k}=\\"{v}\\"" for k, v in self.labels.items())}}} {self.value}'
+        labels_str = ",".join(f'{k}="{v}"' for k, v in self.labels.items())
+        if labels_str:
+            return f'{self.name}{{{labels_str}}} {self.value}'
+        return f'{self.name} {self.value}'
 
 
 class Gauge(Metric):

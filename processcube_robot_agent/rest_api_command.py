@@ -4,6 +4,10 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from typing import Any, Dict
 
+# Allow nested event loops for ProcessCube SDK compatibility
+import nest_asyncio
+nest_asyncio.apply()
+
 from processcube_sdk.configuration.config_accessor import ConfigAccessor
 from processcube_sdk.configuration import Config
 from processcube_sdk.external_tasks import start_external_task
@@ -17,19 +21,31 @@ logger = logging.getLogger("processcube_robot_agent")
 @asynccontextmanager
 async def event_start_external_task(app: FastAPI) -> Any:
 
-    loop = asyncio.get_running_loop()
-
-    external_task_client = start_external_task(builder.build(), loop=loop)
-    logger.info(f"Started external task {external_task_client}")
-
     ConfigAccessor.ensure_from_env()
     config = ConfigAccessor.current()
 
+    loop = asyncio.get_running_loop()
+
+    # Start external task with timeout to avoid blocking indefinitely
+    try:
+        external_task_client = await asyncio.wait_for(
+            loop.run_in_executor(None, start_external_task, builder.build()),
+            timeout=5.0
+        )
+        logger.info(f"Started external task {external_task_client}")
+    except asyncio.TimeoutError:
+        logger.warning("ProcessCube engine connection timed out, continuing without external task support")
+        external_task_client = None
+    except Exception as e:
+        logger.error(f"Failed to start external task client: {e}")
+        external_task_client = None
+
     start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
 
-    if start_watch_project_dir:
+    if start_watch_project_dir and external_task_client:
         _ = loop.run_in_executor(None, start_watch_robots, external_task_client)
-        yield
+
+    yield
 
 description = """
 The ProcessCube Robot Agent is a REST API that allows to rest the installed robots.

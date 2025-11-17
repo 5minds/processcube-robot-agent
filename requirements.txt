@@ -8,6 +8,7 @@ typer>=0.20.0
 fastapi>=0.121.0
 uvicorn>=0.23.0,<0.24.0
 httpx>=0.27.0
+nest-asyncio>=1.5.0
 
 # RPA - Robot Process Automation
 robotframework>=7.0.0,<8.0.0
