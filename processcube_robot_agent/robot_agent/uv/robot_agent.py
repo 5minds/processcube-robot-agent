@@ -201,28 +201,38 @@ class RobotAgent(BaseAgent, UvRunner):
         logger.info("Installing processcube_robot_agent for entry point support")
 
         # Find the processcube_robot_agent package by searching for pyproject.toml
-        # Start from current directory and search upwards
-        project_root = Path().cwd()
-        while project_root != project_root.parent:
-            if (project_root / "pyproject.toml").exists():
+        # Start from this module's location and search upwards (not cwd, which may be temp dir)
+        module_file = Path(__file__)
+        search_root = module_file.parent
+
+        project_root = None
+        while search_root != search_root.parent:
+            if (search_root / "pyproject.toml").exists():
                 # Verify it's the processcube-robot-agent project
                 try:
                     import tomllib
                 except ImportError:
                     import tomli as tomllib
                 try:
-                    with open(project_root / "pyproject.toml", "rb") as f:
+                    with open(search_root / "pyproject.toml", "rb") as f:
                         data = tomllib.load(f)
                         if data.get("project", {}).get("name") == "processcube-robot-agent":
+                            project_root = search_root.resolve()
                             logger.info(f"Found processcube-robot-agent project at {project_root}")
                             break
                 except Exception:
                     pass
-            project_root = project_root.parent
-        else:
-            # Fallback: use current working directory
-            project_root = Path().cwd()
-            logger.warning(f"Could not find processcube-robot-agent project, using {project_root}")
+            search_root = search_root.parent
+
+        if not project_root:
+            # Fallback: try to import and use the installed package location
+            try:
+                import processcube_robot_agent
+                project_root = Path(processcube_robot_agent.__file__).parent.parent.resolve()
+                logger.info(f"Using processcube_robot_agent installation at {project_root}")
+            except ImportError:
+                logger.error("Could not find processcube-robot-agent project or installation")
+                raise RobotError("unwrap", "Could not locate processcube-robot-agent for installation")
 
         cmd_install_agent = ["uv", "pip", "install", "--python", str(python_path), "-e", str(project_root)]
         completed_process = subprocess.run(cmd_install_agent, capture_output=True, text=True)
