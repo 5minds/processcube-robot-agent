@@ -208,26 +208,29 @@ class TestMainFunction:
     @patch('processcube_robot_agent.tools.robot_runner.raise_robot_test_failed')
     def test_main_processor_test_failed(self, mock_raise_error, mock_executor_class, mock_process_work_items):
         """Test processor function when tests fail."""
+        # Mock raise_robot_test_failed to actually raise an exception
+        mock_raise_error.side_effect = Exception("Test failed")
+
         mock_executor = MagicMock()
         mock_executor.execute.return_value = {
             "status": "fail",
             "return_code": 1
         }
         mock_executor_class.return_value = mock_executor
-        
+
         captured_processor = None
         def capture_processor(proc):
             nonlocal captured_processor
             captured_processor = proc
-        
+
         mock_process_work_items.side_effect = capture_processor
-        
+
         main(["my_robot.robot"])
-        
+
         # Call processor - should raise
         with pytest.raises(Exception):  # FunctionalError
             captured_processor({"data": "test"})
-        
+
         mock_raise_error.assert_called_once()
 
     @patch('processcube_robot_agent.tools.robot_runner.process_work_items')
