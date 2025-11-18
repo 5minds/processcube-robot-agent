@@ -42,6 +42,11 @@ class RobotsFileSystemEventHandler(FileSystemEventHandler):
         Raises:
             Exception: If factory building or subscription fails.
         """
+        # Ensure external_task_client is available
+        if self._external_task_client is None:
+            logger.warning(f"Cannot install robot {packed_robot_path}: external_task_client is not initialized yet")
+            return
+
         factory = self._factory_builder.build(packed_robot_path)
         handler = factory.create_external_task(self._config)
         self._external_task_client.subscribe_to_external_task_for_topic(handler.get_topic(), handler)
