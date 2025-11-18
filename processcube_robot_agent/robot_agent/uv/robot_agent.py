@@ -178,9 +178,9 @@ class RobotAgent(BaseAgent, UvRunner):
 
         if dependencies:
             logger.info(f"Installing {len(dependencies)} dependencies: {', '.join(dependencies)}")
-            # Use --no-build to avoid building the local project itself
-            # We only want to install the declared dependencies, not the robot package
-            cmd_install = ["uv", "pip", "install", "--python", str(python_path), "--no-build"] + dependencies
+            # Install only the declared dependencies, not the robot project itself
+            # The robot pyproject.toml should not have a [build-system] section
+            cmd_install = ["uv", "pip", "install", "--python", str(python_path)] + dependencies
         else:
             logger.info("No dependencies found in pyproject.toml")
             # If no dependencies found, still create the venv but don't install anything
