@@ -1,14 +1,30 @@
 # ProcessCube Robot Agent
 
-> Eine RPA-Integrationslösung, die Robot Framework-basierte Automatisierungen mit ProcessCube Workflow-Engines verbindet.
+> Eine RPA-Integrationslösung, die Robot Framework-basierte und Pure Python Automatisierungen mit ProcessCube Workflow-Engines verbindet.
 
 ## 🎯 Überblick
 
-Das **ProcessCube Robot Agent** Projekt ist eine umfassende Lösung zur Integration von Robotic Process Automation (RPA) mit ProcessCube, einem BPM-System (Business Process Management). Es besteht aus drei Hauptkomponenten:
+Das **ProcessCube Robot Agent** Projekt ist eine umfassende Lösung zur Integration von Robotic Process Automation (RPA) mit ProcessCube, einem BPM-System (Business Process Management). Es unterstützt **zwei flexible Ansätze** zur Robot-Entwicklung:
+
+1. **RCC-basierte Robots** (Robot Framework) - Für UI-Automation und textgetriebene Prozesse
+2. **UV-basierte Robots** (Pure Python) - Für APIs, Datenverarbeitung und Python-Libraries
+
+### Komponenten
 
 1. **processcube_robot_agent** - Ein Python-basierter Microservice, der RPA-Roboter verwaltet und ausführt
-2. **robots** - Eine Sammlung von Robot Framework-basierten Automatisierungsaufgaben
+2. **robots** - Eine Sammlung von Automatisierungs-Aufgaben (RCC und UV)
 3. **studio_extension** - Eine TypeScript/React-Erweiterung für die 5Minds Studio IDE
+
+### Zwei Ansätze zur Robot-Entwicklung
+
+Das System unterstützt beide Ansätze parallel, ohne Migration notwendig zu machen:
+
+| Ansatz | Typ | Best For | Lerne mehr |
+|--------|------|----------|-----------|
+| **RCC** | Robot Framework (Text) | UI-Automation, Web-Scraping | [README.md - RCC Guide](#-robot-entwicklung) |
+| **UV** | Pure Python | APIs, Datenverarbeitung, Microservices | [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md) |
+
+**Unsicher, welcher Ansatz?** → Siehe [QUICK_START.md - Vergleichstabelle](./QUICK_START.md#rcc-vs-uv-vergleich)
 
 ### Architektur
 
@@ -45,7 +61,9 @@ Das **ProcessCube Robot Agent** Projekt ist eine umfassende Lösung zur Integrat
 3. [Konfiguration](#konfiguration)
 4. [Projektstruktur](#projektstruktur)
 5. [Robot-Entwicklung](#robot-entwicklung)
-6. [Studio-Erweiterung](#studio-erweiterung)
+   - [RCC (Robot Framework)](#robot-framework-grundlagen)
+   - [UV (Pure Python)](#-uv-robot-entwicklung-pure-python)
+6. [Studio-Erweiterung](#-studio-erweiterung)
 7. [API-Dokumentation](#api-dokumentation)
 8. [Entwicklung & Debugging](#entwicklung--debugging)
 9. [Problembehebung](#problembehebung)
@@ -713,6 +731,75 @@ processcube-robot-agent/
 
 ## 🤖 Robot-Entwicklung
 
+### 🔀 Side-by-Side Vergleich: RCC vs UV
+
+Beide Ansätze lösen Automatisierungsaufgaben, aber mit unterschiedlichen Stärken:
+
+#### RCC (Robot Framework)
+```robot
+*** Settings ***
+Library    RPA.Browser.Selenium
+Library    RPA.HTTP
+
+*** Tasks ***
+Login And Process
+    Open Browser    https://example.com    chrome
+    Input Text    id:username    admin
+    Input Text    id:password    pw123
+    Click Button   xpath://button[@type='submit']
+
+    ${response}=    Get Request    https://api.example.com/process
+    Log    ${response.status_code}
+    Close Browser
+```
+
+#### UV (Pure Python)
+```python
+import requests
+from robocorp.workitems import inputs, outputs
+from selenium import webdriver
+
+def main():
+    for input_item in inputs:
+        payload = input_item.payload
+
+        # Web Automation
+        driver = webdriver.Chrome()
+        driver.get("https://example.com")
+        driver.find_element("id", "username").send_keys("admin")
+        driver.find_element("id", "password").send_keys("pw123")
+        driver.find_element("xpath", "//button[@type='submit']").click()
+
+        # API Request
+        response = requests.post("https://api.example.com/process")
+
+        driver.quit()
+
+        # Output
+        result = {
+            "status": response.status_code,
+            "data": payload,
+            "processed": True
+        }
+        outputs.create(result).save()
+
+if __name__ == "__main__":
+    main()
+```
+
+**Wann welcher Ansatz?**
+
+| Szenario | RCC | UV | Grund |
+|----------|-----|-----|-------|
+| Web UI Automation | ✅ **Besser** | ⚠️ Möglich | RPA.Browser optimiert für UI-Automation |
+| REST APIs | ✅ Möglich | ✅ **Besser** | Python Requests/httpx sind native |
+| Datenverarbeitung | ✅ Gut | ✅ **Besser** | Pandas, NumPy, etc. sind Python-native |
+| Legacy-System RPA | ✅ **Besser** | ❌ Schwierig | Windows UI, SAP, etc. brauchen RPA Framework |
+| Microservices | ⚠️ Overhead | ✅ **Besser** | Leichtgewicht, schnell, einfach zu deployen |
+| Komplexe Logik | ⚠️ Verbose | ✅ **Besser** | Python ist für Entwickler verständlicher |
+
+---
+
 ### Robot Framework Grundlagen
 
 Robot Framework ist ein Python-basiertes, textgetriebenes Automatisierungstool mit roboterlesbarer Syntax:
@@ -880,6 +967,103 @@ open output/log.html
 5. **Locators separat** - locators.json für Wartbarkeit
 6. **Timeouts** - Explizite Timeouts für Stabilität
 7. **Screenshots** - Bei Fehlern für Debugging
+
+---
+
+## 🐍 UV-Robot-Entwicklung (Pure Python)
+
+Für APIs, Datenverarbeitung und moderne Python-basierte Automatisierungen bietet das System auch **UV-Robots** - reine Python-Implementierungen ohne Robot Framework-Overhead.
+
+### Quick Start - UV Robot erstellen
+
+```bash
+# 1. Verzeichnis anlegen
+mkdir robots/src/uv/my-api-robot
+cd robots/src/uv/my-api-robot
+
+# 2. pyproject.toml erstellen
+cat > pyproject.toml << 'EOF'
+[project]
+name = "my-api-robot"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "robocorp-workitems>=1.0.0",
+    "requests>=2.31.0",
+    "pandas>=2.0.0",
+]
+EOF
+
+# 3. main.py mit Geschäftslogik
+cat > main.py << 'EOF'
+import logging
+import requests
+from robocorp.workitems import inputs, outputs
+
+logger = logging.getLogger(__name__)
+
+def main():
+    for input_item in inputs:
+        try:
+            payload = input_item.payload
+
+            # API-Call
+            response = requests.get(
+                f"https://api.example.com/data/{payload.get('id')}",
+                timeout=10
+            )
+
+            result = {
+                "status": "success",
+                "data": response.json(),
+                "code": response.status_code
+            }
+        except Exception as e:
+            logger.error(f"Error: {e}")
+            result = {
+                "status": "error",
+                "error": str(e)
+            }
+        finally:
+            outputs.create(result).save()
+
+if __name__ == "__main__":
+    main()
+EOF
+
+# 4. Lokal testen
+uv run main.py
+```
+
+### Vorteile von UV Robots
+
+- **⚡ Schnell** - 20-40x schneller als RCC durch direkte Python-Ausführung
+- **📦 Leicht** - Minimal dependencies, einfaches Packaging
+- **🔌 Modern** - Zugriff auf alle Python-Libraries (requests, pandas, etc.)
+- **☁️ Cloud-Ready** - Optimal für Microservices und serverless Deployment
+- **👨‍💻 Dev-Friendly** - Normale Python, nicht Robot Framework Syntax
+
+### Wann UV verwenden?
+
+✅ **Ideal für:**
+- REST API Integration
+- Datenverarbeitung und ETL
+- Microservices und Backend-Tasks
+- Python-Libraries (pandas, requests, httpx)
+- Cloud-Deployment
+
+❌ **Nicht ideal für:**
+- Windows UI Automation (braucht RPA Framework)
+- Legacy SAP/Mainframe-Systeme
+- Visuelle Web-Automation mit komplexen Locators
+
+### Weitere UV-Dokumentation
+
+Für detaillierte Anleitung zur UV-Robot-Entwicklung siehe:
+- **Komplette Anleitung:** [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md)
+- **Quick Start:** [QUICK_START.md - Neuen UV-Robot erstellen](./QUICK_START.md#-neuen-uv-robot-erstellen)
+- **Architecture Details:** [ARCHITECTURE.md - Robot Execution Engines](./ARCHITECTURE.md)
+- **Migration & Updates:** [MIGRATION_GUIDE.md - UV Robot Support](./MIGRATION_GUIDE.md#5-uv-robot-support-neu---optional)
 
 ---
 

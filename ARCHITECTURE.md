@@ -37,30 +37,38 @@
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                 │
 │  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Robot Execution Engine (RCC)                             │  │
-│  │ - Unpacks robot.zip                                      │  │
-│  │ - Prepares work items (JSON)                             │  │
-│  │ - Executes via 'rcc run' command                         │  │
-│  │ - Extracts output/results                                │  │
+│  │ Robot Execution Engines                                  │  │
+│  │ ├─ RCC Engine (Robot Framework)                         │  │
+│  │ │  ├─ Unpacks robot.zip                                 │  │
+│  │ │  ├─ Executes via 'rcc run' command                    │  │
+│  │ │  └─ Best for: UI Automation, Web-Scraping             │  │
+│  │ │                                                        │  │
+│  │ └─ UV Engine (Pure Python)                              │  │
+│  │    ├─ Unpacks robot.zip                                 │  │
+│  │    ├─ Executes via 'uv run python main.py'              │  │
+│  │    └─ Best for: APIs, Data Processing, Microservices    │  │
+│  │                                                          │  │
+│  │ Common:                                                 │  │
+│  │ - Prepares work items (JSON)                            │  │
+│  │ - Extracts output/results                               │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                 │
 │  ┌──────────────────────────────────────────────────────────┐  │
 │  │ Project Watcher & Packer                                 │  │
-│  │ - Monitors robots/src/rcc/ for changes                   │  │
-│  │ - Auto-packs modified robots                             │  │
+│  │ - Monitors robots/src/rcc/ and robots/src/uv/            │  │
+│  │ - Auto-packs modified robots (both RCC & UV)            │  │
 │  │ - Re-registers topics on change                          │  │
 │  └──────────────────────────────────────────────────────────┘  │
 │                                                                 │
 └─────────────────────────────────────────────────────────────────┘
                              │
-                ┌────────────┼────────────┐
-                │            │            │
-                ▼            ▼            ▼
-           ┌─────────┐  ┌─────────┐  ┌──────────┐
-           │ RCC CLI │  │ Work    │  │ Conda    │
-           │ (Pack,  │  │ Items   │  │ Env      │
-           │ Run)    │  │ (JSON)  │  │          │
-           └─────────┘  └─────────┘  └──────────┘
+         ┌───────────────────┼───────────────────┐
+         │                   │                   │
+         ▼                   ▼                   ▼
+    ┌─────────────┐  ┌──────────────┐  ┌──────────┐
+    │ RCC/UV CLI  │  │ Work Items   │  │ Env Mgmt │
+    │ (Pack, Run) │  │ (JSON)       │  │(Conda/UV)│
+    └─────────────┘  └──────────────┘  └──────────┘
 ```
 
 ---

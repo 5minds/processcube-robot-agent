@@ -128,7 +128,7 @@ npm run processcube_robot_agent
 
 ---
 
-## 📦 Neuen Robot erstellen
+## 📦 Neuen RCC-Robot erstellen (Robot Framework)
 
 ```bash
 # 1. Verzeichnis anlegen
@@ -171,6 +171,89 @@ npm run processcube_robot_agent
 curl http://localhost:42042/robot_agents/robots
 # Output sollte "my-robot" enthalten
 ```
+
+---
+
+## 📦 Neuen UV-Robot erstellen (Python)
+
+**Schnelle Alternative zu RCC** - für Pure Python Robots
+
+Vollständige Anleitung: [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md)
+
+### Schnelle Schritte:
+
+```bash
+# 1. Verzeichnis anlegen
+mkdir robots/src/uv/my-python-robot
+cd robots/src/uv/my-python-robot
+
+# 2. pyproject.toml erstellen
+cat > pyproject.toml << 'EOF'
+[project]
+name = "my-python-robot"
+version = "0.1.0"
+requires-python = ">=3.11"
+dependencies = [
+    "robocorp-workitems>=1.0.0",
+]
+EOF
+
+# 3. main.py mit Geschäftslogik erstellen
+cat > main.py << 'EOF'
+from robocorp.workitems import inputs, outputs
+
+def main():
+    for item in inputs:
+        payload = item.payload
+        result = {"processed": True, "data": payload}
+        outputs.create(result).save()
+
+if __name__ == "__main__":
+    main()
+EOF
+
+# 4. uv.lock generieren
+uv lock --upgrade
+
+# 5. Testen lokal
+uv run python main.py
+
+# 6. Service neu starten (wird automatisch erkannt)
+npm run processcube_robot_agent
+
+# 7. Robot sollte jetzt registriert sein
+curl http://localhost:42042/robot_agents/robots
+# Output sollte "my-python-robot" enthalten
+```
+
+### Vorteile von UV Robots:
+
+- ✅ **20-40x schneller** als RCC (UV ist hochoptimiert)
+- ✅ **Einfacherer Setup** (nur pyproject.toml, keine conda.yaml)
+- ✅ **Pure Python** - vertraute Syntax für Python-Entwickler
+- ✅ **Perfekt für:**
+  - API-Integration
+  - Datenverarbeitung
+  - Python-Libraries nutzen
+  - Microservices
+
+### RCC vs UV Vergleich
+
+| Feature | RCC | UV |
+|---------|-----|-----|
+| Typ | Robot Framework (Text) | Pure Python |
+| Setup | robot.yaml + conda.yaml | pyproject.toml only |
+| Geschwindigkeit | Normal | 20-40x schneller |
+| UI-Automation | ⭐⭐⭐ Excellent | ⭐ Limited |
+| APIs & Daten | ⭐⭐ Good | ⭐⭐⭐ Excellent |
+| Dependencies | Conda | UV/pip |
+| Lernkurve | Mittel | Niedrig (Python) |
+
+### Nächste Schritte
+
+1. **Neue UV Robot?** → [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md) lesen
+2. **Neue RCC Robot?** → siehe Abschnitt oben
+3. **Beide vergleichen?** → siehe Tabelle oben
 
 ---
 

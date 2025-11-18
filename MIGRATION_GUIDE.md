@@ -10,9 +10,18 @@ Dieses Dokument dokumentiert die Aktualisierung zu den neuesten Major Versions a
 | robotframework | 6.x | 7.x | 🟡 MINOR BREAKING |
 | rpaframework | 16.x | 31.x | 🔴 MAJOR BREAKING |
 | watchdog | 3.x | 6.x | 🟡 MINOR BREAKING |
+| robocorp-workitems | <1.0.0 | ≥1.0.0 | 🔴 BREAKING (UV only) |
 | fastapi | 0.95.x | 0.121.x | ✅ KOMPATIBEL |
 | uvicorn | 0.25.x | 0.38.x | ✅ KOMPATIBEL |
 | typer | 0.9.x | 0.20.x | ✅ KOMPATIBEL |
+
+**Inhaltsverzeichnis:**
+1. [rpaframework (16.x → 31.x)](#1-rpaframework-16x--31x---kritisch)
+2. [robotframework (6.x → 7.x)](#2-robotframework-6x--7x---minor-breaking)
+3. [processcube-sdk (3-4.x → 6.0.0)](#3-processcube-sdk-3-4x--600---breaking)
+4. [watchdog (3.x → 6.x)](#4-watchdog-3x--6x---minor-breaking)
+5. [UV Robot Support (NEU)](#5-uv-robot-support-neu---optional) ⭐ Neu!
+6. [Andere Pakete (KOMPATIBEL)](#6-andere-pakete-kompatibel)
 
 ---
 
@@ -221,7 +230,85 @@ class MyHandler(FileSystemEventHandler):
 
 ---
 
-## 5. Andere Pakete (KOMPATIBEL)
+## 5. UV Robot Support (NEU - OPTIONAL)
+
+### Hintergrund
+
+Das System unterstützt jetzt zwei Robot-Typen parallel:
+- **RCC Robots:** Robot Framework (Text-basiert) - Bestehende RCC Robots weiterhin unterstützt
+- **UV Robots:** Pure Python - Neue Alternative für APIs und Datenverarbeitung
+
+Die Migration zu neuesten Abhängigkeiten hat auch die UV Robot Engine stabiler gemacht.
+
+### UV Robots und diese Migration
+
+Wenn Sie UV Robots verwenden:
+
+1. **robocorp-workitems >= 1.0.0:**
+   ```python
+   # Alte API (funktioniert nicht mehr)
+   input_item = inputs.get()
+
+   # Neue API (erforderlich)
+   for input_item in inputs:
+       payload = input_item.payload
+   ```
+
+2. **pyproject.toml Best Practices:**
+   ```toml
+   [project]
+   name = "my-robot"
+   version = "0.1.0"
+   requires-python = ">=3.11"
+   dependencies = [
+       "robocorp-workitems>=1.0.0",
+   ]
+
+   # WICHTIG: Kein [build-system] für Script-Robots!
+   ```
+
+### Migration Steps für bestehende UV Robots
+
+1. **Update robocorp-workitems:**
+   ```bash
+   uv pip install "robocorp-workitems>=1.0.0"
+   ```
+
+2. **main.py aktualisieren:**
+   ```bash
+   grep -r "inputs.get()" robots/src/uv/
+   # Umwandeln zu: for item in inputs: ...
+   ```
+
+3. **pyproject.toml überprüfen:**
+   ```bash
+   grep -A2 "\[build-system\]" robots/src/uv/*/pyproject.toml
+   # Falls vorhanden: Entfernen (nur für Robots relevant)
+   ```
+
+4. **Testen:**
+   ```bash
+   # Neue UV Robots erstellen und testen
+   python -m processcube_robot_agent serve
+   ```
+
+### Kompatibilität Checklist (UV Robots)
+
+- [ ] robocorp-workitems >= 1.0.0 installiert
+- [ ] main.py nutzt korrekte Iteration API
+- [ ] pyproject.toml hat kein [build-system]
+- [ ] Dependencies korrekt definiert
+- [ ] UV Robot ausführbar
+
+### Weitere Informationen
+
+- Detaillierte Guide: [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md)
+- Quick Start: [QUICK_START.md - Neuen UV-Robot erstellen](./QUICK_START.md#-neuen-uv-robot-erstellen)
+- Architektur: [ARCHITECTURE.md - Robot Execution Engines](./ARCHITECTURE.md)
+
+---
+
+## 6. Andere Pakete (KOMPATIBEL)
 
 ### fastapi (0.95.x → 0.121.x)
 - Vollständig abwärtskompatibel
@@ -247,22 +334,34 @@ class MyHandler(FileSystemEventHandler):
 pytest tests/ -v --cov=processcube_robot_agent --cov-fail-under=70
 ```
 
-### 2. Robots testen
+### 2. RCC Robots testen
 ```bash
-# Alle Robots ausführen
+# Alle RCC Robots ausführen
 rcc robot run --directory robots/src/rcc/
 ```
 
-### 3. Integration testen
+### 3. UV Robots testen (NEU)
+```bash
+# Teste einzelne UV Robot
+cd robots/src/uv/example-python-robot/
+uv run main.py
+
+# Oder über Python direkt
+python -m processcube_robot_agent serve
+# Dann einen Task an UV Robot senden
+```
+
+### 4. Integration testen
 ```bash
 # Starte Service
 python -m processcube_robot_agent serve
 
 # In separatem Terminal
 curl http://localhost:42042/robot_agents/robots
+# Sollte beide RCC und UV Robots zeigen
 ```
 
-### 4. Regressions überprüfen
+### 5. Regressions überprüfen
 ```bash
 # Alte Tests sollten alle bestehen
 pytest tests/ -v
@@ -296,6 +395,32 @@ pip install -r requirements.txt
 ### Issue 2: Robot Framework Custom Listeners
 **Problem:** Alte Listener-APIs funktionieren nicht
 **Workaround:** ROBOT_LISTENER_API_VERSION auf 3 aktualisieren
+
+### Issue 3: robocorp-workitems API Migration (UV Robots)
+**Problem:** `AttributeError: 'Inputs' object has no attribute 'get'` wenn altes API verwendet
+**Workaround:** Auf neuere Iteration API wechseln:
+```python
+# ❌ Alte API (funktioniert nicht)
+input_item = inputs.get()
+
+# ✅ Neue API (erforderlich)
+for input_item in inputs:
+    payload = input_item.payload
+```
+
+### Issue 4: UV Build System Error
+**Problem:** UV versucht, Robots zu bauen obwohl sie reine Scripts sind
+**Workaround:** Entferne `[build-system]` Section aus pyproject.toml:
+```toml
+# ❌ Entfernen
+[build-system]
+requires = ["flit_core >=2,<4"]
+build-backend = "flit_core.buildapi"
+
+# ✅ Nur [project] und [project.dependencies] halten
+[project]
+name = "my-robot"
+```
 
 ---
 

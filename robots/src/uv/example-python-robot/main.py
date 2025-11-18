@@ -54,18 +54,19 @@ def main():
     try:
         # Get input work items
         logger.info("Reading input work items...")
-        input_item = inputs.get()
-        input_payload = input_item.payload
 
-        logger.info(f"Received input payload: {input_payload}")
+        # In robocorp.workitems >= 1.0, iterate through inputs
+        for input_item in inputs:
+            input_payload = input_item.payload
+            logger.info(f"Received input payload: {input_payload}")
 
-        # Process the input
-        output_payload = process_robot_task(input_payload)
+            # Process the input
+            output_payload = process_robot_task(input_payload)
 
-        # Send output work item
-        logger.info("Writing output work items...")
-        output_item = outputs.create(output_payload)
-        output_item.save()
+            # Send output work item
+            logger.info("Writing output work items...")
+            output_item = outputs.create(output_payload)
+            output_item.save()
 
         logger.info("Robot execution completed successfully")
 

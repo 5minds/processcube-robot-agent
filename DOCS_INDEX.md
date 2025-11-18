@@ -294,10 +294,15 @@
 - README.md → [Konfiguration](#-konfiguration)
 - QUICK_START.md → [Konfiguration ändern](#-konfiguration-ändern)
 
-**Robot-Entwicklung**
+**Robot-Entwicklung (RCC-basiert - Robot Framework)**
 - README.md → [Robot-Entwicklung](#-robot-entwicklung)
-- QUICK_START.md → [Neuen Robot erstellen](#-neuen-robot-erstellen)
+- QUICK_START.md → [Neuen RCC-Robot erstellen](#-neuen-rcc-robot-erstellen)
 - ARCHITECTURE.md → [Robot Execution Engine](#4-robot-execution-engine-robot_agent-rcc)
+
+**Robot-Entwicklung (UV-basiert - Pure Python)**
+- UV_ROBOT_CREATION_GUIDE.md → [Komplette Anleitung](./UV_ROBOT_CREATION_GUIDE.md)
+- QUICK_START.md → [Neuen UV-Robot erstellen](#-neuen-uv-robot-erstellen)
+- Beispiel: [robots/src/uv/example-python-robot](./robots/src/uv/example-python-robot/)
 
 **API-Endpoints**
 - README.md → [API-Dokumentation](#-api-dokumentation)
