@@ -20,7 +20,11 @@ logger = logging.getLogger("processcube_robot_agent")
 
 @asynccontextmanager
 async def event_start_external_task(app: FastAPI) -> Any:
+    """Initialize external task client and optionally start robot watchers.
 
+    Sets up the multi-runner factory and starts watching for robot changes
+    if configured in RCC or UV settings.
+    """
     ConfigAccessor.ensure_from_env()
     config = ConfigAccessor.current()
 
@@ -29,10 +33,16 @@ async def event_start_external_task(app: FastAPI) -> Any:
     external_task_client = start_external_task(builder.build(), loop=loop, run_forever=False)
     logger.info(f"Started external task {external_task_client}")
 
-    start_watch_project_dir = config.get('rcc', 'start_watch_project_dir', default=False)
+    # Check if watchers should start (either RCC or UV or both)
+    rcc_watch = config.get('rcc', 'start_watch_project_dir', default=False)
+    uv_watch = config.get('uv', 'start_watch_project_dir', default=False)
+    start_watch_project_dir = rcc_watch or uv_watch
 
     if start_watch_project_dir:
+        logger.info("Starting robot project watchers (RCC and/or UV)...")
         _ = loop.run_in_executor(None, start_watch_robots, external_task_client)
+    else:
+        logger.info("Robot project watchers disabled in configuration")
 
     yield
 

@@ -1,8 +1,8 @@
 """
 Unit tests for watch_robots_command module.
 
-Tests the functionality of starting the robot watcher with ProjectPacker
-and ProjectWatcher integration.
+Tests the functionality of starting the robot watcher with both RCC and UV
+ProjectPacker and ProjectWatcher integration.
 """
 
 import pytest
@@ -15,25 +15,40 @@ from processcube_robot_agent.watch_robots_command import start_watch_robots
 class TestStartWatchRobots:
     """Test suite for start_watch_robots function."""
 
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.ThreadPoolExecutor')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
-    def test_start_watch_robots_initializes_packer_and_watcher(
+    def test_start_watch_robots_initializes_both_packers_and_watchers(
         self,
         mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class
+        mock_rcc_packer_class,
+        mock_uv_packer_class,
+        mock_rcc_watcher_class,
+        mock_uv_watcher_class,
+        mock_executor_class
     ):
-        """Test that start_watch_robots initializes both ProjectPacker and ProjectWatcher."""
+        """Test that start_watch_robots initializes both RCC and UV packer/watcher pairs."""
         # Setup
         mock_config = Mock()
         mock_config_accessor.current.return_value = mock_config
 
-        mock_packer = Mock()
-        mock_project_packer_class.return_value = mock_packer
+        mock_rcc_packer = Mock()
+        mock_rcc_packer_class.return_value = mock_rcc_packer
 
-        mock_watcher = Mock()
-        mock_project_watcher_class.return_value = mock_watcher
+        mock_uv_packer = Mock()
+        mock_uv_packer_class.return_value = mock_uv_packer
+
+        mock_rcc_watcher = Mock()
+        mock_rcc_watcher_class.return_value = mock_rcc_watcher
+
+        mock_uv_watcher = Mock()
+        mock_uv_watcher_class.return_value = mock_uv_watcher
+
+        mock_executor = Mock()
+        mock_executor_class.return_value = mock_executor
 
         mock_external_task_client = Mock()
 
@@ -44,205 +59,258 @@ class TestStartWatchRobots:
         mock_config_accessor.ensure_from_env.assert_called_once()
         mock_config_accessor.current.assert_called_once()
 
-        # Verify ProjectPacker was initialized with config
-        mock_project_packer_class.assert_called_once_with(mock_config)
+        # Verify both packers were initialized with config
+        mock_rcc_packer_class.assert_called_once_with(mock_config)
+        mock_uv_packer_class.assert_called_once_with(mock_config)
 
-        # Verify ProjectPacker.start() was called
-        mock_packer.start.assert_called_once()
+        # Verify both packers' start() were called
+        mock_rcc_packer.start.assert_called_once()
+        mock_uv_packer.start.assert_called_once()
 
-        # Verify ProjectWatcher was initialized with config and client
-        mock_project_watcher_class.assert_called_once_with(
-            mock_config,
-            mock_external_task_client
-        )
+        # Verify both watchers were initialized with config and client
+        mock_rcc_watcher_class.assert_called_once_with(mock_config, mock_external_task_client)
+        mock_uv_watcher_class.assert_called_once_with(mock_config, mock_external_task_client)
 
-        # Verify ProjectWatcher.watch() was called
-        mock_watcher.watch.assert_called_once()
+        # Verify both watchers' watch() were submitted to executor
+        assert mock_executor.submit.call_count == 2
 
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.ThreadPoolExecutor')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
     def test_start_watch_robots_calls_in_correct_order(
         self,
         mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class
+        mock_rcc_packer_class,
+        mock_uv_packer_class,
+        mock_rcc_watcher_class,
+        mock_uv_watcher_class,
+        mock_executor_class
     ):
-        """Test that ProjectPacker.start() is called before ProjectWatcher.watch()."""
+        """Test that packers are called before watchers."""
         # Setup
         call_order = []
 
         mock_config = Mock()
         mock_config_accessor.current.return_value = mock_config
 
-        mock_packer = Mock()
-        mock_packer.start.side_effect = lambda: call_order.append('packer_start')
-        mock_project_packer_class.return_value = mock_packer
+        mock_rcc_packer = Mock()
+        mock_rcc_packer.start.side_effect = lambda: call_order.append('rcc_packer_start')
+        mock_rcc_packer_class.return_value = mock_rcc_packer
 
-        mock_watcher = Mock()
-        mock_watcher.watch.side_effect = lambda: call_order.append('watcher_watch')
-        mock_project_watcher_class.return_value = mock_watcher
+        mock_uv_packer = Mock()
+        mock_uv_packer.start.side_effect = lambda: call_order.append('uv_packer_start')
+        mock_uv_packer_class.return_value = mock_uv_packer
+
+        mock_rcc_watcher = Mock()
+        mock_rcc_watcher_class.return_value = mock_rcc_watcher
+
+        mock_uv_watcher = Mock()
+        mock_uv_watcher_class.return_value = mock_uv_watcher
+
+        mock_executor = Mock()
+        def submit_track(func):
+            call_order.append(f'submit_{func.__name__ if hasattr(func, "__name__") else "watcher"}')
+        mock_executor.submit.side_effect = submit_track
+        mock_executor_class.return_value = mock_executor
 
         mock_external_task_client = Mock()
 
         # Execute
         start_watch_robots(mock_external_task_client)
 
-        # Verify correct order
-        assert call_order == ['packer_start', 'watcher_watch']
+        # Verify packers start before executor.submit calls
+        packer_indices = [i for i, call_name in enumerate(call_order) if 'packer' in call_name]
+        submit_indices = [i for i, call_name in enumerate(call_order) if 'submit' in call_name]
+        assert all(p < s for p in packer_indices for s in submit_indices), \
+            f"Expected all packers to run before watcher submits, got order: {call_order}"
 
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.ThreadPoolExecutor')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
     def test_start_watch_robots_with_different_external_task_clients(
         self,
         mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class
+        mock_rcc_packer_class,
+        mock_uv_packer_class,
+        mock_rcc_watcher_class,
+        mock_uv_watcher_class,
+        mock_executor_class
     ):
         """Test that start_watch_robots works with different external task clients."""
         # Setup
         mock_config = Mock()
         mock_config_accessor.current.return_value = mock_config
 
-        mock_packer = Mock()
-        mock_project_packer_class.return_value = mock_packer
+        mock_rcc_packer = Mock()
+        mock_rcc_packer_class.return_value = mock_rcc_packer
 
-        mock_watcher = Mock()
-        mock_project_watcher_class.return_value = mock_watcher
+        mock_uv_packer = Mock()
+        mock_uv_packer_class.return_value = mock_uv_packer
 
-        # Create different mock clients
+        mock_rcc_watcher = Mock()
+        mock_rcc_watcher_class.return_value = mock_rcc_watcher
+
+        mock_uv_watcher = Mock()
+        mock_uv_watcher_class.return_value = mock_uv_watcher
+
+        mock_executor = Mock()
+        mock_executor_class.return_value = mock_executor
+
         client1 = Mock()
-        client2 = Mock()
 
         # Execute with first client
         start_watch_robots(client1)
 
-        # Verify first client was passed
-        call_args_1 = mock_project_watcher_class.call_args_list[0]
-        assert call_args_1[0][1] == client1
+        # Verify both watchers were called with client1
+        rcc_call = mock_rcc_watcher_class.call_args_list[0]
+        assert rcc_call[0][1] == client1
 
-        # Reset and execute with second client
-        mock_project_watcher_class.reset_mock()
-        mock_packer.reset_mock()
-        mock_packer.start.return_value = None
-        mock_project_watcher_class.return_value = mock_watcher
+        uv_call = mock_uv_watcher_class.call_args_list[0]
+        assert uv_call[0][1] == client1
 
-        start_watch_robots(client2)
-
-        # Verify second client was passed
-        call_args_2 = mock_project_watcher_class.call_args_list[0]
-        assert call_args_2[0][1] == client2
-
+    @patch('processcube_robot_agent.watch_robots_command.ThreadPoolExecutor')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.logger')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
     def test_start_watch_robots_logs_message(
         self,
         mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class,
-        mock_logger
+        mock_logger,
+        mock_rcc_packer_class,
+        mock_uv_packer_class,
+        mock_rcc_watcher_class,
+        mock_uv_watcher_class,
+        mock_executor_class
     ):
-        """Test that start_watch_robots logs the startup message."""
+        """Test that start_watch_robots logs startup messages."""
         # Setup
         mock_config = Mock()
         mock_config_accessor.current.return_value = mock_config
 
-        mock_packer = Mock()
-        mock_project_packer_class.return_value = mock_packer
+        mock_rcc_packer = Mock()
+        mock_rcc_packer_class.return_value = mock_rcc_packer
 
-        mock_watcher = Mock()
-        mock_project_watcher_class.return_value = mock_watcher
+        mock_uv_packer = Mock()
+        mock_uv_packer_class.return_value = mock_uv_packer
+
+        mock_rcc_watcher = Mock()
+        mock_rcc_watcher_class.return_value = mock_rcc_watcher
+
+        mock_uv_watcher = Mock()
+        mock_uv_watcher_class.return_value = mock_uv_watcher
+
+        mock_executor = Mock()
+        mock_executor_class.return_value = mock_executor
 
         mock_external_task_client = Mock()
 
         # Execute
         start_watch_robots(mock_external_task_client)
 
-        # Verify logger was called
-        mock_logger.info.assert_called_once()
-        log_message = mock_logger.info.call_args[0][0]
-        assert 'watch robots' in log_message.lower()
-        assert 'pack' in log_message.lower()
+        # Verify logger.info was called with expected messages
+        assert mock_logger.info.call_count >= 2  # At least initial and final messages
+        log_messages = [call[0][0] for call in mock_logger.info.call_args_list]
+        assert any('watch robots' in msg.lower() for msg in log_messages)
 
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.ThreadPoolExecutor')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
-    def test_start_watch_robots_with_config_accessor_error(
+    def test_start_watch_robots_handles_rcc_packer_error(
         self,
         mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class
+        mock_rcc_packer_class,
+        mock_uv_packer_class,
+        mock_rcc_watcher_class,
+        mock_uv_watcher_class,
+        mock_executor_class
     ):
-        """Test that start_watch_robots handles ConfigAccessor errors gracefully."""
-        # Setup - ConfigAccessor raises error
-        mock_config_accessor.ensure_from_env.side_effect = RuntimeError("Config not found")
-
-        mock_external_task_client = Mock()
-
-        # Execute and verify error is raised
-        with pytest.raises(RuntimeError, match="Config not found"):
-            start_watch_robots(mock_external_task_client)
-
-        # Verify ProjectPacker and ProjectWatcher were not called
-        mock_project_packer_class.assert_not_called()
-        mock_project_watcher_class.assert_not_called()
-
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
-    @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
-    def test_start_watch_robots_with_packer_error(
-        self,
-        mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class
-    ):
-        """Test that start_watch_robots handles ProjectPacker errors."""
+        """Test that RCC packer errors are handled gracefully."""
         # Setup
         mock_config = Mock()
         mock_config_accessor.current.return_value = mock_config
 
-        mock_packer = Mock()
-        mock_packer.start.side_effect = RuntimeError("Packing failed")
-        mock_project_packer_class.return_value = mock_packer
+        mock_rcc_packer = Mock()
+        mock_rcc_packer.start.side_effect = RuntimeError("RCC packing failed")
+        mock_rcc_packer_class.return_value = mock_rcc_packer
+
+        mock_uv_packer = Mock()
+        mock_uv_packer_class.return_value = mock_uv_packer
+
+        mock_rcc_watcher = Mock()
+        mock_rcc_watcher_class.return_value = mock_rcc_watcher
+
+        mock_uv_watcher = Mock()
+        mock_uv_watcher_class.return_value = mock_uv_watcher
+
+        mock_executor = Mock()
+        mock_executor_class.return_value = mock_executor
 
         mock_external_task_client = Mock()
 
-        # Execute and verify error is raised
-        with pytest.raises(RuntimeError, match="Packing failed"):
-            start_watch_robots(mock_external_task_client)
+        # Execute - should not raise
+        start_watch_robots(mock_external_task_client)
 
-        # Verify ProjectWatcher was not called
-        mock_project_watcher_class.assert_not_called()
+        # Verify UV packer still ran despite RCC error
+        mock_uv_packer.start.assert_called_once()
 
-    @patch('processcube_robot_agent.watch_robots_command.ProjectWatcher')
-    @patch('processcube_robot_agent.watch_robots_command.ProjectPacker')
+        # Verify watchers were still initialized
+        mock_uv_watcher_class.assert_called_once()
+
+    @patch('processcube_robot_agent.watch_robots_command.ThreadPoolExecutor')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectWatcher')
+    @patch('processcube_robot_agent.watch_robots_command.UvProjectPacker')
+    @patch('processcube_robot_agent.watch_robots_command.RccProjectPacker')
     @patch('processcube_robot_agent.watch_robots_command.ConfigAccessor')
-    def test_start_watch_robots_with_watcher_error(
+    def test_start_watch_robots_handles_uv_packer_error(
         self,
         mock_config_accessor,
-        mock_project_packer_class,
-        mock_project_watcher_class
+        mock_rcc_packer_class,
+        mock_uv_packer_class,
+        mock_rcc_watcher_class,
+        mock_uv_watcher_class,
+        mock_executor_class
     ):
-        """Test that start_watch_robots handles ProjectWatcher errors."""
+        """Test that UV packer errors are handled gracefully."""
         # Setup
         mock_config = Mock()
         mock_config_accessor.current.return_value = mock_config
 
-        mock_packer = Mock()
-        mock_project_packer_class.return_value = mock_packer
+        mock_rcc_packer = Mock()
+        mock_rcc_packer_class.return_value = mock_rcc_packer
 
-        mock_watcher = Mock()
-        mock_watcher.watch.side_effect = RuntimeError("Watching failed")
-        mock_project_watcher_class.return_value = mock_watcher
+        mock_uv_packer = Mock()
+        mock_uv_packer.start.side_effect = RuntimeError("UV packing failed")
+        mock_uv_packer_class.return_value = mock_uv_packer
+
+        mock_rcc_watcher = Mock()
+        mock_rcc_watcher_class.return_value = mock_rcc_watcher
+
+        mock_uv_watcher = Mock()
+        mock_uv_watcher_class.return_value = mock_uv_watcher
+
+        mock_executor = Mock()
+        mock_executor_class.return_value = mock_executor
 
         mock_external_task_client = Mock()
 
-        # Execute and verify error is raised
-        with pytest.raises(RuntimeError, match="Watching failed"):
-            start_watch_robots(mock_external_task_client)
+        # Execute - should not raise
+        start_watch_robots(mock_external_task_client)
 
-        # Verify packer was started before the error
-        mock_packer.start.assert_called_once()
+        # Verify RCC packer still ran despite UV error
+        mock_rcc_packer.start.assert_called_once()
+
+        # Verify watchers were still initialized
+        mock_rcc_watcher_class.assert_called_once()

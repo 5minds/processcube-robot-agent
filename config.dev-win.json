@@ -15,6 +15,13 @@
         "start_watch_project_dir": true,
         "project_dir": "robots/src/rcc"
     },
+    "uv": {
+        "topic_prefix": "uv",
+        "wrap_dir": "robots/installed/uv",
+        "unwrap_dir": "temp/robots/uv/unwrapped",
+        "start_watch_project_dir": true,
+        "project_dir": "robots/src/uv"
+    },
     "rest_api": {
         "port": 42042,
         "host": "0.0.0.0"

@@ -2,8 +2,7 @@
 
 import pytest
 from unittest.mock import patch, MagicMock
-from processcube_robot_agent.robot_agent.builder import build
-from processcube_robot_agent.robot_agent.rcc import RobotTaskHandlerFactoryCreator
+from processcube_robot_agent.robot_agent.builder import build, MultiRunnerFactoryCreator
 
 
 class TestBuilderBuild:
@@ -11,16 +10,17 @@ class TestBuilderBuild:
 
     @patch('processcube_robot_agent.robot_agent.builder.ConfigAccessor')
     def test_build_creates_factory_creator(self, mock_config_accessor):
-        """Test that build returns RobotTaskHandlerFactoryCreator instance."""
+        """Test that build returns MultiRunnerFactoryCreator instance."""
         # Setup mocks
         mock_config = MagicMock()
+        mock_config.get.return_value = "/path/to/wrap_dir"
         mock_config_accessor.current.return_value = mock_config
 
         # Execute
         result = build()
 
         # Verify
-        assert isinstance(result, RobotTaskHandlerFactoryCreator)
+        assert isinstance(result, MultiRunnerFactoryCreator)
 
     @patch('processcube_robot_agent.robot_agent.builder.ConfigAccessor')
     def test_build_ensures_config_from_env(self, mock_config_accessor):
@@ -50,7 +50,7 @@ class TestBuilderBuild:
 
     @patch('processcube_robot_agent.robot_agent.builder.ConfigAccessor')
     def test_build_passes_config_to_factory(self, mock_config_accessor):
-        """Test that build passes config to RobotTaskHandlerFactoryCreator."""
+        """Test that build passes config to MultiRunnerFactoryCreator."""
         # Setup mocks
         mock_config = MagicMock()
         mock_config.get.return_value = "test_value"
@@ -60,7 +60,7 @@ class TestBuilderBuild:
         result = build()
 
         # Verify factory was initialized with the correct config
-        assert result._config == mock_config
+        assert result._config is mock_config
 
     @patch('processcube_robot_agent.robot_agent.builder.ConfigAccessor')
     def test_build_succeeds_with_valid_config(self, mock_config_accessor):

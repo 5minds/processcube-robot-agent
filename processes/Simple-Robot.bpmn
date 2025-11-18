@@ -13,7 +13,7 @@
       <bpmn:incoming>Flow_1f6206f</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1f6206f" sourceRef="Activity_0gy1er7" targetRef="Event_1kcqzv2" />
-    <bpmn:serviceTask id="Activity_0gy1er7" name="Simple do" camunda:type="external" camunda:topic="rcc.some_dir.another">
+    <bpmn:serviceTask id="Activity_0gy1er7" name="Simple do" camunda:type="external" camunda:topic="uv.example-python-robot">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="studio.externalTask.customType" value="robot" />
