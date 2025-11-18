@@ -44,26 +44,17 @@ robot_runner = "processcube_robot_agent.tools.robot_runner:main"
 robot_file = "example.robot"
 ```
 
-### robot_runner (Modern Approach - Recommended)
+### robot_runner (Entry Point)
 CLI tool generated from `[project.scripts]` entry point.
 - **No boilerplate needed** - Just define .robot files + pyproject.toml config
 - **Automatic work items handling** - Reads input, writes output
 - **Variable & tag support** - Pass via CLI: `robot_runner --variable VAR=value --tag smoke`
-- **Backwards compatible** - Falls back to main.py if no entry point defined
+- **Standard approach** - All UV robots use entry point execution
 
 Example usage:
 ```bash
-uv tool run --python <venv-python> robot_runner --variable USERNAME=user1 --tag smoke
+uv run --python <venv-python> robot_runner --variable USERNAME=user1 --tag smoke
 ```
-
-### main.py (Legacy Approach - Still Supported)
-Core wrapper implementation with:
-- `run_robot_file()` - Execute Robot Framework via subprocess
-- `write_variables_file()` - Pass variables to Robot Framework
-- `extract_reports()` - Parse output.xml and extract logs
-- `main()` - Work Items integration
-
-This file is **optional** - robot_runner can execute robots directly via pyproject.toml config.
 
 ### example.robot
 Test file demonstrating:
@@ -115,48 +106,9 @@ Test file demonstrating:
 ✅ **Logging** - Detailed execution logs
 ✅ **Timeout protection** - 1-hour execution limit
 
-## Execution Modes
-
-### Mode 1: robot_runner Entry Point (Recommended)
-**When to use**: Modern deployments, new robots, minimal boilerplate
-
-Configuration in `pyproject.toml`:
-```toml
-[project.scripts]
-robot_runner = "processcube_robot_agent.tools.robot_runner:main"
-
-[tool.processcube]
-robot_file = "example.robot"
-```
-
-Execution:
-```bash
-uv run --python <venv-python> robot_runner --variable KEY=value --tag smoke
-```
-
-**Advantages**:
-- No main.py boilerplate needed
-- Configuration-driven via `[tool.processcube]`
-- Direct CLI variable/tag support
-- Cleaner for simple robot definitions
-
-### Mode 2: main.py Custom Handler (Legacy)
-**When to use**: Complex initialization, custom preprocessing, existing implementations
-
-Execution:
-```bash
-uv run --python <venv-python> main.py
-```
-
-**Advantages**:
-- Full control over execution flow
-- Custom preprocessing/postprocessing
-- Complex variable transformations
-- Backward compatible
-
 ## Testing
 
-### Local Testing with robot_runner
+### Local Testing
 
 ```bash
 # Create virtual environment
@@ -165,38 +117,9 @@ uv venv .venv
 # Install dependencies
 uv pip install -p .venv/bin/python -e .
 
-# Test robot_runner directly
+# Test robot_runner directly with variables
 cd robots/src/uv/robot-framework-wrapper
 uv run -p .venv/bin/python robot_runner --variable EXAMPLE_VAR=test_input
-```
-
-### Local Testing with main.py
-
-```bash
-# Create virtual environment
-uv venv .venv
-
-# Install dependencies
-uv pip install -p .venv/bin/python -e .
-
-# Run example
-cd robots/src/uv/robot-framework-wrapper
-uv run -p .venv/bin/python -c "
-import logging
-import tempfile
-from pathlib import Path
-from main import run_robot_file
-
-logging.basicConfig(level=logging.INFO)
-
-# Test with example.robot
-result = run_robot_file(
-    robot_file='example.robot',
-    variables={'EXAMPLE_VAR': 'test_input'}
-)
-
-print('Result:', result)
-"
 ```
 
 ### Integration Testing
@@ -293,11 +216,11 @@ Based on test execution with 3 test cases:
 
 1. ✅ Create wrapper prototype
 2. ✅ Create robot_runner entry point (Modern, boilerplate-free execution)
-3. ⏳ Integration into ProcessCubeRobotAgent
-4. ⏳ Create UVRobotFrameworkEngine class
-5. ⏳ Add robot.yaml support
-6. ⏳ Performance benchmarking
-7. ⏳ Migration guide
+3. ✅ Remove main.py legacy code (Enforce entry point standard)
+4. ⏳ Integration into ProcessCubeRobotAgent
+5. ⏳ Create UVRobotFrameworkEngine class
+6. ⏳ Add robot.yaml support
+7. ⏳ Performance benchmarking
 
 ## Questions & Discussion
 

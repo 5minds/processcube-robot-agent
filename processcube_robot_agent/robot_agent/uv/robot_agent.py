@@ -231,42 +231,43 @@ class RobotAgent(BaseAgent, UvRunner):
         return None
 
     def run_robot(self) -> subprocess.CompletedProcess:
-        """Execute robot using UV.
+        """Execute robot using UV via entry point from pyproject.toml.
 
-        Supports two execution modes:
-        1. Entry point mode (modern): Uses [project.scripts] from pyproject.toml
-           - No main.py needed, just define entry point
-        2. main.py mode (legacy): Falls back to main.py if no entry point found
+        Robots must define [project.scripts] in pyproject.toml with an entry point.
+        The entry point should reference a Python function that handles work items.
+
+        Example pyproject.toml:
+            [project.scripts]
+            robot_runner = "processcube_robot_agent.tools.robot_runner:main"
 
         Returns:
             Completed process from UV run command.
 
         Raises:
-            RobotError: If robot execution fails.
+            RobotError: If robot execution fails or entry point not configured.
         """
         unwrapped_path = self.get_unwrapped_path()
         venv_path = unwrapped_path.joinpath('.venv')
         pyproject_path = unwrapped_path.joinpath('pyproject.toml')
 
-        # Try entry point mode first (modern approach)
-        entry_point = None
-        if pyproject_path.exists():
-            entry_point = self._get_entry_point_from_pyproject(pyproject_path)
+        # Extract entry point from pyproject.toml
+        if not pyproject_path.exists():
+            raise RobotError(
+                "run_robot",
+                f"pyproject.toml not found in {unwrapped_path}. "
+                f"Robots must define [project.scripts] entry point in pyproject.toml"
+            )
 
-        if entry_point:
-            logger.info(f"Executing via entry point: {entry_point}")
-            cmd = ["uv", "run", "--python", str(venv_path / "bin" / "python"), entry_point]
-        else:
-            # Fall back to main.py mode (legacy)
-            main_py = unwrapped_path.joinpath('main.py')
-            if not main_py.exists():
-                raise RobotError(
-                    "run_robot",
-                    f"Neither entry point found in pyproject.toml nor main.py found in {unwrapped_path}. "
-                    f"Please define [project.scripts] in pyproject.toml or create main.py"
-                )
-            logger.info("Executing via main.py")
-            cmd = ["uv", "run", "--python", str(venv_path / "bin" / "python"), "main.py"]
+        entry_point = self._get_entry_point_from_pyproject(pyproject_path)
+        if not entry_point:
+            raise RobotError(
+                "run_robot",
+                f"No entry point found in [project.scripts] in {pyproject_path}. "
+                f"Please define an entry point like: robot_runner = 'your_module:main'"
+            )
+
+        logger.info(f"Executing robot via entry point: {entry_point}")
+        cmd = ["uv", "run", "--python", str(venv_path / "bin" / "python"), entry_point]
 
         completed_process = subprocess.run(cmd, capture_output=True, text=True, cwd=str(unwrapped_path))
 
