@@ -18,6 +18,7 @@ from pathlib import Path
 from typing import Any, Dict, Optional
 
 from robocorp.workitems import inputs, outputs
+from processcube_sdk.external_tasks import FunctionalError
 
 # Configure logging
 logging.basicConfig(
@@ -316,6 +317,19 @@ def main():
                 output_item = outputs.create(result)
                 output_item.save()
                 logger.info(f"Output saved for work item {item_count}")
+                
+                # If robot tests failed, raise FunctionalError to signal failure to ProcessCube
+                if result["status"] == "fail":
+                    error_msg = (
+                        f"Robot Framework tests failed (return code: {result['return_code']})\n"
+                        f"Failed tests detected in: {robot_file}"
+                    )
+                    logger.error(error_msg)
+                    raise FunctionalError("ROBOT_TESTS_FAILED", error_msg)
+                elif result["status"] == "error":
+                    error_msg = f"Robot Framework execution error: {result.get('error', 'Unknown error')}"
+                    logger.error(error_msg)
+                    raise FunctionalError("ROBOT_EXECUTION_ERROR", error_msg)
                 
             except Exception as e:
                 logger.error(f"Error processing work item {item_count}: {e}", exc_info=True)
