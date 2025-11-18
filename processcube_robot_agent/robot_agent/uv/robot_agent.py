@@ -1,4 +1,5 @@
 import json
+import logging
 import os
 from pathlib import Path
 import subprocess
@@ -11,6 +12,8 @@ from ..base_agent import BaseAgent
 from ..error import RobotError
 
 from .uv_runner import UvRunner
+
+logger = logging.getLogger(__name__)
 
 
 class RobotAgent(BaseAgent, UvRunner):
@@ -174,8 +177,10 @@ class RobotAgent(BaseAgent, UvRunner):
         dependencies = self._extract_dependencies(unwrapped_path / "pyproject.toml")
 
         if dependencies:
+            logger.info(f"Installing {len(dependencies)} dependencies: {', '.join(dependencies)}")
             cmd_install = ["uv", "pip", "install", "--python", str(python_path)] + dependencies
         else:
+            logger.info("No dependencies found in pyproject.toml")
             # If no dependencies found, still create the venv but don't install anything
             completed_process = subprocess.CompletedProcess(args=[], returncode=0, stdout="", stderr="")
             return completed_process
@@ -183,7 +188,13 @@ class RobotAgent(BaseAgent, UvRunner):
         completed_process = subprocess.run(cmd_install, capture_output=True, text=True)
 
         if completed_process.returncode != 0:
-            raise RobotError("unwrap", f"Installing dependencies failed with return code {completed_process.returncode}\nStderr: {completed_process.stderr}")
+            error_msg = f"Installing dependencies failed with return code {completed_process.returncode}"
+            if completed_process.stderr:
+                error_msg += f"\nStderr: {completed_process.stderr}"
+            if completed_process.stdout:
+                error_msg += f"\nStdout: {completed_process.stdout}"
+            logger.error(error_msg)
+            raise RobotError("unwrap", error_msg)
 
         return completed_process
 
@@ -205,13 +216,22 @@ class RobotAgent(BaseAgent, UvRunner):
             raise RobotError("run_robot", f"main.py not found in {unwrapped_path}")
 
         venv_path = unwrapped_path.joinpath('.venv')
-        
+
         cmd = ["uv", "run", "--python", str(venv_path / "bin" / "python"), "main.py"]
 
         completed_process = subprocess.run(cmd, capture_output=True, text=True, cwd=str(unwrapped_path))
 
         if completed_process.returncode != 0:
-            raise RobotError(f"return_code_{completed_process.returncode}", completed_process.stdout)
+            # Combine stdout and stderr for better error diagnostics
+            error_output = ""
+            if completed_process.stdout:
+                error_output += f"STDOUT:\n{completed_process.stdout}\n"
+            if completed_process.stderr:
+                error_output += f"STDERR:\n{completed_process.stderr}\n"
+            if not error_output:
+                error_output = f"Robot execution failed with return code {completed_process.returncode} but no output was captured."
+
+            raise RobotError(f"return_code_{completed_process.returncode}", error_output)
 
         return completed_process
 
@@ -237,12 +257,24 @@ class RobotAgent(BaseAgent, UvRunner):
         """
         result: Dict[str, Any] = {}
 
+        logger.info(f"Starting robot execution for task {task.get('id')} with filename {self._filename}")
+
         self.check_uv()
+        logger.info("UV availability check passed")
 
         with tempfile.TemporaryDirectory() as tmpdirname:
+            logger.info(f"Creating input data in {tmpdirname}")
             self.create_input_data(tmpdirname, payload, task)
+
+            logger.info(f"Unwrapping robot from {self.get_robot_filename()}")
             self.unwrap()
+            logger.info(f"Robot unwrapped to {self.get_unwrapped_path()}")
+
+            logger.info("Running robot...")
             self.run_robot()
+            logger.info("Robot execution completed successfully")
+
+            logger.info("Reading output data...")
             result = self.read_output_data(tmpdirname, task)
 
         return result
