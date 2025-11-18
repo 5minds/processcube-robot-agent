@@ -241,15 +241,21 @@ def run_robot_file(
 
 def main():
     """Main entry point for the Robot Framework wrapper.
-    
-    Expects input work items with the following structure:
-    {
-        "robot_file": "path/to/file.robot",  # Required
-        "variables": {...},                  # Optional dict
-        "tags": [...],                       # Optional list
-        "suite_name": "..."                  # Optional string
-    }
-    
+
+    Accepts input work items in two ways:
+
+    1. **With robot_file parameter** (recommended):
+       {
+           "robot_file": "path/to/file.robot",  # Path to *.robot file to execute
+           "variables": {...},                  # Optional dict of variables
+           "tags": [...],                       # Optional list of tags to include
+           "suite_name": "..."                  # Optional test suite name
+       }
+
+    2. **Without parameters** (demonstration mode):
+       {} or {"variables": {...}}
+       Uses the included example.robot file to demonstrate functionality.
+
     Creates output work items with execution results:
     {
         "status": "pass|fail|error",
@@ -257,9 +263,9 @@ def main():
         "output_xml": <xml_string>,          # If available
         "log_html_path": <path>,             # If available
         "report_html_path": <path>,          # If available
-        "statistics": {...},                 # If parsed
-        "stdout": <output>,
-        "stderr": <errors>,
+        "statistics": {...},                 # If parsed from output.xml
+        "stdout": <output>,                  # Robot Framework console output
+        "stderr": <errors>,                  # Any error messages
     }
     """
     logger.info("Starting Robot Framework wrapper")
@@ -275,18 +281,29 @@ def main():
             logger.info(f"Processing work item {item_count}: {payload}")
             
             try:
-                # Extract robot file path (required)
+                # Extract robot file path (optional - defaults to example.robot)
                 robot_file = payload.get("robot_file")
+
+                # If no robot file specified, use example.robot for demonstration
                 if not robot_file:
-                    raise ValueError("Missing required field: 'robot_file'")
-                
+                    logger.warning("No 'robot_file' specified in payload, using example.robot for demonstration")
+                    robot_file = "example.robot"
+
                 # Extract optional parameters
                 variables = payload.get("variables", {})
                 tags = payload.get("tags")
                 suite_name = payload.get("suite_name")
-                
-                # Execute robot file
+
+                # Log execution details
                 logger.info(f"Executing robot file: {robot_file}")
+                if variables:
+                    logger.info(f"With variables: {variables}")
+                if tags:
+                    logger.info(f"With tags: {tags}")
+                if suite_name:
+                    logger.info(f"With suite name: {suite_name}")
+
+                # Execute robot file
                 result = run_robot_file(
                     robot_file=robot_file,
                     variables=variables,
