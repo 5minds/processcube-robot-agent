@@ -181,16 +181,28 @@ class RobotAgent(BaseAgent, UvRunner):
             # Install only the declared dependencies, not the robot project itself
             # The robot pyproject.toml should not have a [build-system] section
             cmd_install = ["uv", "pip", "install", "--python", str(python_path)] + dependencies
+
+            completed_process = subprocess.run(cmd_install, capture_output=True, text=True)
+
+            if completed_process.returncode != 0:
+                error_msg = f"Installing dependencies failed with return code {completed_process.returncode}"
+                if completed_process.stderr:
+                    error_msg += f"\nStderr: {completed_process.stderr}"
+                if completed_process.stdout:
+                    error_msg += f"\nStdout: {completed_process.stdout}"
+                logger.error(error_msg)
+                raise RobotError("unwrap", error_msg)
         else:
             logger.info("No dependencies found in pyproject.toml")
-            # If no dependencies found, still create the venv but don't install anything
-            completed_process = subprocess.CompletedProcess(args=[], returncode=0, stdout="", stderr="")
-            return completed_process
 
-        completed_process = subprocess.run(cmd_install, capture_output=True, text=True)
+        # Install processcube_robot_agent in the venv so entry points are available
+        # This is necessary for robot_runner entry point to work
+        logger.info("Installing processcube_robot_agent for entry point support")
+        cmd_install_agent = ["uv", "pip", "install", "--python", str(python_path), "processcube-robot-agent"]
+        completed_process = subprocess.run(cmd_install_agent, capture_output=True, text=True)
 
         if completed_process.returncode != 0:
-            error_msg = f"Installing dependencies failed with return code {completed_process.returncode}"
+            error_msg = f"Installing processcube_robot_agent failed with return code {completed_process.returncode}"
             if completed_process.stderr:
                 error_msg += f"\nStderr: {completed_process.stderr}"
             if completed_process.stdout:
