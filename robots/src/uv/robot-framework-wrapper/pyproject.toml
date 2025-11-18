@@ -10,8 +10,16 @@ dependencies = [
     "webdriver-manager>=4.0.0",
 ]
 
+[project.scripts]
+robot_runner = "processcube_robot_agent.tools.robot_runner:main"
+
 [project.optional-dependencies]
 dev = [
     "pytest>=7.0",
     "black>=22.0",
 ]
+
+[tool.processcube]
+# Optional: Set default robot file to execute
+# If specified and no robot_file is passed via CLI or payload, this will be used
+robot_file = "example.robot"

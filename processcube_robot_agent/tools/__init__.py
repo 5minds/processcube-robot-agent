@@ -3,6 +3,7 @@
 This package provides reusable tools for building ProcessCube robots:
 - RobotFrameworkExecutor: Execute *.robot files from Python
 - process_work_items: Standard work item processing framework
+- robot_runner: Standalone CLI for executing Robot Framework files
 - Error handlers: FunctionalError utilities for proper error signaling
 
 Example:
@@ -26,6 +27,15 @@ Example:
     
     if __name__ == "__main__":
         process_work_items(process_task)
+
+Robot Runner (Entry Point):
+    Instead of writing main.py, add to pyproject.toml:
+    
+    [project.scripts]
+    robot_runner = "processcube_robot_agent.tools.robot_runner:main"
+    
+    Then execute:
+    python -m processcube_robot_agent.tools.robot_runner my_robot.robot
 """
 
 from .robot_executor import RobotFrameworkExecutor
