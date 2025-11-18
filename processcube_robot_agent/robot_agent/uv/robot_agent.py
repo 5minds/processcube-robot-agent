@@ -246,6 +246,21 @@ class RobotAgent(BaseAgent, UvRunner):
             logger.error(error_msg)
             raise RobotError("unwrap", error_msg)
 
+        # Install the robot package itself so entry points are available
+        # This must happen after processcube_robot_agent is installed
+        logger.info("Installing robot package for entry point availability")
+        cmd_install_robot = ["uv", "pip", "install", "--python", str(python_path), "-e", str(unwrapped_path)]
+        completed_process = subprocess.run(cmd_install_robot, capture_output=True, text=True)
+
+        if completed_process.returncode != 0:
+            error_msg = f"Installing robot package failed with return code {completed_process.returncode}"
+            if completed_process.stderr:
+                error_msg += f"\nStderr: {completed_process.stderr}"
+            if completed_process.stdout:
+                error_msg += f"\nStdout: {completed_process.stdout}"
+            logger.error(error_msg)
+            raise RobotError("unwrap", error_msg)
+
         return completed_process
 
     def _get_entry_point_from_pyproject(self, pyproject_path: Path) -> str:
