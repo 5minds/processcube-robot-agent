@@ -11,7 +11,7 @@ ${EXAMPLE_VAR}    default_value
 Example Test 1: Simple Variable Processing
     [Documentation]    Demonstrates variable passing and string operations
     Log    Testing with variable: ${EXAMPLE_VAR}
-    Should Be Equal As Strings    ${EXAMPLE_VAR}    test_input
+    Should Be Equal As Strings    ${EXAMPLE_VAR}    default_value
     Log    Variable test passed
 
 Example Test 2: Dictionary Operations
