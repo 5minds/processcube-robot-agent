@@ -43,6 +43,7 @@
     "webpack-cli": "^6.0.0"
   },
   "dependencies": {
+    "@5minds/processcube_cli": "^4.0.0",
     "markdown-image-loader": "^3.0.0",
     "react-contextmenu": "^2.14.0",
     "uuid": "^9.0.0"

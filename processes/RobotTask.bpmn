@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definition_e6ccb1d6-e1b2-42df-b5e5-f11467dad903" targetNamespace="http://bpmn.io/schema/bpmn" exporter="5Minds Studio" exporterVersion="1">
+<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camunda="http://camunda.org/schema/1.0/bpmn" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" id="Definition_e6ccb1d6-e1b2-42df-b5e5-f11467dad903" targetNamespace="http://bpmn.io/schema/bpmn" exporter="5Minds Studio" exporterVersion="2.3.0-insiders.27">
   <bpmn:collaboration id="Collaboration_1cidyxu" name="">
     <bpmn:participant id="Participant_0px403d" name="RobotTask" processRef="robot_task" />
   </bpmn:collaboration>
@@ -19,12 +19,12 @@
       <bpmn:outgoing>Flow_0pjuqpl</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:sequenceFlow id="Flow_0pjuqpl" sourceRef="StartEvent_1" targetRef="Activity_0y2r5ar" />
-    <bpmn:serviceTask id="Activity_0y2r5ar" name="Run Windows UI" camunda:type="external" camunda:topic="rcc.windows-example-calculator">
+    <bpmn:serviceTask id="Activity_0y2r5ar" name="Run Windows UI" camunda:type="external" camunda:topic="rcc.webui">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   test: &#39;from somedir&#39;&#10;}" />
           <camunda:property name="some_property" value="" />
-          <camunda:property name="studio.externalTask.robotAddin.agentId" value="1b765644-2b92-4ae5-b22f-93e36f45da66" />
+          <camunda:property name="studio.externalTask.robotAddin.agentId" value="aa0a2c6a-20ab-49f5-81e7-26e751c5c841" />
           <camunda:property name="studio.externalTask.customType" value="robot" />
         </camunda:properties>
       </bpmn:extensionElements>
@@ -33,11 +33,11 @@
     </bpmn:serviceTask>
     <bpmn:sequenceFlow id="Flow_0tgke77" sourceRef="Activity_0y2r5ar" targetRef="Activity_1cgd1h1" />
     <bpmn:sequenceFlow id="Flow_0s6ako2" sourceRef="Activity_1cgd1h1" targetRef="Activity_1fls5is" />
-    <bpmn:serviceTask id="Activity_1cgd1h1" name="Run Web" camunda:type="external" camunda:topic="rcc.webui">
+    <bpmn:serviceTask id="Activity_1cgd1h1" name="Run Web" camunda:type="external" camunda:topic="rcc.some_dir.another">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="studio.externalTask.customType" value="robot" />
-          <camunda:property name="studio.externalTask.robotAddin.agentId" value="1b765644-2b92-4ae5-b22f-93e36f45da66" />
+          <camunda:property name="studio.externalTask.robotAddin.agentId" value="aa0a2c6a-20ab-49f5-81e7-26e751c5c841" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0tgke77</bpmn:incoming>
@@ -47,12 +47,12 @@
       <bpmn:incoming>Flow_1mju9ja</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="Flow_1mju9ja" sourceRef="Activity_1fls5is" targetRef="Event_0a00qx9" />
-    <bpmn:serviceTask id="Activity_1fls5is" name="Run Excel" camunda:type="external" camunda:topic="rcc.readexcel">
+    <bpmn:serviceTask id="Activity_1fls5is" name="Run Excel" camunda:type="external" camunda:topic="rcc.some_dir.another">
       <bpmn:extensionElements>
         <camunda:properties>
           <camunda:property name="payload" value="{&#10;   no_test: &#39;from root&#39;&#10;}" />
           <camunda:property name="studio.externalTask.customType" value="robot" />
-          <camunda:property name="studio.externalTask.robotAddin.agentId" value="1b765644-2b92-4ae5-b22f-93e36f45da66" />
+          <camunda:property name="studio.externalTask.robotAddin.agentId" value="aa0a2c6a-20ab-49f5-81e7-26e751c5c841" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0s6ako2</bpmn:incoming>

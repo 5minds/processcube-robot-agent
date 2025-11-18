@@ -11,14 +11,14 @@ Get the list of people from the Excel file
     Open Workbook    challenge.xlsx
     ${table}=    Read Worksheet As Table    header=True
     Close Workbook
-    [Return]    ${table}
+    RETURN    ${table}
 
 Set value by XPath
     [Arguments]    ${xpath}    ${value}
     ${result}=
     ...    Execute Javascript
     ...    document.evaluate('${xpath}',document.body,null,9,null).singleNodeValue.value='${value}';
-    [Return]    ${result}
+    RETURN    ${result}
 
 Fill and submit the form
     [Arguments]    ${person}
