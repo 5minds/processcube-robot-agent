@@ -197,8 +197,14 @@ class RobotAgent(BaseAgent, UvRunner):
 
         # Install processcube_robot_agent in the venv so entry points are available
         # This is necessary for robot_runner entry point to work
+        # Use editable install from the parent project directory
         logger.info("Installing processcube_robot_agent for entry point support")
-        cmd_install_agent = ["uv", "pip", "install", "--python", str(python_path), "processcube-robot-agent"]
+
+        # Find the processcube_robot_agent package in the parent directories
+        # It should be installed as editable (-e) in the main project venv
+        # For the robot venv, we need to install it from the project root
+        project_root = Path().cwd()
+        cmd_install_agent = ["uv", "pip", "install", "--python", str(python_path), "-e", str(project_root)]
         completed_process = subprocess.run(cmd_install_agent, capture_output=True, text=True)
 
         if completed_process.returncode != 0:
