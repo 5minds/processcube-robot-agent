@@ -200,10 +200,30 @@ class RobotAgent(BaseAgent, UvRunner):
         # Use editable install from the parent project directory
         logger.info("Installing processcube_robot_agent for entry point support")
 
-        # Find the processcube_robot_agent package in the parent directories
-        # It should be installed as editable (-e) in the main project venv
-        # For the robot venv, we need to install it from the project root
+        # Find the processcube_robot_agent package by searching for pyproject.toml
+        # Start from current directory and search upwards
         project_root = Path().cwd()
+        while project_root != project_root.parent:
+            if (project_root / "pyproject.toml").exists():
+                # Verify it's the processcube-robot-agent project
+                try:
+                    import tomllib
+                except ImportError:
+                    import tomli as tomllib
+                try:
+                    with open(project_root / "pyproject.toml", "rb") as f:
+                        data = tomllib.load(f)
+                        if data.get("project", {}).get("name") == "processcube-robot-agent":
+                            logger.info(f"Found processcube-robot-agent project at {project_root}")
+                            break
+                except Exception:
+                    pass
+            project_root = project_root.parent
+        else:
+            # Fallback: use current working directory
+            project_root = Path().cwd()
+            logger.warning(f"Could not find processcube-robot-agent project, using {project_root}")
+
         cmd_install_agent = ["uv", "pip", "install", "--python", str(python_path), "-e", str(project_root)]
         completed_process = subprocess.run(cmd_install_agent, capture_output=True, text=True)
 
