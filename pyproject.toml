@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "processcube-robot-agent"
-version = "0.1.1"
+version = "0.1.2"
 description = "ProcessCube Robot Agent - Execute robots via UV with native Python integration"
 readme = "README.md"
 requires-python = ">=3.11"
