@@ -150,8 +150,8 @@ Das Projekt ist **produktionsreif** mit folgenden Qualitätsmetriken:
 
 | Metrik | Status | Details |
 |--------|--------|----------|
-| **Tests Gesamt** | ✅ 195/195 | 100% Pass-Rate |
-| **Python Tests** | ✅ 98/98 | 100% Pass-Rate |
+| **Tests Gesamt** | ✅ 360/360 | 100% Pass-Rate |
+| **Python Tests** | ✅ 279/279 | 100% Pass-Rate (216 unit + 63 integration) |
 | **TypeScript Tests** | ✅ 81/81 | 100% Pass-Rate |
 | **Type Hints** | ✅ 85% | Python Code Coverage |
 | **Sicherheit** | ✅ Safe | Shell-Injection Fixes, 0 npm Vulnerabilities |
@@ -469,6 +469,210 @@ systemctl start processcube-robot-agent
 
 # 4. Verifikation
 journalctl -u processcube-robot-agent -n 20
+```
+
+### 🐳 Docker-Image Konfiguration & Verwendung
+
+Das Projekt enthält ein `Dockerfile` für containerisierte Deployment. Die Docker-Images werden automatisch von GitHub Actions gebaut und in GitHub Container Registry (ghcr.io) gepusht.
+
+#### Docker-Image bauen
+
+```bash
+# Lokal bauen
+docker build -t processcube-robot-agent:latest .
+
+# Mit Version-Tag
+docker build -t processcube-robot-agent:0.1.0 .
+
+# Mit MultiArch (für ARM64/AMD64)
+docker buildx build --platform linux/amd64,linux/arm64 \
+  -t processcube-robot-agent:latest .
+```
+
+#### Docker-Container starten
+
+```bash
+# Basis: Mit Konfigurationsdatei und Robots-Verzeichnis
+docker run -d \
+  --name robot-agent \
+  -p 42042:42042 \
+  -e CONFIG_FILE=/app/config.json \
+  -v $(pwd)/config.json:/app/config.json \
+  -v $(pwd)/robots:/app/robots \
+  processcube-robot-agent:latest
+
+# Mit ProcessCube-Engine-URL
+docker run -d \
+  --name robot-agent \
+  -p 42042:42042 \
+  -e CONFIG_FILE=/app/config.json \
+  -e PROCESSCUBE_ENGINE_URL=http://processcube-engine:56100 \
+  -v $(pwd)/config.json:/app/config.json \
+  -v $(pwd)/robots:/app/robots \
+  processcube-robot-agent:latest
+
+# Mit Docker Compose
+docker-compose up -d
+```
+
+#### Docker Compose (docker-compose.yml)
+
+```yaml
+version: '3.8'
+
+services:
+  robot-agent:
+    image: ghcr.io/5minds/processcube-robot-agent:latest
+    container_name: processcube-robot-agent
+    ports:
+      - "42042:42042"
+    environment:
+      CONFIG_FILE: /app/config.json
+      PROCESSCUBE_ENGINE_URL: http://processcube-engine:56100
+      LOG_LEVEL: INFO
+    volumes:
+      - ./config.json:/app/config.json
+      - ./robots:/app/robots
+      - robot-agent-logs:/var/log/processcube-robot-agent
+    depends_on:
+      - processcube-engine
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:42042/robot_agents/robots"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  processcube-engine:
+    image: processcube/engine:latest
+    container_name: processcube-engine
+    ports:
+      - "56100:56100"
+    environment:
+      DATABASE_URL: postgresql://postgres:postgres@postgres:5432/processcube
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:15-alpine
+    container_name: processcube-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: processcube
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  robot-agent-logs:
+  postgres-data:
+```
+
+#### Docker-Image Tags auf ghcr.io
+
+GitHub Actions pusht automatisch folgende Tags:
+
+```bash
+# Nach git push master
+ghcr.io/5minds/processcube-robot-agent:master
+ghcr.io/5minds/processcube-robot-agent:latest
+ghcr.io/5minds/processcube-robot-agent:<commit-sha>
+
+# Nach Release-Tag (z.B. v0.1.0)
+ghcr.io/5minds/processcube-robot-agent:0.1.0
+ghcr.io/5minds/processcube-robot-agent:0.1
+ghcr.io/5minds/processcube-robot-agent:<commit-sha>
+```
+
+#### Docker-Image Konfiguration
+
+Folgende Umgebungsvariablen werden unterstützt:
+
+| Variable | Standard | Beschreibung |
+|----------|----------|-------------|
+| `CONFIG_FILE` | `/app/config.json` | Pfad zur Konfigurationsdatei |
+| `PROCESSCUBE_ENGINE_URL` | - | ProcessCube-Engine URL (optional) |
+| `LOG_LEVEL` | `INFO` | Logging-Level (DEBUG, INFO, WARNING, ERROR) |
+| `ROBOT_TIMEOUT` | `300` | Timeout für Robot-Ausführung (Sekunden) |
+| `RCC_DEBUG` | `false` | RCC Debug-Output aktivieren |
+| `PYTHONUNBUFFERED` | `1` | Python Buffering deaktivieren |
+
+#### Docker-Container Mounting
+
+```bash
+# Robots vom Host
+-v /path/to/robots:/app/robots
+
+# Konfiguration vom Host
+-v /path/to/config.json:/app/config.json:ro
+
+# Logs persistent speichern
+-v robot-agent-logs:/var/log/processcube-robot-agent
+
+# Temp-Verzeichnis (für RCC unwrapped)
+-v robot-agent-temp:/app/temp
+```
+
+#### Docker-Image Security
+
+```bash
+# Als Non-Root User ausführen (automatisch im Image)
+docker run -u 1000:1000 \
+  -v $(pwd)/robots:/app/robots \
+  processcube-robot-agent:latest
+
+# Mit Read-Only Filesystem (außer /tmp, /var)
+docker run --read-only \
+  --tmpfs /tmp \
+  --tmpfs /var/tmp \
+  -v $(pwd)/robots:/app/robots:ro \
+  processcube-robot-agent:latest
+```
+
+#### Docker-Image optimieren
+
+Das Standard-Image ist ~500MB mit allen Dependencies. Für kleinere Images:
+
+```bash
+# Production-Image (Multi-Stage Build)
+# Verwendung: docker build -f Dockerfile.prod -t processcube-robot-agent:prod .
+```
+
+#### Troubleshooting Docker
+
+```bash
+# Container-Logs anschauen
+docker logs robot-agent
+docker logs -f robot-agent  # Live-Logs
+
+# In Container SSH
+docker exec -it robot-agent sh
+
+# Container Status
+docker ps | grep robot-agent
+docker inspect robot-agent | jq '.[0].State'
+
+# Health-Check
+docker inspect --format='{{.State.Health.Status}}' robot-agent
+
+# Port überprüfen
+docker port robot-agent
+```
+
+#### Docker-Image für Development
+
+```bash
+# Development-Build mit zusätzlichen Tools
+docker build -f Dockerfile.dev -t processcube-robot-agent:dev .
+
+# Mit mounted Quellcode für Live-Reload
+docker run -d \
+  -v $(pwd):/app \
+  -v /app/venv  # Exclude venv
+  processcube-robot-agent:dev
 ```
 
 ---
@@ -1067,6 +1271,153 @@ Für detaillierte Anleitung zur UV-Robot-Entwicklung siehe:
 
 ---
 
+## 🛠️ Robot Execution Tools & Entry Points
+
+Das System bietet spezialisierte Execution-Tools für Robots ohne boilerplate `main.py` Wrapper. Diese Tools werden via [project.scripts] Entry Points in `pyproject.toml` definiert und ermöglichen direkte Ausführung von Robots.
+
+### robot_runner - Robot Framework Entry Point
+
+**Zweck:** Eigenständige Ausführung von Robot Framework .robot-Dateien als CLI-Tool
+
+#### Installation & Konfiguration
+
+```bash
+# In pyproject.toml definieren:
+[project.scripts]
+robot_runner = "processcube_robot_agent.tools.robot_runner:main"
+
+# oder mit UV-Robot Konfig:
+[tool.processcube]
+robot_file = "my_robot.robot"  # Default robot file
+```
+
+#### Verwendung
+
+```bash
+# Option 1: Robot-Datei direkt übergeben
+robot_runner my_robot.robot
+
+# Option 2: Mit Variablen
+robot_runner my_robot.robot \
+  --variable USER=admin \
+  --variable PASSWORD=secret
+
+# Option 3: Mit Tags
+robot_runner my_robot.robot \
+  --tag smoke \
+  --tag critical
+
+# Option 4: Aus Konfiguration (pyproject.toml)
+robot_runner  # Nutzt robot_file aus [tool.processcube]
+
+# Option 5: Mit Python direkt
+python -m processcube_robot_agent.tools.robot_runner my_robot.robot
+
+# Hilfe anzeigen
+robot_runner --help
+```
+
+#### Konfiguration in pyproject.toml
+
+```toml
+[project]
+name = "my-robot"
+version = "0.1.0"
+
+[project.scripts]
+robot_runner = "processcube_robot_agent.tools.robot_runner:main"
+
+[tool.processcube]
+# Optional: Defaults für robot_runner
+robot_file = "main.robot"
+variables = { "USER" = "admin", "TIMEOUT" = "30" }
+tags = ["smoke", "production"]
+```
+
+#### Prozess-Integration
+
+Der `robot_runner` integriert sich nahtlos mit ProcessCube:
+- Liest Input Work Items aus Umgebungsvariablen
+- Führt Robot Framework aus
+- Schreibt Output Work Items
+- Signalisiert Fehler für ProcessCube Error Handling
+
+```bash
+# Mit ProcessCube Work Items
+RPA_WORKITEMS_PATH=/tmp/workitems.json robot_runner task.robot
+
+# Output wird geschrieben zu:
+# $RPA_OUTPUT_WORKITEM_PATH/output.json
+```
+
+#### Vorteile vs. Manuell
+
+| Aspekt | robot_runner | Manuell (main.py) |
+|--------|--|--|
+| Boilerplate | ❌ Keine | ✅ Viel |
+| Konfigurierbar | ✅ TOML-based | ⚠️ Hardcoded |
+| Variables | ✅ CLI + TOML | ❌ Hardcoded |
+| Tags Support | ✅ Ja | ❌ Nein |
+| Work Items | ✅ Automatisch | ❌ Manuell |
+
+#### Beispiel: RCC-Robot mit robot_runner
+
+```bash
+# 1. Robot Struktur
+robots/src/rcc/my-task/
+├── robot.yaml
+├── main.robot
+├── conda.yaml
+└── pyproject.toml
+
+# 2. pyproject.toml
+[project]
+name = "my-task"
+requires-python = ">=3.11"
+
+[project.scripts]
+robot_runner = "processcube_robot_agent.tools.robot_runner:main"
+
+[tool.processcube]
+robot_file = "main.robot"
+
+# 3. Direkte Ausführung
+cd robots/src/rcc/my-task
+robot_runner main.robot
+
+# oder mit Variablen
+robot_runner main.robot --variable API_KEY=secret123
+```
+
+### UV-Runner - Python Execution Engine
+
+Für UV-basierte Robots wird automatisch der UV-Package Manager verwendet.
+
+```bash
+# Struktur für UV-Robot
+robots/src/uv/my-api-robot/
+├── pyproject.toml  # mit Dependencies
+├── main.py         # Entry point
+└── requirements.txt # Optional fallback
+
+# Automatische Ausführung via UV:
+# uv run --directory robots/src/uv/my-api-robot main.py
+```
+
+### RCC-Runner - Robot Framework Compiler
+
+Für RCC-basierte Robots wird der Robot Code Compiler verwendet:
+
+```bash
+# RCC-Robots werden automatisch gepackt
+npm run pack
+
+# Ausführung
+rcc robot run --task TaskName --directory robots/src/rcc/webui
+```
+
+---
+
 ## 📦 Studio-Erweiterung
 
 Die Studio-Erweiterung ermöglicht die grafische Konfiguration von Robot-Agents und Tasks in der 5Minds Studio IDE.
@@ -1536,7 +1887,7 @@ npm run processcube_robot_agent
 
 **Aktueller Status:** ✅ **PRODUKTIONSREIFE**
 - Alle kritischen Sicherheitsprobleme behoben
-- 195 Tests mit 100% Pass-Rate (114 Python + 81 TypeScript)
+- 360 Tests mit 100% Pass-Rate (279 Python + 81 TypeScript)
 - 85% Type Hints Coverage
 - 90% Docstring Coverage
 - 0 npm Vulnerabilities
