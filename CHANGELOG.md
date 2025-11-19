@@ -4,6 +4,50 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.1.0] - 2025-11-19
+
+### ✨ New Features
+
+**🚀 Release Automation**
+- Auto-extract release notes from CHANGELOG.md for GitHub Releases
+- Comprehensive release guide (RELEASING.md) with step-by-step instructions
+- Python script for parsing CHANGELOG.md versions
+- GitHub Actions automatically creates releases with formatted notes
+
+**📖 Documentation Enhancements**
+- Added RELEASING.md with complete release workflow
+- Release checklist and troubleshooting guide
+- Semantic versioning and Keep a Changelog guidelines
+- Pre-release version support (alpha, beta, rc)
+
+### 🔧 Improvements
+
+**CI/CD Pipeline**
+- Updated GitHub Actions release job to extract notes automatically
+- Added Python 3.12 support in release job
+- Improved error handling with fallback mechanisms
+- Auto-detection of pre-release versions
+
+**Developer Experience**
+- Easy release process: Update CHANGELOG → Git tag → Done
+- Single source of truth for release notes (CHANGELOG.md)
+- Manual testing support: `python scripts/extract_release_notes.py VERSION`
+
+### 📊 Testing & Quality
+
+**Test Coverage Consolidation**
+- Python backend: 279 tests (70.67% coverage)
+- TypeScript frontend: 81 tests
+- Integration tests: 71 tests
+- All tests 100% passing
+
+**CI/CD Quality**
+- Coverage check properly separated (unit/integration)
+- All security checks passing (0 npm vulnerabilities)
+- Modern GitHub Actions with latest action versions
+
+---
+
 ## [0.0.1] - 2025-11-19
 
 ### 🎉 Initial Release
@@ -224,7 +268,7 @@ We welcome contributions! Please see our [Contributing Guidelines](#contributing
 
 MIT License - See [LICENSE](./LICENSE) for details
 
-#### 🎯 Next Release Goals (0.1.0)
+#### 🎯 Next Release Goals (0.2.0)
 
 - Parallel robot execution (task queue system)
 - Enhanced monitoring and metrics (Prometheus support)
@@ -245,7 +289,7 @@ Found a bug or have a feature request?
 
 ---
 
-**Version:** 0.0.1
+**Latest Version:** 0.1.0
 **Release Date:** November 19, 2025
 **Status:** ✅ Production Ready
 
