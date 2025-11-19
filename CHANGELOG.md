@@ -4,6 +4,27 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.1.2] - 2025-11-19
+
+### 📚 Documentation
+
+**English Translation**
+- Translated README.md core sections to English for international audience:
+  - Overview and architecture documentation
+  - Installation & setup guide
+  - Comprehensive deployment guide (Docker support)
+  - Quick start guide
+  - Configuration documentation
+  - Project structure
+- Translated CHANGELOG.md to English
+- Repository now fully prepared for public release with consistent English documentation
+
+**Documentation Cleanup**
+- Removed old discussion and notes files (ROBOT_YAML_DISCUSSION.md, WRAPPER_FIX_NOTES.md)
+- Repository streamlined for public visibility
+
+---
+
 ## [0.1.1] - 2025-11-19
 
 ### 📚 Documentation
@@ -319,7 +340,7 @@ Found a bug or have a feature request?
 
 ---
 
-**Latest Version:** 0.1.0
+**Latest Version:** 0.1.2
 **Release Date:** November 19, 2025
 **Status:** ✅ Production Ready
 
