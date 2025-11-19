@@ -18,6 +18,7 @@
         <camunda:properties>
           <camunda:property name="studio.externalTask.customType" value="robot" />
           <camunda:property name="studio.externalTask.robotAddin.agentId" value="aa0a2c6a-20ab-49f5-81e7-26e751c5c841" />
+          <camunda:property name="payload" value="{&#10;    &#34;variables&#34;: {&#10;        &#34;test&#34;: &#34;test&#34;&#10;    }&#10;}" />
         </camunda:properties>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_0ck99xy</bpmn:incoming>
