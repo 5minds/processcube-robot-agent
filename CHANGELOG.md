@@ -11,7 +11,7 @@ All notable changes to this project will be documented in this file.
 **README.md Modernization**
 - Updated test count to 360 (279 Python + 81 TypeScript)
 - Added comprehensive UV-Runner / Robot Execution Tools documentation
-- Added Docker-Image configuration & usage guide with examples:
+- Added Docker image configuration & usage guide with examples:
   - Docker build and container startup
   - Docker Compose full stack configuration
   - ghcr.io image tags and versioning

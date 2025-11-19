@@ -1,37 +1,37 @@
 # ProcessCube Robot Agent
 
-> Eine RPA-Integrationslösung, die Robot Framework-basierte und Pure Python Automatisierungen mit ProcessCube Workflow-Engines verbindet.
+> An RPA integration solution that connects Robot Framework-based and pure Python automations with ProcessCube workflow engines.
 
-## 🎯 Überblick
+## 🎯 Overview
 
-Das **ProcessCube Robot Agent** Projekt ist eine umfassende Lösung zur Integration von Robotic Process Automation (RPA) mit ProcessCube, einem BPM-System (Business Process Management). Es unterstützt **zwei flexible Ansätze** zur Robot-Entwicklung:
+The **ProcessCube Robot Agent** project is a comprehensive solution for integrating Robotic Process Automation (RPA) with ProcessCube, a Business Process Management (BPM) system. It supports **two flexible approaches** for robot development:
 
-1. **RCC-basierte Robots** (Robot Framework) - Für UI-Automation und textgetriebene Prozesse
-2. **UV-basierte Robots** (Pure Python) - Für APIs, Datenverarbeitung und Python-Libraries
+1. **RCC-based Robots** (Robot Framework) - For UI automation and text-driven processes
+2. **UV-based Robots** (Pure Python) - For APIs, data processing, and Python libraries
 
-### Komponenten
+### Components
 
-1. **processcube_robot_agent** - Ein Python-basierter Microservice, der RPA-Roboter verwaltet und ausführt
-2. **robots** - Eine Sammlung von Automatisierungs-Aufgaben (RCC und UV)
-3. **studio_extension** - Eine TypeScript/React-Erweiterung für die 5Minds Studio IDE
+1. **processcube_robot_agent** - A Python-based microservice that manages and executes RPA robots
+2. **robots** - A collection of automation tasks (RCC and UV)
+3. **studio_extension** - A TypeScript/React extension for the 5Minds Studio IDE
 
-### Zwei Ansätze zur Robot-Entwicklung
+### Two Approaches to Robot Development
 
-Das System unterstützt beide Ansätze parallel, ohne Migration notwendig zu machen:
+The system supports both approaches in parallel without requiring migration:
 
-| Ansatz | Typ | Best For | Lerne mehr |
-|--------|------|----------|-----------|
-| **RCC** | Robot Framework (Text) | UI-Automation, Web-Scraping | [README.md - RCC Guide](#-robot-entwicklung) |
-| **UV** | Pure Python | APIs, Datenverarbeitung, Microservices | [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md) |
+| Approach | Type | Best For | Learn More |
+|----------|------|----------|-----------|
+| **RCC** | Robot Framework (Text) | UI automation, web scraping | [README.md - RCC Guide](#-robot-development) |
+| **UV** | Pure Python | APIs, data processing, microservices | [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md) |
 
-**Unsicher, welcher Ansatz?** → Siehe [QUICK_START.md - Vergleichstabelle](./QUICK_START.md#rcc-vs-uv-vergleich)
+**Unsure which approach?** → See [QUICK_START.md - Comparison Table](./QUICK_START.md#rcc-vs-uv-comparison)
 
-### Architektur
+### Architecture
 
 ```
 ┌─────────────────────────────────┐
-│    ProcessCube Engine           │ (Workflow-Engine)
-│    (BPMN Prozesse)              │
+│    ProcessCube Engine           │ (Workflow Engine)
+│    (BPMN Processes)             │
 └──────────┬──────────────────────┘
            │
       External Tasks
@@ -54,69 +54,69 @@ Das System unterstützt beide Ansätze parallel, ohne Migration notwendig zu mac
 
 ---
 
-## 📋 Inhaltsverzeichnis
+## 📋 Table of Contents
 
 1. [Installation & Setup](#installation--setup)
-2. [Schnelleinstieg](#schnelleinstieg)
-3. [Konfiguration](#konfiguration)
-4. [Projektstruktur](#projektstruktur)
-5. [Robot-Entwicklung](#robot-entwicklung)
-   - [RCC (Robot Framework)](#robot-framework-grundlagen)
-   - [UV (Pure Python)](#-uv-robot-entwicklung-pure-python)
-6. [Studio-Erweiterung](#-studio-erweiterung)
-7. [API-Dokumentation](#api-dokumentation)
-8. [Entwicklung & Debugging](#entwicklung--debugging)
-9. [Problembehebung](#problembehebung)
+2. [Quick Start](#quick-start)
+3. [Configuration](#configuration)
+4. [Project Structure](#project-structure)
+5. [Robot Development](#robot-development)
+   - [RCC (Robot Framework)](#robot-framework-basics)
+   - [UV (Pure Python)](#-uv-robot-development-pure-python)
+6. [Studio Extension](#-studio-extension)
+7. [API Documentation](#api-documentation)
+8. [Development & Debugging](#development--debugging)
+9. [Troubleshooting](#troubleshooting)
 10. [Contributing](#contributing)
 
 ---
 
 ## 🚀 Installation & Setup
 
-### Voraussetzungen
+### Prerequisites
 
-- **Python** 3.8 oder höher
-- **Node.js** 14.x oder höher (für Studio-Erweiterung)
-- **npm** 6.x oder höher
+- **Python** 3.8 or higher
+- **Node.js** 14.x or higher (for Studio extension)
+- **npm** 6.x or higher
 - **RCC** (Robocorp Command Center) - Download: https://github.com/robocorp/rcc
 - **Git**
 
 ### Installation
 
-#### 1. Repository klonen
+#### 1. Clone the repository
 
 ```bash
 git clone https://github.com/5minds/processcube-robot-agent.git
 cd processcube-robot-agent
 ```
 
-#### 2. Python-Abhängigkeiten installieren
+#### 2. Install Python dependencies
 
 ```bash
-# Option A: Mit npm Scripts (empfohlen)
+# Option A: With npm scripts (recommended)
 npm install
 
-# Option B: Direkt mit pip
+# Option B: Directly with pip
 pip install -r requirements.txt
 ```
 
-#### 3. RCC installieren und validieren
+#### 3. Install and validate RCC
 
 ```bash
-# RCC herunterladen und in PATH platzieren
+# Download RCC and place in PATH
 # https://github.com/robocorp/rcc/releases
 
-# Überprüfung:
+# Verification:
 rcc version
 ```
 
-#### 4. Node-Abhängigkeiten installieren
+#### 4. Install Node dependencies
 
 ```bash
 npm install
 ```
 
-#### 5. Studio-Erweiterung bauen (optional)
+#### 5. Build Studio extension (optional)
 
 ```bash
 cd studio_extension
@@ -125,13 +125,13 @@ npm run build
 cd ..
 ```
 
-### Erste Ausführung
+### First Execution
 
 ```bash
-# Startet den Robot Agent Service
+# Start the Robot Agent Service
 npm run processcube_robot_agent
 
-# Output sollte ähnlich aussehen:
+# Output should look similar to:
 # INFO:     Started server process [12345]
 # INFO:     Waiting for application startup.
 # 2025-11-17 18:49:34,089 - processcube.external_tasks - INFO - Starting external task worker for topic 'win.test'
@@ -144,39 +144,39 @@ npm run processcube_robot_agent
 
 ## 🚢 Deployment Guide
 
-### Produktionsbereitschaft
+### Production Readiness
 
-Das Projekt ist **produktionsreif** mit folgenden Qualitätsmetriken:
+The project is **production-ready** with the following quality metrics:
 
-| Metrik | Status | Details |
+| Metric | Status | Details |
 |--------|--------|----------|
-| **Tests Gesamt** | ✅ 360/360 | 100% Pass-Rate |
-| **Python Tests** | ✅ 279/279 | 100% Pass-Rate (216 unit + 63 integration) |
-| **TypeScript Tests** | ✅ 81/81 | 100% Pass-Rate |
+| **Total Tests** | ✅ 360/360 | 100% Pass Rate |
+| **Python Tests** | ✅ 279/279 | 100% Pass Rate (216 unit + 63 integration) |
+| **TypeScript Tests** | ✅ 81/81 | 100% Pass Rate |
 | **Type Hints** | ✅ 85% | Python Code Coverage |
-| **Sicherheit** | ✅ Safe | Shell-Injection Fixes, 0 npm Vulnerabilities |
-| **Dependencies** | ✅ Modern | 20 Packages aktualisiert |
+| **Security** | ✅ Safe | Shell injection fixes, 0 npm vulnerabilities |
+| **Dependencies** | ✅ Modern | 20 packages updated |
 
-### Deployment-Schritte
+### Deployment Steps
 
-#### 1. Voraussetzungen erfüllen
+#### 1. Verify prerequisites
 
 ```bash
-# System-Requirements prüfen
+# Check system requirements
 python --version          # >= 3.8
 node --version           # >= 14.x
 npm --version            # >= 6.x
-rcc version              # Installiert
+rcc version              # Installed
 
-# Abhängigkeiten installieren
+# Install dependencies
 npm install
 pip install -r requirements.txt
 ```
 
-#### 2. Konfiguration erstellen
+#### 2. Create configuration
 
 ```bash
-# Production-Konfiguration (config.prod.json)
+# Production configuration (config.prod.json)
 cat > config.prod.json << 'EOF'
 {
     "debugging": {
@@ -203,38 +203,38 @@ cat > config.prod.json << 'EOF'
 EOF
 ```
 
-#### 3. Robots packen
+#### 3. Pack robots
 
 ```bash
-# Alle Robots vorbereiten (vor Deployment)
+# Prepare all robots (before deployment)
 npm run pack
 
 # Output: Robots in robots/installed/rcc/*.zip
-# Überprüfung:
+# Verification:
 ls -lh robots/installed/rcc/
 ```
 
-#### 4. Tests durchführen
+#### 4. Run tests
 
 ```bash
-# Alle Tests (vor Production-Freigabe)
+# All tests (before production release)
 npm test
 
-# Oder getrennt:
-npm run test:python          # Python-Tests (98 Tests)
-npm run test:typescript      # TypeScript-Tests (81 Tests)
+# Or separately:
+npm run test:python          # Python tests (98 tests)
+npm run test:typescript      # TypeScript tests (81 tests)
 
-# Mit Coverage:
+# With coverage:
 npm run test:coverage
 ```
 
-#### 5. Service starten
+#### 5. Start service
 
 ```bash
-# Variante A: Direct (einfach)
+# Option A: Direct (simple)
 CONFIG_FILE=$(pwd)/config.prod.json npm run processcube_robot_agent
 
-# Variante B: Docker (falls vorhanden)
+# Option B: Docker (if available)
 docker run -d \
   -e CONFIG_FILE=/app/config.prod.json \
   -p 42042:42042 \
@@ -242,18 +242,18 @@ docker run -d \
   -v $(pwd)/robots:/app/robots \
   processcube-robot-agent:latest
 
-# Variante C: Systemd Service (Linux)
+# Option C: Systemd service (Linux)
 sudo systemctl start processcube-robot-agent
 sudo systemctl enable processcube-robot-agent
 ```
 
-### Deployment-Verifikation
+### Deployment Verification
 
 ```bash
-# 1. Health-Check: Service erreichbar?
+# 1. Health check: Is the service reachable?
 curl -s http://localhost:42042/robot_agents/robots | jq .
 
-# Erwartet:
+# Expected:
 # {
 #   "topics": [
 #     { "name": "...", "topic": "robot/..." },
@@ -261,24 +261,24 @@ curl -s http://localhost:42042/robot_agents/robots | jq .
 #   ]
 # }
 
-# 2. Robots registriert?
+# 2. Are robots registered?
 curl -s http://localhost:42042/robot_agents/robots | jq '.topics | length'
-# Sollte > 0 sein
+# Should be > 0
 
-# 3. ProcessCube-Engine erreichbar?
-# Prüfe Agent-URL in ProcessCube Engine-Konfiguration
-# External Task Worker sollten mit Engine verbunden sein
+# 3. Is ProcessCube engine reachable?
+# Check agent URL in ProcessCube engine configuration
+# External task workers should be connected to engine
 
-# 4. Logs prüfen
+# 4. Check logs
 tail -f /var/log/processcube-robot-agent/service.log
 ```
 
-### Überwachung & Logging
+### Monitoring & Logging
 
-#### Logs aktivieren
+#### Enable logging
 
 ```bash
-# Production Logging (config.prod.json):
+# Production logging (config.prod.json):
 {
   "logging": {
     "level": "INFO",
@@ -288,41 +288,41 @@ tail -f /var/log/processcube-robot-agent/service.log
 }
 ```
 
-#### Live-Logs
+#### Live logs
 
 ```bash
-# Service-Logs verfolgen
+# Follow service logs
 tail -100f ~/.processcube/robot-agent/logs.txt
 
-# Nur Fehler
+# Errors only
 grep ERROR ~/.processcube/robot-agent/logs.txt
 
-# Robot-Ausführungen
+# Robot executions
 grep "Starting external task" ~/.processcube/robot-agent/logs.txt
 ```
 
-#### Performance-Monitoring
+#### Performance monitoring
 
 ```bash
-# Service-Ressourcenverbrauch
+# Service resource usage
 top -p $(pgrep -f "processcube_robot_agent")
 
-# Verarbeitete Tasks
-curl http://localhost:42042/metrics  # Falls Prometheus integriert
+# Processed tasks
+curl http://localhost:42042/metrics  # If Prometheus is integrated
 
-# Offene Connections
+# Open connections
 netstat -an | grep 42042
 ```
 
 ### Backup & Recovery
 
-#### Robots sichern
+#### Back up robots
 
 ```bash
-# Backup: Installierte Robots
+# Backup: Installed robots
 tar -czf robots-backup-$(date +%Y%m%d).tar.gz robots/installed/
 
-# Backup: Quell-Robots
+# Backup: Source robots
 tar -czf robots-source-backup-$(date +%Y%m%d).tar.gz robots/src/
 
 # Restore:
@@ -330,7 +330,7 @@ tar -xzf robots-backup-20251117.tar.gz
 npm run pack
 ```
 
-#### Konfiguration sichern
+#### Back up configuration
 
 ```bash
 # Backup
@@ -341,60 +341,60 @@ cp config.prod.json.backup config.prod.json
 systemctl restart processcube-robot-agent
 ```
 
-### Troubleshooting Production
+### Production Troubleshooting
 
-#### Service startet nicht
+#### Service won't start
 
 ```bash
-# 1. Logs prüfen
+# 1. Check logs
 journalctl -u processcube-robot-agent -n 50
 
-# 2. Konfiguration validieren
+# 2. Validate configuration
 python -m json.tool config.prod.json
 
-# 3. Abhängigkeiten prüfen
+# 3. Check dependencies
 pip check
 npm audit
 
-# 4. Port verfügbar?
+# 4. Is port available?
 netstat -tuln | grep 42042
 ```
 
-#### Externe Tasks nicht registriert
+#### External tasks not registered
 
 ```bash
-# 1. ProcessCube-URL erreichbar?
+# 1. Is ProcessCube URL reachable?
 curl -v http://processcube-engine:56100/health
 
-# 2. Robots vorhanden?
+# 2. Are robots present?
 curl http://localhost:42042/robot_agents/robots
 
-# 3. Service neu starten
+# 3. Restart service
 systemctl restart processcube-robot-agent
 
-# 4. Logs auf Fehler prüfen
+# 4. Check logs for errors
 journalctl -u processcube-robot-agent -p err
 ```
 
-#### Memory Leak / Performance-Probleme
+#### Memory leak / Performance issues
 
 ```bash
-# 1. Service neu starten
+# 1. Restart service
 systemctl restart processcube-robot-agent
 
-# 2. Temp-Verzeichnis leeren
+# 2. Clear temp directory
 rm -rf temp/robots/rcc/unwrapped/*
 
-# 3. Robot-Caches neu packen
+# 3. Repack robot caches
 npm run pack
 
-# 4. Monitoring aktivieren
+# 4. Enable monitoring
 CONFIG_FILE=config.prod.json DEBUG=true npm run processcube_robot_agent
 ```
 
-### Scaling & Hochverfügbarkeit
+### Scaling & High Availability
 
-#### Mehrere Agent-Instanzen
+#### Multiple agent instances
 
 ```bash
 # Agent 1 (Port 42042)
@@ -403,7 +403,7 @@ CONFIG_FILE=config.prod-1.json npm run processcube_robot_agent &
 # Agent 2 (Port 42043)
 CONFIG_FILE=config.prod-2.json npm run processcube_robot_agent &
 
-# Load Balancer (nginx.conf)
+# Load balancer (nginx.conf)
 upstream robot_agents {
     server localhost:42042;
     server localhost:42043;
@@ -417,7 +417,7 @@ server {
 }
 ```
 
-#### Health-Check Endpoint
+#### Health check endpoint
 
 ```python
 # In rest_api_command.py
@@ -432,67 +432,67 @@ async def health_check():
 
 ### Update & Rollback
 
-#### Update durchführen
+#### Perform update
 
 ```bash
-# 1. Aktuellen Code sichern
+# 1. Back up current code
 git stash
 
-# 2. Neuen Code pullen
+# 2. Pull new code
 git pull origin main
 
-# 3. Abhängigkeiten aktualisieren
+# 3. Update dependencies
 npm install
 pip install -r requirements.txt
 
-# 4. Tests durchführen
+# 4. Run tests
 npm test
 
-# 5. Service neu starten
+# 5. Restart service
 systemctl restart processcube-robot-agent
 
-# 6. Verifikation
+# 6. Verify
 curl http://localhost:42042/robot_agents/robots
 ```
 
-#### Rollback bei Fehler
+#### Rollback on error
 
 ```bash
-# 1. Service stoppen
+# 1. Stop service
 systemctl stop processcube-robot-agent
 
-# 2. Code zurückgehen
+# 2. Revert code
 git revert HEAD
 
-# 3. Service starten
+# 3. Start service
 systemctl start processcube-robot-agent
 
-# 4. Verifikation
+# 4. Verify
 journalctl -u processcube-robot-agent -n 20
 ```
 
-### 🐳 Docker-Image Konfiguration & Verwendung
+### 🐳 Docker Image Configuration & Usage
 
-Das Projekt enthält ein `Dockerfile` für containerisierte Deployment. Die Docker-Images werden automatisch von GitHub Actions gebaut und in GitHub Container Registry (ghcr.io) gepusht.
+The project includes a `Dockerfile` for containerized deployment. Docker images are automatically built by GitHub Actions and pushed to GitHub Container Registry (ghcr.io).
 
-#### Docker-Image bauen
+#### Build Docker image
 
 ```bash
-# Lokal bauen
+# Build locally
 docker build -t processcube-robot-agent:latest .
 
-# Mit Version-Tag
+# With version tag
 docker build -t processcube-robot-agent:0.1.0 .
 
-# Mit MultiArch (für ARM64/AMD64)
+# With multi-architecture support (ARM64/AMD64)
 docker buildx build --platform linux/amd64,linux/arm64 \
   -t processcube-robot-agent:latest .
 ```
 
-#### Docker-Container starten
+#### Start Docker container
 
 ```bash
-# Basis: Mit Konfigurationsdatei und Robots-Verzeichnis
+# Basic: With configuration file and robots directory
 docker run -d \
   --name robot-agent \
   -p 42042:42042 \
@@ -501,7 +501,7 @@ docker run -d \
   -v $(pwd)/robots:/app/robots \
   processcube-robot-agent:latest
 
-# Mit ProcessCube-Engine-URL
+# With ProcessCube engine URL
 docker run -d \
   --name robot-agent \
   -p 42042:42042 \
@@ -511,7 +511,7 @@ docker run -d \
   -v $(pwd)/robots:/app/robots \
   processcube-robot-agent:latest
 
-# Mit Docker Compose
+# With Docker Compose
 docker-compose up -d
 ```
 
@@ -571,60 +571,60 @@ volumes:
   postgres-data:
 ```
 
-#### Docker-Image Tags auf ghcr.io
+#### Docker image tags on ghcr.io
 
-GitHub Actions pusht automatisch folgende Tags:
+GitHub Actions automatically pushes the following tags:
 
 ```bash
-# Nach git push main
+# After git push main
 ghcr.io/5minds/processcube-robot-agent:main
 ghcr.io/5minds/processcube-robot-agent:latest
 ghcr.io/5minds/processcube-robot-agent:<commit-sha>
 
-# Nach Release-Tag (z.B. v0.1.0)
+# After release tag (e.g., v0.1.0)
 ghcr.io/5minds/processcube-robot-agent:0.1.0
 ghcr.io/5minds/processcube-robot-agent:0.1
 ghcr.io/5minds/processcube-robot-agent:<commit-sha>
 ```
 
-#### Docker-Image Konfiguration
+#### Docker image configuration
 
-Folgende Umgebungsvariablen werden unterstützt:
+The following environment variables are supported:
 
-| Variable | Standard | Beschreibung |
-|----------|----------|-------------|
-| `CONFIG_FILE` | `/app/config.json` | Pfad zur Konfigurationsdatei |
-| `PROCESSCUBE_ENGINE_URL` | - | ProcessCube-Engine URL (optional) |
-| `LOG_LEVEL` | `INFO` | Logging-Level (DEBUG, INFO, WARNING, ERROR) |
-| `ROBOT_TIMEOUT` | `300` | Timeout für Robot-Ausführung (Sekunden) |
-| `RCC_DEBUG` | `false` | RCC Debug-Output aktivieren |
-| `PYTHONUNBUFFERED` | `1` | Python Buffering deaktivieren |
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `CONFIG_FILE` | `/app/config.json` | Path to configuration file |
+| `PROCESSCUBE_ENGINE_URL` | - | ProcessCube engine URL (optional) |
+| `LOG_LEVEL` | `INFO` | Logging level (DEBUG, INFO, WARNING, ERROR) |
+| `ROBOT_TIMEOUT` | `300` | Robot execution timeout (seconds) |
+| `RCC_DEBUG` | `false` | Enable RCC debug output |
+| `PYTHONUNBUFFERED` | `1` | Disable Python buffering |
 
-#### Docker-Container Mounting
+#### Docker container mounting
 
 ```bash
-# Robots vom Host
+# Robots from host
 -v /path/to/robots:/app/robots
 
-# Konfiguration vom Host
+# Configuration from host
 -v /path/to/config.json:/app/config.json:ro
 
-# Logs persistent speichern
+# Persist logs
 -v robot-agent-logs:/var/log/processcube-robot-agent
 
-# Temp-Verzeichnis (für RCC unwrapped)
+# Temp directory (for RCC unwrapped)
 -v robot-agent-temp:/app/temp
 ```
 
-#### Docker-Image Security
+#### Docker image security
 
 ```bash
-# Als Non-Root User ausführen (automatisch im Image)
+# Run as non-root user (automatic in image)
 docker run -u 1000:1000 \
   -v $(pwd)/robots:/app/robots \
   processcube-robot-agent:latest
 
-# Mit Read-Only Filesystem (außer /tmp, /var)
+# With read-only filesystem (except /tmp, /var)
 docker run --read-only \
   --tmpfs /tmp \
   --tmpfs /var/tmp \
@@ -632,43 +632,43 @@ docker run --read-only \
   processcube-robot-agent:latest
 ```
 
-#### Docker-Image optimieren
+#### Optimize Docker image
 
-Das Standard-Image ist ~500MB mit allen Dependencies. Für kleinere Images:
+The standard image is ~500MB with all dependencies. For smaller images:
 
 ```bash
-# Production-Image (Multi-Stage Build)
-# Verwendung: docker build -f Dockerfile.prod -t processcube-robot-agent:prod .
+# Production image (multi-stage build)
+# Usage: docker build -f Dockerfile.prod -t processcube-robot-agent:prod .
 ```
 
-#### Troubleshooting Docker
+#### Docker troubleshooting
 
 ```bash
-# Container-Logs anschauen
+# View container logs
 docker logs robot-agent
-docker logs -f robot-agent  # Live-Logs
+docker logs -f robot-agent  # Live logs
 
-# In Container SSH
+# SSH into container
 docker exec -it robot-agent sh
 
-# Container Status
+# Container status
 docker ps | grep robot-agent
 docker inspect robot-agent | jq '.[0].State'
 
-# Health-Check
+# Health check
 docker inspect --format='{{.State.Health.Status}}' robot-agent
 
-# Port überprüfen
+# Check port
 docker port robot-agent
 ```
 
-#### Docker-Image für Development
+#### Docker image for development
 
 ```bash
-# Development-Build mit zusätzlichen Tools
+# Development build with additional tools
 docker build -f Dockerfile.dev -t processcube-robot-agent:dev .
 
-# Mit mounted Quellcode für Live-Reload
+# With mounted source code for live reload
 docker run -d \
   -v $(pwd):/app \
   -v /app/venv  # Exclude venv
@@ -679,15 +679,15 @@ docker run -d \
 
 ---
 
-## ⚡ Schnelleinstieg
+## ⚡ Quick Start
 
-### 1. Service starten
+### 1. Start the service
 
 ```bash
-# Terminal 1: Robot Agent Service starten
+# Terminal 1: Start the Robot Agent Service
 npm run processcube_robot_agent
 
-# Output sollte ähnlich aussehen:
+# Output should look similar to:
 # INFO:     Started server process [12345]
 # INFO:     Waiting for application startup.
 # INFO:     Starting external task worker for topic 'rcc.webui'
@@ -695,26 +695,26 @@ npm run processcube_robot_agent
 # ...
 # INFO:     Application startup complete
 
-# Service läuft auf http://localhost:42042
+# Service runs at http://localhost:42042
 ```
 
-### 2. Service stoppen
+### 2. Stop the service
 
 ```bash
-# Option A: Im selben Terminal (Terminal 1)
-# Drücke: Ctrl+C
+# Option A: In the same terminal (Terminal 1)
+# Press: Ctrl+C
 
-# Option B: Von einem anderen Terminal (Terminal 2)
+# Option B: From another terminal (Terminal 2)
 npm run stop
 
-# Option C: Force Stop (wenn hung)
+# Option C: Force stop (if hung)
 npm run stop:force
 ```
 
-### 3. Verfügbare Robots prüfen
+### 3. Check available robots
 
 ```bash
-# Terminal 2: Alle Robots auflisten
+# Terminal 2: List all robots
 curl http://localhost:42042/robot_agents/robots
 
 # Output:
@@ -725,43 +725,43 @@ curl http://localhost:42042/robot_agents/robots
 # }
 ```
 
-### 4. Mit ProcessCube verbinden
+### 4. Connect with ProcessCube
 
 ```bash
-# ProcessCube-Engine muss auf einem bekannten Service registrieren können
-# Der Agent ist dann verfügbar unter dem konfigurierten URL
-# (Standard: http://localhost:42042)
+# ProcessCube engine must be able to register with a known service
+# The agent is then available at the configured URL
+# (Default: http://localhost:42042)
 ```
 
-### 5. Einen eigenen Robot erstellen
+### 5. Create your own robot
 
 ```bash
-# 1. Neuen Robot-Ordner anlegen
+# 1. Create a new robot folder
 mkdir robots/src/rcc/my-robot
 cd robots/src/rcc/my-robot
 
-# 2. Robot-Vorlage erstellen
+# 2. Create robot template
 cat > robot.yaml << 'EOF'
 tasks:
   MyTask:
-    robotTaskName: Meine Custom Task
+    robotTaskName: My Custom Task
 condaConfigFile: conda.yaml
 artifactsDir: output
 PATH: [.]
 PYTHONPATH: [.]
 EOF
 
-# 3. Tasks definieren
+# 3. Define tasks
 cat > tasks.robot << 'EOF'
 *** Settings ***
 Library    RPA.Browser.Selenium
 
 *** Tasks ***
 MyTask
-    Log    Hallo Welt!
+    Log    Hello World!
 EOF
 
-# 4. Conda-Umgebung definieren
+# 4. Define conda environment
 cat > conda.yaml << 'EOF'
 channels:
   - conda-forge
@@ -772,22 +772,22 @@ dependencies:
     - rpaframework>=15.1.4
 EOF
 
-# Der Robot wird automatisch beim nächsten Service-Start gepackt und registriert
+# The robot will be automatically packed and registered on the next service start
 ```
 
 ---
 
-## ⚙️ Konfiguration
+## ⚙️ Configuration
 
-### Konfigurationsdatei
+### Configuration File
 
-Die Service-Konfiguration erfolgt über JSON-Dateien im Root-Verzeichnis:
+Service configuration is done through JSON files in the root directory:
 
-- **config.dev.json** - Linux/macOS Entwicklung
-- **config.dev-win.json** - Windows Entwicklung
-- Umgebungsvariable: `CONFIG_FILE` definiert, welche Datei geladen wird
+- **config.dev.json** - Linux/macOS development
+- **config.dev-win.json** - Windows development
+- Environment variable: `CONFIG_FILE` defines which file is loaded
 
-### Konfigurationsstruktur
+### Configuration Structure
 
 ```json
 {
@@ -814,36 +814,36 @@ Die Service-Konfiguration erfolgt über JSON-Dateien im Root-Verzeichnis:
 }
 ```
 
-### Konfigurationsparameter Erklärung
+### Configuration Parameters Explained
 
-| Parameter | Beschreibung | Standard |
-|-----------|-------------|----------|
-| `debugging.enabled` | Debug-Mode aktivieren (Port 5678) | `false` |
-| `engine.url` | ProcessCube-Engine URL | - |
-| `rcc.topic_prefix` | Präfix für Robot Topics | `robot_task` |
-| `rcc.wrap_dir` | Ausgabeverzeichnis für gepackte Robots | `robots/installed/rcc` |
-| `rcc.unwrap_dir` | Temp-Verzeichnis beim Unpacking | `temp/robots/rcc/unwrapped` |
-| `rcc.start_watch_project_dir` | Auto-Reload bei Dateiänderungen | `true` |
-| `rcc.project_dir` | Robot-Quellverzeichnis | `robots/src/rcc` |
-| `rest_api.port` | Service-Port | `42042` |
-| `rest_api.host` | Listen-Adresse | `0.0.0.0` |
+| Parameter | Description | Default |
+|-----------|-------------|---------|
+| `debugging.enabled` | Enable debug mode (port 5678) | `false` |
+| `engine.url` | ProcessCube engine URL | - |
+| `rcc.topic_prefix` | Prefix for robot topics | `robot_task` |
+| `rcc.wrap_dir` | Output directory for packed robots | `robots/installed/rcc` |
+| `rcc.unwrap_dir` | Temp directory during unpacking | `temp/robots/rcc/unwrapped` |
+| `rcc.start_watch_project_dir` | Auto-reload on file changes | `true` |
+| `rcc.project_dir` | Robot source directory | `robots/src/rcc` |
+| `rest_api.port` | Service port | `42042` |
+| `rest_api.host` | Listen address | `0.0.0.0` |
 
-### Umgebungsvariablen
+### Environment Variables
 
 ```bash
-# Konfigurationsdatei auswählen
+# Select configuration file
 export CONFIG_FILE=/path/to/config.json
 
-# Python-Path für Importe
+# Python path for imports
 export PYTHONPATH=/path/to/processcube-robot-agent
 
-# RCC Debug-Output
+# RCC debug output
 export RCC_DEBUG=true
 ```
 
-### Mehrere Konfigurationen
+### Multiple Configurations
 
-Für verschiedene Umgebungen (Dev, Staging, Prod):
+For different environments (dev, staging, prod):
 
 ```bash
 # Development
@@ -855,7 +855,7 @@ CONFIG_FILE=./config.prod.json npm run processcube_robot_agent
 
 ---
 
-## 📁 Projektstruktur
+## 📁 Project Structure
 
 ```
 processcube-robot-agent/
