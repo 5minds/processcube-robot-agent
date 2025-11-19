@@ -24,6 +24,7 @@ import json
 import logging
 import subprocess
 import tempfile
+import time
 import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import Any, Dict, Optional
@@ -75,70 +76,75 @@ def write_variables_file(variables: Dict[str, Any], tmpdir: str) -> str:
     return str(var_file)
 
 
-def extract_reports(output_dir: Path, result: subprocess.CompletedProcess) -> Dict[str, Any]:
-    """Extract Robot Framework reports from output directory.
-    
+def extract_reports(output_dir: Path, result: subprocess.CompletedProcess, duration: float) -> Dict[str, Any]:
+    """Extract Robot Framework reports from output directory (minimal format).
+
+    Returns a compressed result dictionary to minimize logging output:
+    - Excludes verbose stdout/stderr (stored in DEBUG logs instead)
+    - Excludes full XML content (path to log.html provided for details)
+    - Includes only: status, return_code, duration, tests_passed, log_html
+
     Robot Framework generates:
-    - output.xml: Machine-readable test results
-    - log.html: Detailed test execution logs
+    - output.xml: Machine-readable test results (parsed for statistics only)
+    - log.html: Detailed test execution logs (path provided for access)
     - report.html: High-level test report
-    - stderr/stdout: Console output
-    
+
     Args:
         output_dir: Directory where Robot Framework wrote its output
         result: CompletedProcess from robot execution
-        
+        duration: Execution duration in seconds
+
     Returns:
-        Dictionary with all extracted reports and metadata
+        Minimal result dictionary for ProcessCube integration:
+        {
+            'status': 'pass|fail',
+            'return_code': <int>,
+            'duration': <float>,
+            'tests_passed': <int>,
+            'log_html': <path>
+        }
     """
+    # Initialize minimal result (Option A format)
     reports = {
-        "return_code": result.returncode,
         "status": "pass" if result.returncode == 0 else "fail",
-        "stdout": result.stdout,
-        "stderr": result.stderr,
+        "return_code": result.returncode,
+        "duration": duration,
+        "tests_passed": 0,
+        "log_html": None,
     }
-    
+
+    # Log stdout/stderr at DEBUG level instead of including in result
+    if result.stdout:
+        logger.debug(f"Robot Framework STDOUT:\n{result.stdout}")
+    if result.stderr:
+        logger.debug(f"Robot Framework STDERR:\n{result.stderr}")
+
     # Extract output.xml (machine-readable test results)
     output_xml_path = output_dir / "output.xml"
     if output_xml_path.exists():
         try:
-            reports["output_xml"] = output_xml_path.read_text(encoding='utf-8')
-            # Try to parse for statistics
+            # Try to parse for test statistics
             tree = ET.parse(output_xml_path)
             root = tree.getroot()
-            reports["xml_parsed"] = True
-            
+
             # Extract test statistics if available
             stats = root.find(".//stat")
             if stats is not None:
-                reports["statistics"] = {
-                    "total": stats.get("total"),
-                    "passed": stats.get("passed"),
-                    "failed": stats.get("failed"),
-                }
+                passed = stats.get("passed")
+                if passed:
+                    reports["tests_passed"] = int(passed)
+                logger.debug(f"Robot test statistics - total: {stats.get('total')}, "
+                           f"passed: {stats.get('passed')}, failed: {stats.get('failed')}")
         except Exception as e:
             logger.error(f"Failed to parse output.xml: {e}")
-            reports["xml_parsed"] = False
     else:
         logger.warning("No output.xml found in Robot Framework output")
-        reports["output_xml"] = None
-    
-    # Extract log.html (detailed logs)
+
+    # Include log.html path for detailed logs
     log_html_path = output_dir / "log.html"
     if log_html_path.exists():
-        reports["log_html_path"] = str(log_html_path)
-        reports["log_html_available"] = True
-    else:
-        reports["log_html_available"] = False
-    
-    # Extract report.html (summary report)
-    report_html_path = output_dir / "report.html"
-    if report_html_path.exists():
-        reports["report_html_path"] = str(report_html_path)
-        reports["report_html_available"] = True
-    else:
-        reports["report_html_available"] = False
-    
+        reports["log_html"] = str(log_html_path)
+
     return reports
 
 
@@ -183,24 +189,21 @@ class RobotFrameworkExecutor:
             suite_name: Name for the test suite (--name)
             
         Returns:
-            Dictionary with execution results and reports:
+            Dictionary with execution results and reports (minimal format):
                 {
                     "status": "pass|fail|error",
                     "return_code": <int>,
-                    "output_xml": <xml_string>,          # If available
-                    "log_html_path": <path>,             # If available
-                    "report_html_path": <path>,          # If available
-                    "statistics": {...},                 # If parsed from output.xml
-                    "stdout": <output>,                  # Robot Framework console output
-                    "stderr": <errors>,                  # Any error messages
+                    "duration": <float>,             # Execution time in seconds
+                    "tests_passed": <int>,           # Number of passing tests
+                    "log_html": <path>,              # Path to detailed HTML logs
                 }
         """
         if variables is None:
             variables = {}
-        
+
         logger.info(f"Running Robot Framework file: {robot_file}")
         logger.info(f"Variables: {variables}")
-        
+
         # Verify robot file exists
         robot_path = Path(robot_file)
         if not robot_path.exists():
@@ -209,53 +212,56 @@ class RobotFrameworkExecutor:
                 "error": f"Robot file not found: {robot_file}",
                 "return_code": -1,
             }
-        
+
         # Create temporary directory for output
         with tempfile.TemporaryDirectory() as tmpdir:
             output_dir = Path(tmpdir) / "output"
             output_dir.mkdir(parents=True, exist_ok=True)
-            
+
             # Build robot command
             cmd = [
                 "robot",
                 "--outputdir", str(output_dir),
             ]
-            
+
             # Add variables if provided
             if variables:
                 var_file = write_variables_file(variables, tmpdir)
                 cmd.extend(["--variablefile", var_file])
-            
+
             # Add optional parameters
             if tags:
                 for tag in tags:
                     cmd.extend(["--include", tag])
-            
+
             if suite_name:
                 cmd.extend(["--name", suite_name])
-            
+
             # Add robot file as last argument
             cmd.append(str(robot_path))
-            
+
             logger.info(f"Executing: {' '.join(cmd)}")
-            
+
             # Execute robot framework
             try:
+                # Track execution time
+                start_time = time.time()
                 result = subprocess.run(
                     cmd,
                     capture_output=True,
                     text=True,
                     timeout=3600  # 1 hour timeout
                 )
-                
-                logger.info(f"Robot execution completed with return code: {result.returncode}")
+                duration = time.time() - start_time
+
+                logger.info(f"Robot execution completed with return code: {result.returncode} (duration: {duration:.3f}s)")
                 if result.stdout:
                     logger.debug(f"STDOUT:\n{result.stdout}")
                 if result.stderr:
                     logger.debug(f"STDERR:\n{result.stderr}")
-                
-                # Extract and return reports
-                reports = extract_reports(output_dir, result)
+
+                # Extract and return reports with duration
+                reports = extract_reports(output_dir, result, duration)
                 return reports
                 
             except subprocess.TimeoutExpired:

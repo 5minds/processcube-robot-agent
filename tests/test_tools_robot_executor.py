@@ -25,19 +25,19 @@ class TestRobotExecutor:
     
     @patch('processcube_robot_agent.tools.robot_executor.subprocess.run')
     def test_execute_success(self, mock_run, executor):
-        """Test successful robot execution."""
+        """Test successful robot execution with minimal Option A format."""
         # Mock successful robot execution
         mock_result = MagicMock()
         mock_result.returncode = 0
         mock_result.stdout = "Robot execution output"
         mock_result.stderr = ""
         mock_run.return_value = mock_result
-        
+
         with tempfile.TemporaryDirectory() as tmpdir:
             # Create a dummy robot file
             robot_file = Path(tmpdir) / "test.robot"
             robot_file.write_text("*** Test Cases ***\nTest\n    Log    Hello")
-            
+
             # Create output.xml for the test
             output_dir = Path(tmpdir) / "output"
             output_dir.mkdir()
@@ -46,20 +46,29 @@ class TestRobotExecutor:
                 '<?xml version="1.0" encoding="UTF-8"?>\n'
                 '<robot><statistics><total><stat total="1" passed="1" failed="0"/></total></statistics></robot>'
             )
-            
+
             # Patch the output directory creation
             with patch('processcube_robot_agent.tools.robot_executor.tempfile.TemporaryDirectory') as mock_tmpdir:
                 mock_context = MagicMock()
                 mock_context.__enter__.return_value = tmpdir
                 mock_context.__exit__.return_value = None
                 mock_tmpdir.return_value = mock_context
-                
+
                 result = executor.execute(str(robot_file))
-                
+
+                # Verify Option A minimal format
                 assert result["status"] == "pass"
                 assert result["return_code"] == 0
-                assert "stdout" in result
-                assert "Robot execution output" in result["stdout"]
+                assert "duration" in result
+                assert isinstance(result["duration"], float)
+                assert "tests_passed" in result
+                assert result["tests_passed"] == 1
+                assert "log_html" in result
+
+                # Verify verbose fields are NOT included
+                assert "stdout" not in result
+                assert "stderr" not in result
+                assert "output_xml" not in result
     
     def test_execute_robot_file_not_found(self, executor):
         """Test execution with non-existent robot file."""
