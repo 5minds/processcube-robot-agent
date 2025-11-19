@@ -576,8 +576,8 @@ volumes:
 GitHub Actions pusht automatisch folgende Tags:
 
 ```bash
-# Nach git push master
-ghcr.io/5minds/processcube-robot-agent:master
+# Nach git push main
+ghcr.io/5minds/processcube-robot-agent:main
 ghcr.io/5minds/processcube-robot-agent:latest
 ghcr.io/5minds/processcube-robot-agent:<commit-sha>
 
