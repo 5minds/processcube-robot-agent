@@ -4,6 +4,32 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.1.2] - 2025-11-19
+
+### 📚 Documentation
+
+**Complete English Translation**
+- ✅ Entire README.md translated to English (2070 lines)
+- Robot Development section (RCC vs UV comparison, best practices)
+- UV Robot Development (Pure Python implementation guide)
+- Robot Execution Tools & Entry Points (robot_runner, UV-Runner, RCC-Runner)
+- Studio Extension (Configuration, installation, development guide)
+- API Documentation (REST endpoints, error responses)
+- Development & Debugging (Setup, testing, logging, debugging)
+- Troubleshooting (7 common problems with detailed solutions)
+- Project Status & Quality metrics
+- Contributing guidelines
+- Support & Resources
+- Examples & Tutorials
+
+**Release Readiness**
+- All content consistently in English for international audience
+- Production-ready documentation for public release
+- Single source of truth for all functionality documentation
+- Professional English documentation suitable for open-source publication
+
+---
+
 ## [0.1.1] - 2025-11-19
 
 ### 📚 Documentation
