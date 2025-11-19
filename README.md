@@ -1969,7 +1969,7 @@ git commit -m "test: add unit tests for robot_agent.py"
 
 ## 📝 Lizenz
 
-MIT License - siehe LICENSE Datei
+Apache 2.0 License - siehe [LICENSE](./LICENSE) für Details
 
 ---
 

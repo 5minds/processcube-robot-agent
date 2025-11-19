@@ -296,7 +296,7 @@ We welcome contributions! Please see our [Contributing Guidelines](#contributing
 
 #### 📝 License
 
-MIT License - See [LICENSE](./LICENSE) for details
+Apache 2.0 License - See [LICENSE](./LICENSE) for details
 
 #### 🎯 Next Release Goals (0.2.0)
 
