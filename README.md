@@ -860,54 +860,54 @@ CONFIG_FILE=./config.prod.json npm run processcube_robot_agent
 ```
 processcube-robot-agent/
 │
-├── processcube_robot_agent/          # Backend-Microservice (Python)
-│   ├── __main__.py                   # CLI-Einstiegspunkt
-│   ├── rest_api_command.py           # REST API Server
-│   ├── pack_robots_command.py        # Packaging-Kommando
-│   ├── watch_robots_command.py       # File-Watcher-Kommando
+├── processcube_robot_agent/          # Backend microservice (Python)
+│   ├── __main__.py                   # CLI entry point
+│   ├── rest_api_command.py           # REST API server
+│   ├── pack_robots_command.py        # Packaging command
+│   ├── watch_robots_command.py       # File watcher command
 │   │
-│   ├── robot_agent/                  # Agent-Logik
-│   │   ├── base_agent.py             # Abstrakte Basisklasse
-│   │   ├── builder.py                # Factory-Builder
-│   │   ├── error.py                  # Custom Exception
+│   ├── robot_agent/                  # Agent logic
+│   │   ├── base_agent.py             # Abstract base class
+│   │   ├── builder.py                # Factory builder
+│   │   ├── error.py                  # Custom exceptions
 │   │   │
-│   │   └── rcc/                      # RCC-Implementierung
-│   │       ├── robot_agent.py        # Hauptausführungs-Engine
-│   │       ├── rcc_runner.py         # RCC-Validator
-│   │       ├── robot_task_handler_factory.py  # Factory Pattern
-│   │       ├── project_packer.py     # Robot-Packaging
-│   │       └── project_watcher.py    # Hot-Reload Watcher
+│   │   └── rcc/                      # RCC implementation
+│   │       ├── robot_agent.py        # Main execution engine
+│   │       ├── rcc_runner.py         # RCC validator
+│   │       ├── robot_task_handler_factory.py  # Factory pattern
+│   │       ├── project_packer.py     # Robot packaging
+│   │       └── project_watcher.py    # Hot-reload watcher
 │   │
-│   ├── external_task/                # ProcessCube Integration
-│   │   └── robot_task_handler.py     # External Task Handler
+│   ├── external_task/                # ProcessCube integration
+│   │   └── robot_task_handler.py     # External task handler
 │   │
-│   └── rest_api/                     # HTTP-Endpoints
-│       └── robots.py                 # Robot-List-Endpoint
+│   └── rest_api/                     # HTTP endpoints
+│       └── robots.py                 # Robot list endpoint
 │
-├── robots/                           # RPA Robot-Definitionen
-│   ├── src/rcc/                      # Quell-Robots
-│   │   ├── webui/                    # Web UI Automatisierung
+├── robots/                           # RPA robot definitions
+│   ├── src/rcc/                      # Source robots
+│   │   ├── webui/                    # Web UI automation
 │   │   ├── windows/
-│   │   │   └── ui/                   # Windows UI Automatisierung
+│   │   │   └── ui/                   # Windows UI automation
 │   │   ├── windows-example-calculator/
 │   │   └── web-example-rpa-challenge/
 │   │
-│   ├── installed/                    # Gepackte, einsatzbereite Robots
-│   │   └── rcc/                      # RCC-gepackte .zip Dateien
+│   ├── installed/                    # Packed, ready-to-run robots
+│   │   └── rcc/                      # RCC-packed .zip files
 │   │
-│   └── backup/                       # Backup von Robots
-│       └── readexcel/                # Excel-Lese-Beispiel
+│   └── backup/                       # Robot backups
+│       └── readexcel/                # Excel read example
 │
-├── studio_extension/                 # TypeScript/React IDE-Erweiterung
-│   ├── index.ts                      # Erweiterungs-Einstiegspunkt
-│   ├── robotServiceType/             # Robot Service-Type UI
+├── studio_extension/                 # TypeScript/React IDE extension
+│   ├── index.ts                      # Extension entry point
+│   ├── robotServiceType/             # Robot service type UI
 │   │   ├── initializeServiceTypeRobot.ts
 │   │   ├── PropertiesRobotTaskPane.tsx
 │   │   ├── PropertiesRobotTaskPaneContent.tsx
 │   │   ├── fetchRobots.ts
 │   │   └── PropertiesRobotServiceTask.md
 │   │
-│   ├── agentSettings/                # Agent-Konfiguration UI
+│   ├── agentSettings/                # Agent configuration UI
 │   │   ├── initializeAgentSettingsEditor.ts
 │   │   ├── getRobotAgents.ts
 │   │   ├── RobotAgentsConfigDocument.ts
@@ -918,26 +918,26 @@ processcube-robot-agent/
 │   ├── webpack.config.js
 │   └── README.md
 │
-├── processes/                        # Beispiel BPMN-Prozesse
+├── processes/                        # Example BPMN processes
 │   ├── RobotTask.bpmn
 │   └── .processcube/
 │
-├── package.json                      # Root NPM-Konfiguration
-├── requirements.txt                  # Python-Abhängigkeiten
-├── config.dev.json                   # Linux/macOS Dev-Konfiguration
-├── config.dev-win.json               # Windows Dev-Konfiguration
-├── start_on_windows.sh               # Windows Startup-Script
+├── package.json                      # Root NPM configuration
+├── requirements.txt                  # Python dependencies
+├── config.dev.json                   # Linux/macOS dev configuration
+├── config.dev-win.json               # Windows dev configuration
+├── start_on_windows.sh               # Windows startup script
 │
-└── README.md                         # Diese Datei
+└── README.md                         # This file
 ```
 
 ---
 
-## 🤖 Robot-Entwicklung
+## 🤖 Robot Development
 
-### 🔀 Side-by-Side Vergleich: RCC vs UV
+### 🔀 Side-by-Side Comparison: RCC vs UV
 
-Beide Ansätze lösen Automatisierungsaufgaben, aber mit unterschiedlichen Stärken:
+Both approaches solve automation tasks, but with different strengths:
 
 #### RCC (Robot Framework)
 ```robot
@@ -991,22 +991,22 @@ if __name__ == "__main__":
     main()
 ```
 
-**Wann welcher Ansatz?**
+**When to use which approach?**
 
-| Szenario | RCC | UV | Grund |
+| Scenario | RCC | UV | Reason |
 |----------|-----|-----|-------|
-| Web UI Automation | ✅ **Besser** | ⚠️ Möglich | RPA.Browser optimiert für UI-Automation |
-| REST APIs | ✅ Möglich | ✅ **Besser** | Python Requests/httpx sind native |
-| Datenverarbeitung | ✅ Gut | ✅ **Besser** | Pandas, NumPy, etc. sind Python-native |
-| Legacy-System RPA | ✅ **Besser** | ❌ Schwierig | Windows UI, SAP, etc. brauchen RPA Framework |
-| Microservices | ⚠️ Overhead | ✅ **Besser** | Leichtgewicht, schnell, einfach zu deployen |
-| Komplexe Logik | ⚠️ Verbose | ✅ **Besser** | Python ist für Entwickler verständlicher |
+| Web UI Automation | ✅ **Better** | ⚠️ Possible | RPA.Browser optimized for UI automation |
+| REST APIs | ✅ Possible | ✅ **Better** | Python Requests/httpx are native |
+| Data Processing | ✅ Good | ✅ **Better** | Pandas, NumPy, etc. are Python-native |
+| Legacy System RPA | ✅ **Better** | ❌ Difficult | Windows UI, SAP, etc. require RPA Framework |
+| Microservices | ⚠️ Overhead | ✅ **Better** | Lightweight, fast, easy to deploy |
+| Complex Logic | ⚠️ Verbose | ✅ **Better** | Python is more understandable for developers |
 
 ---
 
-### Robot Framework Grundlagen
+### Robot Framework Basics
 
-Robot Framework ist ein Python-basiertes, textgetriebenes Automatisierungstool mit roboterlesbarer Syntax:
+Robot Framework is a Python-based, text-driven automation tool with robot-readable syntax:
 
 ```robot
 *** Settings ***
@@ -1033,44 +1033,44 @@ Login As User
     Click Button   xpath://button[@type='submit']
 ```
 
-### Robot-Projekt-Struktur
+### Robot Project Structure
 
-Ein Minimal-Robot mit den erforderlichen Dateien:
+A minimal robot with the required files:
 
 ```
 my-robot/
-├── robot.yaml              # Robot-Metadaten
-├── tasks.robot             # Task-Definitionen
-├── conda.yaml              # Abhängigkeiten
-├── locators.json           # Optional: UI-Element-Locators
-└── output/                 # Output-Verzeichnis (vom System erstellt)
-    ├── output.xml          # Test-Ergebnisse
-    ├── log.html            # HTML-Log
-    └── report.html         # Testbericht
+├── robot.yaml              # Robot metadata
+├── tasks.robot             # Task definitions
+├── conda.yaml              # Dependencies
+├── locators.json           # Optional: UI element locators
+└── output/                 # Output directory (system-created)
+    ├── output.xml          # Test results
+    ├── log.html            # HTML log
+    └── report.html         # Test report
 ```
 
-### robot.yaml - Konfiguration
+### robot.yaml - Configuration
 
 ```yaml
-# Task-Definitionen
+# Task definitions
 tasks:
   TaskName:
-    robotTaskName: Anzeigename für ProcessCube
+    robotTaskName: Display name for ProcessCube
   SecondTask:
-    robotTaskName: Zweite Task
+    robotTaskName: Second Task
 
-# Conda-Umgebungskonfiguration
+# Conda environment configuration
 condaConfigFile: conda.yaml
 
-# Ausgabeverzeichnis
+# Output directory
 artifactsDir: output
 
-# Pfadvariablen
+# Path variables
 PATH: [.]
 PYTHONPATH: [.]
 ```
 
-### tasks.robot - Task-Definition
+### tasks.robot - Task Definition
 
 ```robot
 *** Settings ***
@@ -1092,7 +1092,7 @@ Process Data
     Log    ${json}[0][name]
 ```
 
-### conda.yaml - Abhängigkeiten
+### conda.yaml - Dependencies
 
 ```yaml
 channels:
@@ -1111,9 +1111,9 @@ dependencies:
     - selenium>=4.0.0
 ```
 
-### Work Items (Ein-/Ausgabe)
+### Work Items (Input/Output)
 
-Robot Framework arbeitet mit **Work Items** für strukturierte Datenverwaltung:
+Robot Framework works with **Work Items** for structured data management:
 
 #### Input in tasks.robot
 
@@ -1127,13 +1127,13 @@ Process Purchase Order
     ${customer}=      Get Work Item Variable    customer_name
 
     Log    Processing order ${order_id} for ${customer}
-    # ... weitere Verarbeitung ...
+    # ... further processing ...
 
     Set Work Item Variable    status    completed
     Set Work Item Variable    result_data    ${result}
 ```
 
-#### JSON Input von ProcessCube
+#### JSON Input from ProcessCube
 
 ```json
 {
@@ -1145,47 +1145,47 @@ Process Purchase Order
 }
 ```
 
-### Robots lokal testen
+### Test robots locally
 
 ```bash
-# Single Task ausführen
+# Execute single task
 cd robots/src/rcc/my-robot
 robot --task TaskName tasks.robot
 
-# Alle Tasks
+# All tasks
 robot tasks.robot
 
-# Mit RCC (wie im Production-System)
+# With RCC (as in production)
 rcc robot run --task TaskName
 
-# Outputs checken
+# Check outputs
 open output/log.html
 ```
 
-### Best Practices für Robot-Entwicklung
+### Best Practices for Robot Development
 
-1. **Klare Task-Namen** - Sprechende Namen in robot.yaml
-2. **Fehlerbehandlung** - Run Keyword If und Error Handling
-3. **Logging** - Ausreichend Log-Ausgaben für Debugging
-4. **Modularisierung** - Keywords für wiederverwendbaren Code
-5. **Locators separat** - locators.json für Wartbarkeit
-6. **Timeouts** - Explizite Timeouts für Stabilität
-7. **Screenshots** - Bei Fehlern für Debugging
+1. **Clear task names** - Meaningful names in robot.yaml
+2. **Error handling** - Run Keyword If and error handling
+3. **Logging** - Sufficient log output for debugging
+4. **Modularity** - Keywords for reusable code
+5. **Separate locators** - locators.json for maintainability
+6. **Timeouts** - Explicit timeouts for stability
+7. **Screenshots** - On errors for debugging
 
 ---
 
-## 🐍 UV-Robot-Entwicklung (Pure Python)
+## 🐍 UV Robot Development (Pure Python)
 
-Für APIs, Datenverarbeitung und moderne Python-basierte Automatisierungen bietet das System auch **UV-Robots** - reine Python-Implementierungen ohne Robot Framework-Overhead.
+For APIs, data processing, and modern Python-based automations, the system also offers **UV Robots** - pure Python implementations without Robot Framework overhead.
 
-### Quick Start - UV Robot erstellen
+### Quick Start - Create UV Robot
 
 ```bash
-# 1. Verzeichnis anlegen
+# 1. Create directory
 mkdir robots/src/uv/my-api-robot
 cd robots/src/uv/my-api-robot
 
-# 2. pyproject.toml erstellen
+# 2. Create pyproject.toml
 cat > pyproject.toml << 'EOF'
 [project]
 name = "my-api-robot"
@@ -1198,7 +1198,7 @@ dependencies = [
 ]
 EOF
 
-# 3. main.py mit Geschäftslogik
+# 3. Create main.py with business logic
 cat > main.py << 'EOF'
 import logging
 import requests
@@ -1211,7 +1211,7 @@ def main():
         try:
             payload = input_item.payload
 
-            # API-Call
+            # API call
             response = requests.get(
                 f"https://api.example.com/data/{payload.get('id')}",
                 timeout=10
@@ -1235,89 +1235,89 @@ if __name__ == "__main__":
     main()
 EOF
 
-# 4. Lokal testen
+# 4. Test locally
 uv run main.py
 ```
 
-### Vorteile von UV Robots
+### Benefits of UV Robots
 
-- **⚡ Schnell** - 20-40x schneller als RCC durch direkte Python-Ausführung
-- **📦 Leicht** - Minimal dependencies, einfaches Packaging
-- **🔌 Modern** - Zugriff auf alle Python-Libraries (requests, pandas, etc.)
-- **☁️ Cloud-Ready** - Optimal für Microservices und serverless Deployment
-- **👨‍💻 Dev-Friendly** - Normale Python, nicht Robot Framework Syntax
+- **⚡ Fast** - 20-40x faster than RCC through direct Python execution
+- **📦 Lightweight** - Minimal dependencies, simple packaging
+- **🔌 Modern** - Access to all Python libraries (requests, pandas, etc.)
+- **☁️ Cloud-Ready** - Optimal for microservices and serverless deployment
+- **👨‍💻 Dev-Friendly** - Standard Python, not Robot Framework syntax
 
-### Wann UV verwenden?
+### When to Use UV?
 
-✅ **Ideal für:**
-- REST API Integration
-- Datenverarbeitung und ETL
-- Microservices und Backend-Tasks
-- Python-Libraries (pandas, requests, httpx)
-- Cloud-Deployment
+✅ **Ideal for:**
+- REST API integration
+- Data processing and ETL
+- Microservices and backend tasks
+- Python libraries (pandas, requests, httpx)
+- Cloud deployment
 
-❌ **Nicht ideal für:**
-- Windows UI Automation (braucht RPA Framework)
-- Legacy SAP/Mainframe-Systeme
-- Visuelle Web-Automation mit komplexen Locators
+❌ **Not ideal for:**
+- Windows UI automation (requires RPA Framework)
+- Legacy SAP/Mainframe systems
+- Visual web automation with complex locators
 
-### Weitere UV-Dokumentation
+### Further UV Documentation
 
-Für detaillierte Anleitung zur UV-Robot-Entwicklung siehe:
-- **Komplette Anleitung:** [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md)
-- **Quick Start:** [QUICK_START.md - Neuen UV-Robot erstellen](./QUICK_START.md#-neuen-uv-robot-erstellen)
+For detailed guidance on UV robot development, see:
+- **Complete guide:** [UV_ROBOT_CREATION_GUIDE.md](./UV_ROBOT_CREATION_GUIDE.md)
+- **Quick Start:** [QUICK_START.md - Create new UV robot](./QUICK_START.md#-create-new-uv-robot)
 - **Architecture Details:** [ARCHITECTURE.md - Robot Execution Engines](./ARCHITECTURE.md)
-- **Migration & Updates:** [MIGRATION_GUIDE.md - UV Robot Support](./MIGRATION_GUIDE.md#5-uv-robot-support-neu---optional)
+- **Migration & Updates:** [MIGRATION_GUIDE.md - UV Robot Support](./MIGRATION_GUIDE.md#5-uv-robot-support-new---optional)
 
 ---
 
 ## 🛠️ Robot Execution Tools & Entry Points
 
-Das System bietet spezialisierte Execution-Tools für Robots ohne boilerplate `main.py` Wrapper. Diese Tools werden via [project.scripts] Entry Points in `pyproject.toml` definiert und ermöglichen direkte Ausführung von Robots.
+The system provides specialized execution tools for robots without boilerplate `main.py` wrapper. These tools are defined via [project.scripts] entry points in `pyproject.toml` and enable direct robot execution.
 
 ### robot_runner - Robot Framework Entry Point
 
-**Zweck:** Eigenständige Ausführung von Robot Framework .robot-Dateien als CLI-Tool
+**Purpose:** Standalone execution of Robot Framework .robot files as CLI tool
 
-#### Installation & Konfiguration
+#### Installation & Configuration
 
 ```bash
-# In pyproject.toml definieren:
+# Define in pyproject.toml:
 [project.scripts]
 robot_runner = "processcube_robot_agent.tools.robot_runner:main"
 
-# oder mit UV-Robot Konfig:
+# Or with UV robot config:
 [tool.processcube]
 robot_file = "my_robot.robot"  # Default robot file
 ```
 
-#### Verwendung
+#### Usage
 
 ```bash
-# Option 1: Robot-Datei direkt übergeben
+# Option 1: Pass robot file directly
 robot_runner my_robot.robot
 
-# Option 2: Mit Variablen
+# Option 2: With variables
 robot_runner my_robot.robot \
   --variable USER=admin \
   --variable PASSWORD=secret
 
-# Option 3: Mit Tags
+# Option 3: With tags
 robot_runner my_robot.robot \
   --tag smoke \
   --tag critical
 
-# Option 4: Aus Konfiguration (pyproject.toml)
-robot_runner  # Nutzt robot_file aus [tool.processcube]
+# Option 4: From configuration (pyproject.toml)
+robot_runner  # Uses robot_file from [tool.processcube]
 
-# Option 5: Mit Python direkt
+# Option 5: With Python directly
 python -m processcube_robot_agent.tools.robot_runner my_robot.robot
 
-# Hilfe anzeigen
+# Show help
 robot_runner --help
 ```
 
-#### Konfiguration in pyproject.toml
+#### Configuration in pyproject.toml
 
 ```toml
 [project]
@@ -1328,42 +1328,42 @@ version = "0.1.0"
 robot_runner = "processcube_robot_agent.tools.robot_runner:main"
 
 [tool.processcube]
-# Optional: Defaults für robot_runner
+# Optional: Defaults for robot_runner
 robot_file = "main.robot"
 variables = { "USER" = "admin", "TIMEOUT" = "30" }
 tags = ["smoke", "production"]
 ```
 
-#### Prozess-Integration
+#### ProcessCube Integration
 
-Der `robot_runner` integriert sich nahtlos mit ProcessCube:
-- Liest Input Work Items aus Umgebungsvariablen
-- Führt Robot Framework aus
-- Schreibt Output Work Items
-- Signalisiert Fehler für ProcessCube Error Handling
+The `robot_runner` integrates seamlessly with ProcessCube:
+- Reads input work items from environment variables
+- Executes Robot Framework
+- Writes output work items
+- Signals errors for ProcessCube error handling
 
 ```bash
-# Mit ProcessCube Work Items
+# With ProcessCube work items
 RPA_WORKITEMS_PATH=/tmp/workitems.json robot_runner task.robot
 
-# Output wird geschrieben zu:
+# Output is written to:
 # $RPA_OUTPUT_WORKITEM_PATH/output.json
 ```
 
-#### Vorteile vs. Manuell
+#### Benefits vs. Manual
 
-| Aspekt | robot_runner | Manuell (main.py) |
+| Aspect | robot_runner | Manual (main.py) |
 |--------|--|--|
-| Boilerplate | ❌ Keine | ✅ Viel |
-| Konfigurierbar | ✅ TOML-based | ⚠️ Hardcoded |
+| Boilerplate | ❌ None | ✅ Lots |
+| Configurable | ✅ TOML-based | ⚠️ Hardcoded |
 | Variables | ✅ CLI + TOML | ❌ Hardcoded |
-| Tags Support | ✅ Ja | ❌ Nein |
-| Work Items | ✅ Automatisch | ❌ Manuell |
+| Tags Support | ✅ Yes | ❌ No |
+| Work Items | ✅ Automatic | ❌ Manual |
 
-#### Beispiel: RCC-Robot mit robot_runner
+#### Example: RCC Robot with robot_runner
 
 ```bash
-# 1. Robot Struktur
+# 1. Robot structure
 robots/src/rcc/my-task/
 ├── robot.yaml
 ├── main.robot
@@ -1381,84 +1381,84 @@ robot_runner = "processcube_robot_agent.tools.robot_runner:main"
 [tool.processcube]
 robot_file = "main.robot"
 
-# 3. Direkte Ausführung
+# 3. Direct execution
 cd robots/src/rcc/my-task
 robot_runner main.robot
 
-# oder mit Variablen
+# Or with variables
 robot_runner main.robot --variable API_KEY=secret123
 ```
 
 ### UV-Runner - Python Execution Engine
 
-Für UV-basierte Robots wird automatisch der UV-Package Manager verwendet.
+For UV-based robots, the UV package manager is automatically used.
 
 ```bash
-# Struktur für UV-Robot
+# Structure for UV robot
 robots/src/uv/my-api-robot/
-├── pyproject.toml  # mit Dependencies
+├── pyproject.toml  # with dependencies
 ├── main.py         # Entry point
 └── requirements.txt # Optional fallback
 
-# Automatische Ausführung via UV:
+# Automatic execution via UV:
 # uv run --directory robots/src/uv/my-api-robot main.py
 ```
 
 ### RCC-Runner - Robot Framework Compiler
 
-Für RCC-basierte Robots wird der Robot Code Compiler verwendet:
+For RCC-based robots, the Robot Code Compiler is used:
 
 ```bash
-# RCC-Robots werden automatisch gepackt
+# RCC robots are automatically packed
 npm run pack
 
-# Ausführung
+# Execution
 rcc robot run --task TaskName --directory robots/src/rcc/webui
 ```
 
 ---
 
-## 📦 Studio-Erweiterung
+## 📦 Studio Extension
 
-Die Studio-Erweiterung ermöglicht die grafische Konfiguration von Robot-Agents und Tasks in der 5Minds Studio IDE.
+The studio extension enables graphical configuration of robot agents and tasks in the 5Minds Studio IDE.
 
 ### Features
 
-- **Robot Service Type Registration** - "Robot" als Task-Typ in BPMN
-- **Agent Management** - Verwaltung von Robot-Agent-Instanzen
-- **Topic Selection** - Auswahl des auszuführenden Robots
-- **Visual Feedback** - Robot-Icon auf BPMN-Diagrammen
-- **Properties Panel** - Konfiguration im Studio
+- **Robot Service Type Registration** - "Robot" as task type in BPMN
+- **Agent Management** - Management of robot agent instances
+- **Topic Selection** - Selection of robot to execute
+- **Visual Feedback** - Robot icon on BPMN diagrams
+- **Properties Panel** - Configuration in Studio
 
 ### Installation in Studio
 
 ```bash
 cd studio_extension
 
-# Abhängigkeiten installieren
+# Install dependencies
 npm ci
 
-# Build erstellen
+# Create build
 npm run build
 
-# Installation per npm-Script (muss in studio_extension/package.json konfiguriert sein)
+# Install via npm script (must be configured in studio_extension/package.json)
 npm run install_studio_extension
 ```
 
-### Manuelle Installation
+### Manual Installation
 
-1. Studio öffnen: `5minds-studio`
-2. Menü: Settings → Extensions
-3. "processcube.robot.extension" auswählen
-4. Path zum `studio_extension/out/index.js` angeben
-5. Studio neu starten
+1. Open Studio: `5minds-studio`
+2. Menu: Settings → Extensions
+3. Select "processcube.robot.extension"
+4. Specify path to `studio_extension/out/index.js`
+5. Restart Studio
 
-### Verwendung in Studio
+### Usage in Studio
 
-#### 1. Agent konfigurieren
+#### 1. Configure agent
 
-1. Studio: Menü → Settings → "Configure Robot Agents"
-2. Agent hinzufügen:
+1. Studio: Menu → Settings → "Configure Robot Agents"
+2. Add agent:
    ```json
    {
      "name": "Local Robot Agent",
@@ -1466,23 +1466,23 @@ npm run install_studio_extension
      "uuid": "robot-agent-001"
    }
    ```
-3. Speichern in `~/.processcube/robot-agent/agents.json`
+3. Save in `~/.processcube/robot-agent/agents.json`
 
-#### 2. Robot Task in BPMN erstellen
+#### 2. Create Robot Task in BPMN
 
-1. BPMN-Editor öffnen
-2. Service-Task hinzufügen
-3. Properties → Type: "Robot" wählen
-4. Properties → Agent: Konfigurierter Agent wählen
-5. Properties → Topic: Verfügbaren Robot aus Liste wählen
+1. Open BPMN editor
+2. Add service task
+3. Properties → Type: Select "Robot"
+4. Properties → Agent: Select configured agent
+5. Properties → Topic: Select available robot from list
    - `rcc/webui`
    - `rcc/windows/ui`
    - etc.
 
-#### 3. Work Items konfigurieren
+#### 3. Configure Work Items
 
 ```javascript
-// Task Properties im BPMN
+// Task Properties in BPMN
 {
   "taskConfig": {
     "agent": "robot-agent-001",
@@ -1493,42 +1493,42 @@ npm run install_studio_extension
 }
 ```
 
-### Studio-Erweiterung Entwicklung
+### Studio Extension Development
 
-#### Komponenten
+#### Components
 
-- **PropertiesRobotTaskPane.tsx** - Haupt-UI für Robot-Tasks
-- **PropertiesRobotTaskPaneContent.tsx** - Task-Eigenschaften
-- **RobotAgentsConfigEditor.tsx** - Agent-Verwaltung UI
+- **PropertiesRobotTaskPane.tsx** - Main UI for robot tasks
+- **PropertiesRobotTaskPaneContent.tsx** - Task properties
+- **RobotAgentsConfigEditor.tsx** - Agent management UI
 
 #### Debugging
 
 ```bash
-# Studio mit Erweiterungs-Dev-Mode starten
+# Start Studio with extension dev mode
 5minds-studio --extension-development-dir=./studio_extension
 
-# VSCode Debugger: F5 zum Debuggen des TypeScript
+# VSCode Debugger: F5 to debug TypeScript
 ```
 
 #### Build & Release
 
 ```bash
-# Development Build
+# Development build
 npm run build
 
-# Outputs als studio_extension/out/index.js
+# Outputs to studio_extension/out/index.js
 
-# Für Beta
+# For beta
 npm run copy_release_to_beta
 ```
 
 ---
 
-## 🔌 API-Dokumentation
+## 🔌 API Documentation
 
 ### REST API Endpoints
 
-#### Robot-Liste abrufen
+#### Get Robot List
 
 ```
 GET /robot_agents/robots
@@ -1550,17 +1550,17 @@ GET /robot_agents/robots
 }
 ```
 
-**cURL Beispiel:**
+**cURL Example:**
 ```bash
 curl -X GET http://localhost:42042/robot_agents/robots
 ```
 
 ### ProcessCube External Task Integration
 
-Der Agent registriert sich bei ProcessCube als External Task Subscriber:
+The agent registers with ProcessCube as an external task subscriber:
 
 ```python
-# Beispiel Task-Ausführung
+# Example task execution
 task_handler.execute(
     payload={
         "order_id": "ORD-123",
@@ -1573,7 +1573,7 @@ task_handler.execute(
 )
 ```
 
-### Fehler-Responses
+### Error Responses
 
 ```json
 {
@@ -1590,32 +1590,32 @@ task_handler.execute(
 
 ---
 
-## 🔧 Entwicklung & Debugging
+## 🔧 Development & Debugging
 
-### Projekt-Setup für Entwicklung
+### Project Setup for Development
 
 ```bash
-# 1. Repository klonen
+# 1. Clone repository
 git clone <repo-url>
 cd processcube-robot-agent
 
-# 2. Python venv erstellen
+# 2. Create Python venv
 python -m venv venv
 source venv/bin/activate  # Linux/macOS
-# oder
+# or
 venv\Scripts\activate  # Windows
 
-# 3. Abhängigkeiten installieren
+# 3. Install dependencies
 pip install -r requirements.txt
 
-# 4. RCC prüfen
+# 4. Check RCC
 rcc version
 ```
 
-### Service mit Debug-Modus starten
+### Start Service with Debug Mode
 
 ```bash
-# Debug-Modus in config.dev.json aktivieren:
+# Enable debug mode in config.dev.json:
 {
   "debugging": {
     "enabled": true,
@@ -1625,16 +1625,16 @@ rcc version
   }
 }
 
-# Service starten
+# Start service
 npm run processcube_robot_agent
 
-# Debugger verbinden (PyCharm/VSCode)
-# Verbinden auf localhost:5678
+# Connect debugger (PyCharm/VSCode)
+# Connect to localhost:5678
 ```
 
 ### Logging & Debugging
 
-#### Console Logging aktivieren
+#### Enable Console Logging
 
 ```python
 # In processcube_robot_agent/__main__.py
@@ -1646,22 +1646,22 @@ logging.basicConfig(
 )
 ```
 
-#### Log-Ausgaben nachverfolgen
+#### Track Log Output
 
 ```bash
-# Service mit verbose Output
+# Service with verbose output
 LOG_LEVEL=DEBUG npm run processcube_robot_agent
 
-# RCC Debug-Output
+# RCC debug output
 RCC_DEBUG=true npm run processcube_robot_agent
 
-# Service Logs live folgen
+# Follow service logs live
 tail -f ~/.processcube/robot-agent/logs.txt
 ```
 
-### Watch Mode für Entwicklung
+### Watch Mode for Development
 
-Mit automatischem Reload bei Dateiänderungen:
+With automatic reload on file changes:
 
 ```bash
 # config.dev.json:
@@ -1672,39 +1672,39 @@ Mit automatischem Reload bei Dateiänderungen:
   }
 }
 
-# Service starten - ändert einen Robot und beobachte Auto-Reload
+# Start service - change a robot and watch auto-reload
 npm run processcube_robot_agent
 ```
 
-Dateiänderungen werden erkannt:
-- Neue robot.yaml → Robot wird gepackt und registriert
-- Geänderte robot.yaml → Neupacken und Neuregistrierung
-- Neue tasks.robot → Repack automatisch
+File changes are detected:
+- New robot.yaml → Robot is packed and registered
+- Changed robot.yaml → Repack and re-register
+- New tasks.robot → Automatically repack
 
-### Manuelles Testen
+### Manual Testing
 
 ```bash
-# 1. Robot lokal testen
+# 1. Test robot locally
 cd robots/src/rcc/webui
 robot --task WebUIExample tasks.robot
 
-# 2. Robot mit RCC packen
+# 2. Pack robot with RCC
 rcc robot wrap -z robots/src/rcc/webui
 
-# 3. Robot auspacken und inspizieren
+# 3. Unpack robot and inspect
 rcc robot unwrap -z robots/installed/rcc/webui.zip -d temp/webui
 
-# 4. Mit RCC ausführen
+# 4. Execute with RCC
 rcc run -c robots/src/rcc/webui
 ```
 
-### Unit Testing hinzufügen
+### Add Unit Testing
 
 ```bash
-# Abhängigkeiten
+# Dependencies
 pip install pytest pytest-asyncio pytest-cov
 
-# Tests schreiben (noch nicht vorhanden!)
+# Write tests (not yet created!)
 mkdir tests
 cat > tests/test_robot_agent.py << 'EOF'
 import pytest
@@ -1717,20 +1717,20 @@ def test_execute_missing_robot():
         agent.execute({}, {"task_id": "test"})
 EOF
 
-# Tests ausführen
+# Run tests
 pytest tests/ -v --cov
 ```
 
-### Typprüfung (mypy)
+### Type Checking (mypy)
 
 ```bash
 # Installation
 pip install mypy types-all
 
-# Typprüfung
+# Type checking
 mypy processcube_robot_agent/
 
-# Mit Konfiguration
+# With configuration
 cat > mypy.ini << 'EOF'
 [mypy]
 python_version = 3.9
@@ -1744,136 +1744,136 @@ mypy processcube_robot_agent/
 
 ---
 
-## ⚠️ Problembehebung
+## ⚠️ Troubleshooting
 
-### Service startet nicht
+### Service won't start
 
 **Problem:** `ModuleNotFoundError: No module named 'processcube_robot_agent'`
 
 ```bash
-# Lösung 1: PYTHONPATH setzen
+# Solution 1: Set PYTHONPATH
 export PYTHONPATH=$(pwd)
 npm run processcube_robot_agent
 
-# Lösung 2: Abhängigkeiten neu installieren
+# Solution 2: Reinstall dependencies
 pip install -r requirements.txt --force-reinstall
 
-# Lösung 3: Virtual Environment verwenden
+# Solution 3: Use virtual environment
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
 npm run processcube_robot_agent
 ```
 
-### RCC nicht gefunden
+### RCC not found
 
 **Problem:** `rcc: command not found`
 
 ```bash
-# RCC herunterladen
+# Download RCC
 cd /tmp
 wget https://github.com/robocorp/rcc/releases/download/v12.x.x/rcc-linux-64bit
 chmod +x rcc
 sudo mv rcc /usr/local/bin/
 
-# Oder in PATH hinzufügen
+# Or add to PATH
 export PATH=$PATH:/path/to/rcc/directory
 
-# Überprüfung
+# Verify
 rcc version
 ```
 
-### Robot wird nicht registriert
+### Robot not registered
 
-**Problem:** Robot nach Hinzufügen nicht in der Liste sichtbar
+**Problem:** Robot not visible in list after adding
 
 ```bash
-# 1. Watch-Modus aktiviert?
+# 1. Watch mode enabled?
 # config.dev.json: "start_watch_project_dir": true
 
-# 2. Robots manuell packen
+# 2. Pack robots manually
 npm run pack
 
-# 3. Service neu starten
+# 3. Restart service
 npm run processcube_robot_agent
 
-# 4. Robots auflisten
+# 4. List robots
 curl http://localhost:42042/robot_agents/robots
 ```
 
-### Fehler im Robot beim Ausführen
+### Error running robot
 
-**Problem:** Robot schlägt fehl, Output nicht sichtbar
+**Problem:** Robot fails, output not visible
 
 ```bash
-# 1. Logs anschauen
+# 1. Check logs
 tail -100 ~/.processcube/robot-agent/logs.txt
 
-# 2. Robot lokal testen
-cd robots/src/rcc/mein-robot
+# 2. Test robot locally
+cd robots/src/rcc/my-robot
 robot tasks.robot
 
-# 3. Output überprüfen
+# 3. Check output
 open output/log.html
 
-# 4. RCC Output lesen
-rcc run -c robots/src/rcc/mein-robot
+# 4. Read RCC output
+rcc run -c robots/src/rcc/my-robot
 
-# 5. Debug-JSON check
-cat robots/installed/rcc/mein-robot/output.xml
+# 5. Check debug JSON
+cat robots/installed/rcc/my-robot/output.xml
 ```
 
-### ProcessCube verbindet sich nicht
+### ProcessCube won't connect
 
-**Problem:** Service läuft, aber ProcessCube findet ihn nicht
+**Problem:** Service running, but ProcessCube can't find it
 
 ```bash
-# 1. Service-URL prüfen
+# 1. Check service URL
 curl http://localhost:42042/robot_agents/robots
-# Sollte erfolgreich sein
+# Should succeed
 
-# 2. Config überprüfen
+# 2. Check configuration
 cat config.dev.json
-# rest_api.host und rest_api.port korrekt?
+# rest_api.host and rest_api.port correct?
 
-# 3. Firewall/Netzwerk
-# Port 42042 offen von ProcessCube?
+# 3. Firewall/Network
+# Port 42042 open from ProcessCube?
 netstat -tuln | grep 42042
 
-# 4. ProcessCube Config überprüfen
-# ProcessCube sollte konfiguriert sein mit:
+# 4. Check ProcessCube config
+# ProcessCube should be configured with:
 # http://<agent-host>:42042
 ```
 
-### Studio-Erweiterung lädt nicht
+### Studio Extension won't load
 
-**Problem:** "Robot" Task-Type nicht verfügbar in Studio
+**Problem:** "Robot" task type not available in Studio
 
 ```bash
-# 1. Erweiterung gebaut?
+# 1. Extension built?
 cd studio_extension
 npm run build
 
-# 2. out/index.js existiert?
+# 2. out/index.js exists?
 ls -la out/index.js
 
-# 3. Studio Debug-Mode
+# 3. Studio debug mode
 5minds-studio --extension-development-dir=./studio_extension
 
-# 4. Browser Console prüfen (F12)
-# Fehler in Extensions anschauen
+# 4. Check browser console (F12)
+# Look for errors in Extensions
 ```
 
-### Port 42042 bereits in Verwendung
+### Port 42042 already in use
 
 **Problem:** `Address already in use`
 
 ```bash
-# Prozess finden und beenden
+# Find and kill process
 lsof -i :42042
 kill -9 <PID>
 
-# Oder anderen Port verwenden
+# Or use different port
 cat config.dev.json | sed 's/42042/42043/' > config.dev.json.new
 mv config.dev.json.new config.dev.json
 npm run processcube_robot_agent
@@ -1881,71 +1881,71 @@ npm run processcube_robot_agent
 
 ---
 
-## 📊 Projekt Status & Qualität
+## 📊 Project Status & Quality
 
-### Code-Qualität Zusammenfassung
+### Code Quality Summary
 
-**Aktueller Status:** ✅ **PRODUKTIONSREIFE**
-- Alle kritischen Sicherheitsprobleme behoben
-- 360 Tests mit 100% Pass-Rate (279 Python + 81 TypeScript)
-- 85% Type Hints Coverage
-- 90% Docstring Coverage
-- 0 npm Vulnerabilities
-- 20 Packages modernisiert
+**Current Status:** ✅ **PRODUCTION READY**
+- All critical security issues fixed
+- 360 tests with 100% pass rate (279 Python + 81 TypeScript)
+- 85% type hints coverage
+- 90% docstring coverage
+- 0 npm vulnerabilities
+- 20 packages modernized
 
-**Abgeschlossene Verbesserungen:**
-- ✅ Shell-Injection-Lücken geschlossen
-- ✅ Unit Tests hinzugefügt (114 Tests)
-- ✅ Dependencies aktualisiert (20 Packages)
-- ✅ Type Hints hinzugefügt (85%)
-- ✅ Docstrings ergänzt (90%)
-- ✅ Production-Build für Studio-Erweiterung (Webpack 0 Errors)
+**Completed Improvements:**
+- ✅ Shell injection vulnerabilities closed
+- ✅ Unit tests added (114 tests)
+- ✅ Dependencies updated (20 packages)
+- ✅ Type hints added (85%)
+- ✅ Docstrings added (90%)
+- ✅ Production build for Studio extension (Webpack 0 errors)
 
-**Detaillierte Analyse:** siehe [ANALYSIS.md](./ANALYSIS.md) und [PROJECT_STATUS.md](./PROJECT_STATUS.md)
+**Detailed Analysis:** See [ANALYSIS.md](./ANALYSIS.md) and [PROJECT_STATUS.md](./PROJECT_STATUS.md)
 
 ---
 
-## 📚 Weitere Dokumentation
+## 📚 Further Documentation
 
-### Zusammengehörige Komponenten
+### Related Components
 
 #### processcube_robot_agent
-- Backend-Service mit RPA-Executor
-- **Hauptdatei:** `processcube_robot_agent/__main__.py`
-- **Dokumentation:** siehe [Processing Robot Agent Details](#robot-entwicklung)
+- Backend service with RPA executor
+- **Main file:** `processcube_robot_agent/__main__.py`
+- **Documentation:** See [Robot Development Details](#robot-development)
 
 #### robots
-- Robot Framework Projekte
-- **Struktur:** `robots/src/rcc/`
-- **Packaging:** Automatisch via RCC oder `npm run pack`
+- Robot Framework projects
+- **Structure:** `robots/src/rcc/`
+- **Packaging:** Automatically via RCC or `npm run pack`
 
 #### studio_extension
-- TypeScript/React IDE-Integration
-- **Build:** `npm run build` im `studio_extension/` Verzeichnis
-- **Installation:** in 5Minds Studio
+- TypeScript/React IDE integration
+- **Build:** `npm run build` in `studio_extension/` directory
+- **Installation:** In 5Minds Studio
 
 ---
 
 ## 🤝 Contributing
 
-### Bereiche mit Verbesserungsbedarf
+### Areas for Improvement
 
-1. **Tests schreiben** - `tests/` Verzeichnis aufbauen
-2. **Dependencies updaten** - Modern halten
-3. **Fehlerbehandlung** - Robustness erhöhen
-4. **Dokumentation** - Docstrings ergänzen
-5. **Logging** - Debugbarkeit verbessern
+1. **Write tests** - Build up `tests/` directory
+2. **Update dependencies** - Keep modern
+3. **Error handling** - Increase robustness
+4. **Documentation** - Add docstrings
+5. **Logging** - Improve debuggability
 
-### Commit-Konventionen
+### Commit Conventions
 
 ```bash
 # Feature
 git commit -m "feat: add robot auto-discovery"
 
-# Bug Fix
+# Bug fix
 git commit -m "fix: shell injection vulnerability in subprocess calls"
 
-# Dokumentation
+# Documentation
 git commit -m "docs: add testing guide"
 
 # Refactor
@@ -1955,34 +1955,34 @@ git commit -m "refactor: simplify factory builder"
 git commit -m "test: add unit tests for robot_agent.py"
 ```
 
-### Pull Request Prozess
+### Pull Request Process
 
 1. Fork repository
-2. Feature branch erstellen: `git checkout -b feature/amazing-feature`
-3. Änderungen committen: `git commit -m "feat: ..."`
-4. Branch pushen: `git push origin feature/amazing-feature`
-5. Pull Request öffnen
-6. Tests müssen passen
-7. Code-Review durchführen
+2. Create feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m "feat: ..."`
+4. Push branch: `git push origin feature/amazing-feature`
+5. Open pull request
+6. Tests must pass
+7. Perform code review
 
 ---
 
-## 📝 Lizenz
+## 📝 License
 
-Apache 2.0 License - siehe [LICENSE](./LICENSE) für Details
+Apache 2.0 License - See [LICENSE](./LICENSE) for details
 
 ---
 
-## 🆘 Support & Kontakt
+## 🆘 Support & Contact
 
-### Fehlermeldung beheben
+### Fix Error Messages
 
-1. **Logs überprüfen** - siehe [Problembehebung](#-problembehebung)
-2. **Einfaches Beispiel** - webui Robot testen
-3. **Isolieren** - Problem reproduzieren
+1. **Check logs** - See [Troubleshooting](#-troubleshooting)
+2. **Simple example** - Test webui robot
+3. **Isolate** - Reproduce problem
 4. **GitHub Issue** - https://github.com/5minds/processcube-robot-agent/issues
 
-### Weitere Ressourcen
+### Additional Resources
 
 - **Robot Framework:** https://robotframework.org/
 - **RPA Framework:** https://rpaframework.org/
@@ -1992,9 +1992,9 @@ Apache 2.0 License - siehe [LICENSE](./LICENSE) für Details
 
 ---
 
-## 🎓 Beispiele & Tutorials
+## 🎓 Examples & Tutorials
 
-### Beispiel 1: Web-Login automatisieren
+### Example 1: Automate Web Login
 
 ```robot
 *** Settings ***
@@ -2015,7 +2015,7 @@ Automated Login
     Close Browser
 ```
 
-### Beispiel 2: Datenverarbeitung
+### Example 2: Data Processing
 
 ```robot
 *** Settings ***
@@ -2042,7 +2042,7 @@ Process Order
     RETURN    completed
 ```
 
-### Beispiel 3: API-Integration
+### Example 3: API Integration
 
 ```robot
 *** Settings ***
@@ -2064,6 +2064,6 @@ Fetch And Process API Data
 
 ---
 
-**Dokumentversion:** 1.0
-**Letztes Update:** November 2025
-**Status:** Production Ready (mit anstehenden Verbesserungen)
+**Documentation Version:** 1.0
+**Last Updated:** November 2025
+**Status:** Production Ready (with upcoming improvements)
