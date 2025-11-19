@@ -206,21 +206,53 @@ jobs:
     runs-on: ubuntu-latest
     needs: [build-docker, quality, integration-tests]
     if: startsWith(github.ref, 'refs/tags/v')
-    
+
     steps:
       - uses: actions/checkout@v4
-      
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Extract version from tag
+        id: version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/}
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "version_no_v=${VERSION#v}" >> $GITHUB_OUTPUT
+
+      - name: Extract release notes from CHANGELOG.md
+        id: notes
+        run: |
+          python scripts/extract_release_notes.py "${{ steps.version.outputs.version }}" > /tmp/release_notes.txt 2>/dev/null || {
+            echo "⚠️ Could not extract from CHANGELOG.md, using fallback"
+            echo "See [CHANGELOG.md](./CHANGELOG.md) for release notes." > /tmp/release_notes.txt
+          }
+          cat /tmp/release_notes.txt
+
+      - name: Format release notes
+        id: formatted_notes
+        run: |
+          {
+            echo 'body<<EOF'
+            cat /tmp/release_notes.txt
+            echo ""
+            echo "---"
+            echo ""
+            echo "**Docker Image**: \`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}\`"
+            echo ""
+            echo "📖 **Full Changelog**: [CHANGELOG.md](./CHANGELOG.md)"
+            echo 'EOF'
+          } >> $GITHUB_OUTPUT
+
       - name: Create Release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          body: |
-            ## Changes in this Release
-            - Docker image: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ github.ref_name }}`
-            
-            See [Changelog](CHANGELOG.md) for details.
+          release_name: Release ${{ steps.version.outputs.version }}
+          body: ${{ steps.formatted_notes.outputs.body }}
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(steps.version.outputs.version, 'alpha') || contains(steps.version.outputs.version, 'beta') }}
