@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 ---
 
+## [0.1.1] - 2025-11-19
+
+### 📚 Documentation
+
+**README.md Modernization**
+- Updated test count to 360 (279 Python + 81 TypeScript)
+- Added comprehensive UV-Runner / Robot Execution Tools documentation
+- Added Docker-Image configuration & usage guide with examples:
+  - Docker build and container startup
+  - Docker Compose full stack configuration
+  - ghcr.io image tags and versioning
+  - Environment variables and mounting options
+  - Security best practices (non-root user, read-only filesystem)
+  - Development Docker builds
+  - Troubleshooting for Docker containers
+
+**Documentation Cleanup**
+- Removed outdated ANALYSIS.md (v0.0.1 status documentation)
+- Removed outdated IMPROVEMENTS_SUMMARY.md (completed work now in CHANGELOG.md)
+- Removed outdated ROADMAP.md (old development plans)
+- Removed outdated STUDIO_EXTENSION_TESTS.md (81% → 100% pass rate)
+- Removed studio_extension/TYPESCRIPT_MIGRATION_GUIDE.md (migration completed)
+- Repository now contains only actively maintained, production-relevant documentation
+
+**License**
+- Added Apache 2.0 LICENSE file
+- All documentation reflects Apache 2.0 licensing
+
+---
+
 ## [0.1.0] - 2025-11-19
 
 ### ✨ New Features
