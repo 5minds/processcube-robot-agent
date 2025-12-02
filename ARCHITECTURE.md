@@ -6,70 +6,42 @@
 
 ## 🏛️ System-Übersicht
 
-```
-┌─────────────────────────────────────────────────────────────────┐
-│                     ProcessCube Engine (BPMN)                   │
-└────────────────────────────┬────────────────────────────────────┘
-                             │
-                   External Task Events
-                             │
-┌────────────────────────────▼────────────────────────────────────┐
-│              Robot Agent Service (Python)                       │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ REST API (FastAPI)                                       │  │
-│  │ - GET /robot_agents/robots                               │  │
-│  │ - Health checks & status                                 │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ External Task Handler                                    │  │
-│  │ - Subscribes to ProcessCube topics                       │  │
-│  │ - Routes tasks to appropriate robots                     │  │
-│  │ - Handles task results                                   │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Robot Task Handler Factory                               │  │
-│  │ - Discovers available robots (.zip packages)             │  │
-│  │ - Creates topic → robot mappings                         │  │
-│  │ - Auto-updates on file changes (watch mode)              │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Robot Execution Engines                                  │  │
-│  │ ├─ RCC Engine (Robot Framework)                         │  │
-│  │ │  ├─ Unpacks robot.zip                                 │  │
-│  │ │  ├─ Executes via 'rcc run' command                    │  │
-│  │ │  └─ Best for: UI Automation, Web-Scraping             │  │
-│  │ │                                                        │  │
-│  │ └─ UV Engine (Pure Python)                              │  │
-│  │    ├─ Unpacks robot.zip                                 │  │
-│  │    ├─ Executes via 'uv run python main.py'              │  │
-│  │    └─ Best for: APIs, Data Processing, Microservices    │  │
-│  │                                                          │  │
-│  │ Common:                                                 │  │
-│  │ - Prepares work items (JSON)                            │  │
-│  │ - Extracts output/results                               │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-│  ┌──────────────────────────────────────────────────────────┐  │
-│  │ Project Watcher & Packer                                 │  │
-│  │ - Monitors robots/src/rcc/ and robots/src/uv/            │  │
-│  │ - Auto-packs modified robots (both RCC & UV)            │  │
-│  │ - Re-registers topics on change                          │  │
-│  └──────────────────────────────────────────────────────────┘  │
-│                                                                 │
-└─────────────────────────────────────────────────────────────────┘
-                             │
-         ┌───────────────────┼───────────────────┐
-         │                   │                   │
-         ▼                   ▼                   ▼
-    ┌─────────────┐  ┌──────────────┐  ┌──────────┐
-    │ RCC/UV CLI  │  │ Work Items   │  │ Env Mgmt │
-    │ (Pack, Run) │  │ (JSON)       │  │(Conda/UV)│
-    └─────────────┘  └──────────────┘  └──────────┘
-```
+![ProcessCube Robot Agent - Architektur](architecture-diagram.png)
+
+**Das Diagramm zeigt:**
+- **ProcessCube Engine Integration** (Blau) - BPMN Workflow und External Tasks
+- **FastAPI REST Server** (Grün) - Port 42042 mit allen Komponenten
+- **External Task Handler** (Lila) - Task-Routing und Orchestrierung
+- **MultiRunnerFactoryCreator** (Rot) - Zentrale Factory-Orchestrierung
+- **RCC Robot Factory & Agent** (Orange) - Für UI/Web Automation
+- **UV Robot Factory & Agent** (Cyan) - Für API/Data Processing
+- **Project Watcher** (Violett) - Hot Reload Funktionalität
+- **Externe Dependencies** (Grau) - RCC CLI, Work Items, UV Tool
+
+> **📝 Editierbare Version:** Das Diagramm kann als Excalidraw-Datei bearbeitet werden: [architecture-diagram.excalidraw](architecture-diagram.excalidraw)
+
+### Kernarchitektur
+
+Die Architektur basiert auf einem **Dual-Engine Ansatz** mit zwei unterschiedlichen Robot-Typen:
+
+**RCC Robots** (Robot Framework)
+- Optimal für UI/Web-Automation
+- Verwendet Robocorp RCC CLI
+- Conda-basiertes Dependency Management
+- Topic-Präfix: `rcc.`
+
+**UV Robots** (Pure Python)
+- Optimal für API-Integration und Datenverarbeitung
+- Verwendet UV Package Manager
+- Schnelle Python Virtual Environments
+- Topic-Präfix: `uv.`
+
+**Gemeinsame Komponenten:**
+- FastAPI REST Server (Port 42042)
+- External Task Handler für ProcessCube Integration
+- Work Items (JSON) für Input/Output
+- Factory Pattern für Robot Discovery
+- Hot Reload via File System Watcher
 
 ---
 
